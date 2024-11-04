@@ -28,6 +28,10 @@ public class TurnManager : MonoBehaviour
 
     [SerializeField] GameObject loseScreen;
 
+    [SerializeField] CharacterHUD[] enemyHUDs;
+
+    [SerializeField] CharacterHUD bossHUD;
+
     private Hero hero;
     private List<Enemy> enemies;
 
@@ -75,12 +79,20 @@ public class TurnManager : MonoBehaviour
         enemies.Add(mageObj.GetComponent<Enemy>());
         enemies.Add(archerObj.GetComponent<Enemy>());
 
+        enemyHUDs[0].Init(enemies[0]);
+        enemyHUDs[1].Init(enemies[1]);
+        enemyHUDs[2].Init(enemies[2]);
+        enemyHUDs[3].Init(enemies[3]);
+
+
         targetingMode = false;
         targetingHUDParent.SetActive(false);
 
         GameObject bossObj = SpawnPrefabAtPosition(bossPrefab, bossSpawn);
 
         hero = bossObj.GetComponent<Hero>();
+
+        bossHUD.Init(hero);
 
         enemyAttacksUsed = new List<AttackSO>();
 
