@@ -102,10 +102,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c5ae5bbe65afef4e9559b7a21acc110, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  characterName: Boss
-  maxHealth: 50
+  characterName: 
+  maxHealth: 5000
   currentHealth: 0
   animator: {fileID: 3769531731434638702}
-  currentAttack: {fileID: 0}
+  currentAttack: {fileID: 11400000, guid: 3687350894a4c0142b0993f34a1ae24d, type: 2}
   allAttacks: []
   bideLevel: 1

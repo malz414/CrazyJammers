@@ -1,12 +1,15 @@
 using Code.Utility.Events;
 using System.Collections;
 using UnityEngine;
+using System.Collections.Generic;
 
 public abstract class Character : MonoBehaviour
 {
     public string characterName;
     public int maxHealth;
     public int currentHealth;
+    private List<BurnEffect> activeBurns = new List<BurnEffect>();
+    private ParalysisEffect paralysisEffect;
 
     [SerializeField] private Animator animator;
 
@@ -70,4 +73,37 @@ public abstract class Character : MonoBehaviour
     {
         return currentHealth > 0;
     }
+
+     public void ApplyBurn(int damagePerTurn, int duration)
+    {
+        BurnEffect burnEffect = new BurnEffect(damagePerTurn, duration);
+        activeBurns.Add(burnEffect);
+    }
+
+       public void ApplyParalysis(int duration)
+    {
+        paralysisEffect = new ParalysisEffect(duration);
+    }
+
+    public bool CanAct()
+    {
+        return paralysisEffect == null || !paralysisEffect.isActivatedThisTurn;
+    }
+
+    
+    public void UpdateEffects()
+    {
+    
+        paralysisEffect?.CheckForActivation();
+
+        foreach (var burn in activeBurns.ToArray())
+        {
+            burn.ApplyBurn(this);
+            if (burn.turnsRemaining <= 0)
+            {
+                activeBurns.Remove(burn);
+            }
+        }
+    }
+    
 }

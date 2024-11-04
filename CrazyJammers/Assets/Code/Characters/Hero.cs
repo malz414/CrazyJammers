@@ -3,10 +3,13 @@ using System.Collections.Generic;
 
 public class Hero : Character
 {
-    public AttackSO currentAttack; 
+    
+    public CombinedAttackSO currentAttack;
     public List<AttackSO> allAttacks;
     public float bideLevel = 1.0f;
     private int bideUses = 0; 
+    
+    
 
     protected override void Start()
     {
@@ -16,39 +19,25 @@ public class Hero : Character
 
     public void CombineAttacks(AttackSO attack1, AttackSO attack2)
     {
-        // Combine attacks logic
-
-        //Malz: Probably not a good idea to createa scriptable objects on the fly like this. We can simply store both attacks that are used and then apply both of their effects at once.
-        AttackSO combinedAttack = ScriptableObject.CreateInstance<AttackSO>();
-        combinedAttack.attackName = $"{attack1.attackName} + {attack2.attackName}";
-        combinedAttack.baseDamage = attack1.GetDamage() + attack2.GetDamage();
-        combinedAttack.upgradeLevel = Mathf.Max(attack1.upgradeLevel, attack2.upgradeLevel); 
-        combinedAttack.attributes = new List<string>(attack1.attributes);
-        combinedAttack.attributes.AddRange(attack2.attributes);
-
-        if (!allAttacks.Contains(combinedAttack)) 
-        {
-            allAttacks.Add(combinedAttack);
-            Debug.Log($"Combined attack created: {combinedAttack.attackName} with damage: {combinedAttack.GetDamage()}");
-        }
+        currentAttack.Combine(attack1, attack2);
     }
 
-    public AttackSO RandomlySelectAttack()
-    {
-        if (allAttacks.Count > 0)
-        {
-            int randomIndex = Random.Range(0, allAttacks.Count);
-            currentAttack = allAttacks[randomIndex];
-            Debug.Log($"Randomly selected attack: {currentAttack.attackName} with damage: {currentAttack.GetDamage()}");
-            return currentAttack;
-        }
-        else
-        {
-            Debug.Log("No attacks available to select.");
-            currentAttack = null; 
-            return null;
-        }
-    }
+    // public AttackSO RandomlySelectAttack()
+    // {
+    //     if (allAttacks.Count > 0)
+    //     {
+    //         int randomIndex = Random.Range(0, allAttacks.Count);
+    //         currentAttack = allAttacks[randomIndex];
+    //         Debug.Log($"Randomly selected attack: {currentAttack.attackName} with damage: {currentAttack.GetDamage()}");
+    //         return currentAttack;
+    //     }
+    //     else
+    //     {
+    //         Debug.Log("No attacks available to select.");
+    //         currentAttack = null; 
+    //         return null;
+    //     }
+    // }
 
     public bool UseBide()
     {
