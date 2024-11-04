@@ -17,6 +17,8 @@ public class Hero : Character
     public void CombineAttacks(AttackSO attack1, AttackSO attack2)
     {
         // Combine attacks logic
+
+        //Malz: Probably not a good idea to createa scriptable objects on the fly like this. We can simply store both attacks that are used and then apply both of their effects at once.
         AttackSO combinedAttack = ScriptableObject.CreateInstance<AttackSO>();
         combinedAttack.attackName = $"{attack1.attackName} + {attack2.attackName}";
         combinedAttack.baseDamage = attack1.GetDamage() + attack2.GetDamage();
@@ -79,6 +81,7 @@ public class Hero : Character
     protected override void Die()
     {
         Debug.Log($"{characterName} has been defeated!");
+        TurnManager.Instance.EndGame(false);
        
     }
 }

@@ -2,19 +2,46 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System.Collections.Generic;
+using System.Collections;
+using Code.Utility.Events;
 
 public class TurnManager : MonoBehaviour
 {
-    public static TurnManager Instance { get; private set; } 
-    public Hero hero;
-    public List<Enemy> enemies;
-    public GameObject attackSelectionPanel; 
+    public static TurnManager Instance { get; private set; }
+
+    [SerializeField] private GameObject knightPrefab;
+    [SerializeField] private GameObject magePrefab;
+    [SerializeField] private GameObject swordsmanPrefab;
+    [SerializeField] private GameObject archerPrefab;
+
+    [SerializeField] private Transform[] enemySpawns;
+
+    [SerializeField] private GameObject bossPrefab;
+
+    [SerializeField] private Transform bossSpawn;
+
+    [SerializeField] GameObject attackOptionsParent;
+
+    [SerializeField] GameObject targetingHUDParent;
+
+    [SerializeField] GameObject winScreen;
+
+    [SerializeField] GameObject loseScreen;
+
+    private Hero hero;
+    private List<Enemy> enemies;
+
     public Button[] attackButtons; 
     public Button bideButton;
-    public AttackSO selectedAttack1;
-    public AttackSO selectedAttack2;
 
-    private List<AttackSO> enemyAttacksUsed; 
+    private AttackSO selectedAttack1;
+    private AttackSO selectedAttack2;
+
+    private List<AttackSO> enemyAttacksUsed;
+
+    public bool TargetingMode => targetingMode;
+
+    private bool targetingMode = false;
 
     private void Awake()
     {
@@ -30,19 +57,72 @@ public class TurnManager : MonoBehaviour
 
     private void Start()
     {
+        SetUpBattle();
+    }
+
+    private void SetUpBattle()
+    {
+        GameObject knightObj = SpawnPrefabAtPosition(knightPrefab, enemySpawns[0]);
+
+        GameObject swordsmanObj = SpawnPrefabAtPosition(swordsmanPrefab, enemySpawns[1]);
+        GameObject mageObj = SpawnPrefabAtPosition(magePrefab, enemySpawns[2]);
+        GameObject archerObj = SpawnPrefabAtPosition(archerPrefab, enemySpawns[3]);
+
+        enemies = new List<Enemy>();
+
+        enemies.Add(knightObj.GetComponent<Enemy>());
+        enemies.Add(swordsmanObj.GetComponent<Enemy>());
+        enemies.Add(mageObj.GetComponent<Enemy>());
+        enemies.Add(archerObj.GetComponent<Enemy>());
+
+        targetingMode = false;
+        targetingHUDParent.SetActive(false);
+
+        GameObject bossObj = SpawnPrefabAtPosition(bossPrefab, bossSpawn);
+
+        hero = bossObj.GetComponent<Hero>();
+
+        enemyAttacksUsed = new List<AttackSO>();
+
+        StartCoroutine(DoBattleStartRoutine());
+
+    }
+
+    private IEnumerator DoBattleStartRoutine()
+    {
+        yield return new WaitForSeconds(.25f);
+
+        EventBus.Publish(new FadeInEvent());
+
+        yield return new WaitForSeconds(2f);
+
         StartTurn();
+    }
+
+    private GameObject SpawnPrefabAtPosition(GameObject prefab, Transform pos)
+    {
+        GameObject spawned = GameObject.Instantiate(prefab);
+        spawned.transform.position = pos.transform.position;
+        spawned.transform.rotation = pos.transform.rotation;
+        return spawned;
     }
 
     public void StartTurn()
     {
         if (hero.currentHealth <= 0 || enemies.Count == 0)
         {
-            EndGame(hero.currentHealth > 0);
             return;
         }
 
         // Clear previous attacks at the start of each turn
-        enemyAttacksUsed = new List<AttackSO>();
+        enemyAttacksUsed.Clear();
+
+        StartCoroutine(DoTurnRoutine());
+    }
+
+    private IEnumerator DoTurnRoutine()
+    {
+        yield return new WaitForSeconds(.5f);
 
         // Enemies attack hero
         foreach (var enemy in enemies)
@@ -51,7 +131,16 @@ public class TurnManager : MonoBehaviour
             enemyAttacksUsed.Add(enemyAttack);
             hero.TakeDamage(enemyAttack.GetDamage());
             Debug.Log($"Enemy {enemy.name} used {enemyAttack.attackName}, dealing {enemyAttack.GetDamage()} damage to the hero.");
+            yield return new WaitForSeconds(1.5f);
+
+            if(hero.currentHealth <= 0)
+            {
+                yield break;
+            }
+
         }
+
+        yield return new WaitForSeconds(1.5f);
 
         // Show attack selection UI for the hero
         ShowAttackSelectionUI();
@@ -59,7 +148,6 @@ public class TurnManager : MonoBehaviour
 
     private void ShowAttackSelectionUI()
     {
-        attackSelectionPanel.SetActive(true);
 
         for (int i = 0; i < attackButtons.Length; i++)
         {
@@ -77,11 +165,13 @@ public class TurnManager : MonoBehaviour
             }
         }
 
+        attackOptionsParent.SetActive(true);
+
         // Set up the Bide button
-        bideButton.gameObject.SetActive(true);
-        bideButton.onClick.RemoveAllListeners();
-        bideButton.onClick.AddListener(OnBideButtonClicked);
-        bideButton.GetComponentInChildren<TextMeshProUGUI>().text = "Bide";
+        /*        bideButton.gameObject.SetActive(true);
+                bideButton.onClick.RemoveAllListeners();
+                bideButton.onClick.AddListener(OnBideButtonClicked);
+                bideButton.GetComponentInChildren<TextMeshProUGUI>().text = "Bide";*/
     }
 
 
@@ -106,13 +196,25 @@ public class TurnManager : MonoBehaviour
 
             
             hero.RandomlySelectAttack();
-            heroAttackEnemy();
+
+            attackOptionsParent.SetActive(false);
+            targetingHUDParent.SetActive(true);
+            targetingMode = true;
 
             enemyAttacksUsed.Clear();
-            StartTurn();
+            /*            heroAttackEnemy();
 
-         
+                        StartTurn();*/
+
+
         }
+    }
+
+    public void SelectEnemyTotAttack(Enemy enemy)
+    {
+        targetingMode = false;
+        targetingHUDParent.SetActive(false);
+        StartCoroutine(DoBossAttackRoutine(enemy));
     }
     
     private void OnBideButtonClicked()
@@ -121,27 +223,32 @@ public class TurnManager : MonoBehaviour
 
         if (bideSuccessful)
         {
-            attackSelectionPanel.SetActive(false);
+            attackOptionsParent.SetActive(false);
             StartTurn();
         }
     }
 
-    private void heroAttackEnemy()
+    private IEnumerator DoBossAttackRoutine(Enemy targetEnemy)
     {
-        if (enemies.Count > 0)
-        {
-            Enemy targetEnemy = enemies[0]; 
-            int damage = hero.GetDamage(); 
-            targetEnemy.TakeDamage(damage);
-            Debug.Log($"Hero attacked {targetEnemy.name}, dealing {damage} damage.");
+        yield return new WaitForSeconds(1f);
 
-            if (targetEnemy.currentHealth <= 0)
-            {
-                Debug.Log($"{targetEnemy.name} has been defeated!");
-                RemoveEnemy(targetEnemy);
-            }
+        hero.DoAttackAnimation();
+
+        int damage = hero.GetDamage();
+        targetEnemy.TakeDamage(damage);
+        Debug.Log($"Hero attacked {targetEnemy.name}, dealing {damage} damage.");
+
+        if (targetEnemy.currentHealth <= 0)
+        {
+            Debug.Log($"{targetEnemy.name} has been defeated!");
+            RemoveEnemy(targetEnemy);
         }
+
+        yield return new WaitForSeconds(1f);
+
+        StartTurn();
     }
+
 
 
     public void RemoveEnemy(Enemy enemy)
@@ -156,5 +263,22 @@ public class TurnManager : MonoBehaviour
     public void EndGame(bool playerWon)
     {
         Debug.Log(playerWon ? "You won!" : "Game Over.");
+
+        StartCoroutine(DoEndGameRoutine(playerWon));
+    }
+
+    private IEnumerator DoEndGameRoutine(bool playerWon)
+    {
+
+        yield return new WaitForSeconds(1f);
+
+        if (playerWon)
+        {
+            winScreen.SetActive(true);
+        }
+        else
+        {
+            loseScreen.SetActive(true);
+        }
     }
 }

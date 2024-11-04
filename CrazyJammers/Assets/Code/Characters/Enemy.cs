@@ -4,21 +4,43 @@ using System.Collections.Generic;
 public class Enemy : Character
 {
     public List<AttackSO> possibleAttacks = new List<AttackSO>();
-    public List<AttackSO> attacksUsed = new List<AttackSO>(); 
-    public CharacterSO characterData;
-    
+    public List<AttackSO> attacksUsed = new List<AttackSO>();
+    //public CharacterSO characterData;
+
+    [SerializeField] public GameObject TargetingIndicator;
+
     private void Awake()
     {
-        characterName = characterData.characterName;
-        maxHealth = characterData.maxHealth;
+        //characterName = characterData.characterName;
+        //maxHealth = characterData.maxHealth;
         currentHealth = maxHealth; 
+    }
+
+    void OnMouseOver()
+    {
+        if (!TurnManager.Instance.TargetingMode)
+            return;
+
+        if(Input.GetMouseButtonUp(0))
+        {
+            TurnManager.Instance.SelectEnemyTotAttack(this);
+
+            TargetingIndicator.SetActive(false);
+            return;
         }
+
+        TargetingIndicator.SetActive(true);
+    }
+
+    void OnMouseExit()
+    {
+        TargetingIndicator.SetActive(false);
+    }
 
     protected override void Die()
     {
         Debug.Log($"{characterName} has been defeated.");
         TurnManager.Instance.RemoveEnemy(this);
-        Destroy(gameObject);
     }
 
     public AttackSO PerformRandomAttack()
@@ -29,8 +51,10 @@ public class Enemy : Character
             AttackSO chosenAttack = possibleAttacks[randomIndex];
             int damage = chosenAttack.GetDamage();
             attacksUsed.Add(chosenAttack);
+            DoAttackAnimation();
             return chosenAttack; 
         }
+        Debug.LogError($"No available attacks for enemy: {gameObject.name}");
         return null;
     }
 }
