@@ -2,13 +2,16 @@ using UnityEngine;
 
 public class ParalysisEffect
 {
-    public int turnsRemaining;
-    public bool isActivatedThisTurn;
+    public int TurnsRemaining => turnsRemaining;
+    public bool IsActivatedThisTurn => isActivatedThisTurn;
+
+    private int turnsRemaining;
+    private bool isActivatedThisTurn;
 
     public ParalysisEffect(int duration)
     {
         turnsRemaining = duration;
-        isActivatedThisTurn = false;
+        isActivatedThisTurn = Random.value <= 0.6f;
     }
 
 

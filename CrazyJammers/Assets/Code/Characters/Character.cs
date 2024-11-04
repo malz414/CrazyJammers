@@ -87,7 +87,7 @@ public abstract class Character : MonoBehaviour
 
     public bool CanAct()
     {
-        return paralysisEffect == null || !paralysisEffect.isActivatedThisTurn;
+        return paralysisEffect == null || !paralysisEffect.IsActivatedThisTurn;
     }
 
     
