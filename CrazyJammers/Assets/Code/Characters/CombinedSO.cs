@@ -36,7 +36,7 @@ public class CombinedAttackSO : ScriptableObject
         System.Array.Sort(attacks);
         string key = string.Join(", ", attacks);
 
-        Debug.Log($"Generated Key: {key}"); // Log the generated key
+        
 
         if (attackNameMapping.TryGetValue(key, out string combinedName))
         {

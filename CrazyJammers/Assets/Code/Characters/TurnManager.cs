@@ -285,13 +285,13 @@ public class TurnManager : MonoBehaviour
         Debug.Log($"Hero attacked {targetEnemy.name}, dealing {damage} damage.");
         if (combinedAttack.attributes.Contains("Burn"))
             {
-                
                 if (Random.value <= 0.3f) 
                 {
                     targetEnemy.ApplyBurn(10, 3);
                     Debug.Log($"Hero has burned {targetEnemy.name}!");
                 }
             }
+
         if (combinedAttack.attributes.Contains("Paralysis"))
             {
                
@@ -301,6 +301,16 @@ public class TurnManager : MonoBehaviour
                     Debug.Log($"Hero has paralyzed by {targetEnemy.name}!");
                 }
             }
+
+        if (combinedAttack.attributes.Contains("Heal"))
+            {
+               
+                
+                    hero.currentHealth += damage; 
+                    Debug.Log($"Health is no {hero.currentHealth}!");
+            
+            }
+
 
         if (targetEnemy.currentHealth <= 0)
         {
