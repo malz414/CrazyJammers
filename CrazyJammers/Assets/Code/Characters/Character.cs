@@ -1,3 +1,4 @@
+using Code.Utility.Events;
 using System.Collections;
 using UnityEngine;
 using System.Collections.Generic;
@@ -14,9 +15,13 @@ public abstract class Character : MonoBehaviour
 
     private const float DAMAGE_ANIM_DELAY_DURATION = .35f;
 
+    private CharacterStatusUpdateEvent statusUpdateEvent;
+
     protected virtual void Start()
     {
         currentHealth = maxHealth;
+
+        statusUpdateEvent = new CharacterStatusUpdateEvent();
     }
 
     public virtual void TakeDamage(int damage)
@@ -46,6 +51,9 @@ public abstract class Character : MonoBehaviour
         {
             DoHitAnimation();
         }
+
+        EventBus.Publish(statusUpdateEvent);
+
     }
 
     public void DoHitAnimation()

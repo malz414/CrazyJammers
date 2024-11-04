@@ -201,7 +201,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c7c4542f08e041845913bee4d3129d4f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  characterName: RogueHooded
+  characterName: Archer
   maxHealth: 5
   currentHealth: 0
   animator: {fileID: 6131042976110356707}
