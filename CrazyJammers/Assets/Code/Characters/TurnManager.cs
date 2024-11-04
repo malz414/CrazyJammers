@@ -21,6 +21,8 @@ public class TurnManager : MonoBehaviour
 
     [SerializeField] private Transform bossSpawn;
 
+    [SerializeField] GameObject MainUIParent;
+
     [SerializeField] GameObject attackOptionsParent;
 
     [SerializeField] GameObject targetingHUDParent;
@@ -60,7 +62,7 @@ public class TurnManager : MonoBehaviour
         }
     }
 
-    private void Start()
+    public void StartBattle()
     {
         SetUpBattle();
     }
@@ -94,6 +96,8 @@ public class TurnManager : MonoBehaviour
         hero = bossObj.GetComponent<Hero>();
 
         bossHUD.Init(hero);
+
+        MainUIParent.SetActive(true);
 
         enemyAttacksUsed = new List<AttackSO>();
 

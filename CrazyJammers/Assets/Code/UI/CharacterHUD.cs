@@ -28,7 +28,7 @@ public class CharacterHUD : MonoBehaviour
         nameText.text = character.characterName;
 
         hpFill.fillAmount = 1;
-        hpText.text = character.currentHealth + " / " + character.maxHealth;
+        hpText.text = character.maxHealth + " / " + character.maxHealth;
 
         EventBus.Subscribe<CharacterStatusUpdateEvent>(OnStatusUpdate);
 

@@ -21,7 +21,7 @@ public class FadeScreen : MonoBehaviour
         EventBus.Subscribe<FadeOutEvent>(OnFadeOut);
         EventBus.Subscribe<FadeInEvent>(OnFadeIn);
 
-        fadeScreen.alpha = 1;
+        //fadeScreen.alpha = 1;
     }
 
     private void OnFadeOut(FadeOutEvent fadeEvent)
