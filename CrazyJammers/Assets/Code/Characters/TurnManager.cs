@@ -13,6 +13,7 @@ public class TurnManager : MonoBehaviour
     [SerializeField] private GameObject magePrefab;
     [SerializeField] private GameObject swordsmanPrefab;
     [SerializeField] private GameObject archerPrefab;
+    public CombinedAttackSO combinedAttack;
 
     [SerializeField] private Transform[] enemySpawns;
 
@@ -109,6 +110,12 @@ public class TurnManager : MonoBehaviour
 
     public void StartTurn()
     {
+        hero.UpdateEffects();
+        foreach (var enemy in enemies)
+        {
+            enemy.UpdateEffects();
+        }
+
         if (hero.currentHealth <= 0 || enemies.Count == 0)
         {
             return;
@@ -127,23 +134,62 @@ public class TurnManager : MonoBehaviour
         // Enemies attack hero
         foreach (var enemy in enemies)
         {
+            if (!enemy.CanAct())
+            {
+                Debug.Log("ENEMY is paralyzed and cannot act this turn!");
+                continue;
+            }
+                
+            else
+            {
+            Debug.Log("not para !");
             AttackSO enemyAttack = enemy.PerformRandomAttack();
             enemyAttacksUsed.Add(enemyAttack);
             hero.TakeDamage(enemyAttack.GetDamage());
             Debug.Log($"Enemy {enemy.name} used {enemyAttack.attackName}, dealing {enemyAttack.GetDamage()} damage to the hero.");
+            if (enemyAttack.attributes.Contains("Burn"))
+            {
+                
+                if (Random.value <= 0.3f) 
+                {
+                    hero.ApplyBurn(10, 3);
+                    Debug.Log($"Hero has been burned by {enemyAttack.attackName}!");
+                }
+            }
+            
+            if (enemyAttack.attributes.Contains("Paralysis"))
+            {
+               
+                if (Random.value <= 1f) 
+                {
+                    hero.ApplyParalysis(5); 
+                    Debug.Log($"Hero has been paralyzed by {enemyAttack.attackName}!");
+                }
+            }
+        
+
             yield return new WaitForSeconds(1.5f);
 
             if(hero.currentHealth <= 0)
             {
                 yield break;
             }
-
+            }
         }
 
         yield return new WaitForSeconds(1.5f);
 
-        // Show attack selection UI for the hero
-        ShowAttackSelectionUI();
+        if (!hero.CanAct())
+        {
+            Debug.Log("Hero is paralyzed and cannot act this turn!");
+            StartTurn(); // Skip the hero's turn
+        }
+        else
+        {
+            // Show attack selection UI for the hero
+            ShowAttackSelectionUI();
+        }
+ 
     }
 
     private void ShowAttackSelectionUI()
@@ -195,7 +241,7 @@ public class TurnManager : MonoBehaviour
             selectedAttack2 = null;
 
             
-            hero.RandomlySelectAttack();
+            //hero.RandomlySelectAttack();
 
             attackOptionsParent.SetActive(false);
             targetingHUDParent.SetActive(true);
@@ -237,6 +283,24 @@ public class TurnManager : MonoBehaviour
         int damage = hero.GetDamage();
         targetEnemy.TakeDamage(damage);
         Debug.Log($"Hero attacked {targetEnemy.name}, dealing {damage} damage.");
+        if (combinedAttack.attributes.Contains("Burn"))
+            {
+                
+                if (Random.value <= 0.3f) 
+                {
+                    targetEnemy.ApplyBurn(10, 3);
+                    Debug.Log($"Hero has burned {targetEnemy.name}!");
+                }
+            }
+        if (combinedAttack.attributes.Contains("Paralysis"))
+            {
+               
+                if (Random.value <= 1f) 
+                {
+                    hero.ApplyParalysis(5); 
+                    Debug.Log($"Hero has paralyzed by {targetEnemy.name}!");
+                }
+            }
 
         if (targetEnemy.currentHealth <= 0)
         {

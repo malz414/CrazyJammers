@@ -202,11 +202,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   characterName: Mage
-  maxHealth: 5
+  maxHealth: 300
   currentHealth: 0
   animator: {fileID: 1568177226905324059}
   possibleAttacks:
-  - {fileID: 11400000, guid: 27cfda9b1a1637746985ceb311c3760c, type: 2}
+  - {fileID: 11400000, guid: 8d1fafe2eae2346468755b04daeaa076, type: 2}
   attacksUsed: []
   TargetingIndicator: {fileID: 6834894991224646977}
 --- !u!95 &1568177226905324059

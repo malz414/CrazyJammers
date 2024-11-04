@@ -1,25 +1,16 @@
 using UnityEngine;
+using System.Collections.Generic;
 
-[System.Serializable]
 public class Attack
 {
-    public string attackName;
-    public int power;
+    public string Name { get; private set; }
+    public int Damage { get; private set; }
+    public List<string> Attributes { get; private set; }
 
-    // Executes the attack, dealing damage to the target
-    public void Execute(Character target)
+    public Attack(string name, int damage, List<string> attributes)
     {
-        target.TakeDamage(power);
-        Debug.Log($"{attackName} dealt {power} damage to {target.characterName}");
-    }
-
-    // Combines two attacks to create a stronger one
-    public static Attack CombineAttacks(Attack attack1, Attack attack2)
-    {
-        return new Attack
-        {
-            attackName = $"{attack1.attackName}-{attack2.attackName}",
-            power = attack1.power + attack2.power
-        };
+        Name = name;
+        Damage = damage;
+        Attributes = attributes;
     }
 }

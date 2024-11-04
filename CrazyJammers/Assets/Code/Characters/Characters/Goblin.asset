@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Goblin
   m_EditorClassIdentifier: 
   characterName: Goblin
-  maxHealth: 10
+  maxHealth: 300
   availableAttacks:
   - {fileID: 11400000, guid: 27cfda9b1a1637746985ceb311c3760c, type: 2}
+  - {fileID: 11400000, guid: aec4e051ab40fff41ba32fcdccf8f765, type: 2}
