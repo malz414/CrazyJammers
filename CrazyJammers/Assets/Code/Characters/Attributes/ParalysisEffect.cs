@@ -8,10 +8,12 @@ public class ParalysisEffect
     private int turnsRemaining;
     private bool isActivatedThisTurn;
 
+    private const float PARALYSIS_EFFECT_CHANCE = .15f;
+
     public ParalysisEffect(int duration)
     {
         turnsRemaining = duration;
-        isActivatedThisTurn = Random.value <= 0.6f;
+        isActivatedThisTurn = Random.value <= PARALYSIS_EFFECT_CHANCE;
     }
 
 
@@ -19,7 +21,7 @@ public class ParalysisEffect
     {
         if (turnsRemaining > 0)
         {
-            isActivatedThisTurn = Random.value <= 0.6f;
+            isActivatedThisTurn = Random.value <= PARALYSIS_EFFECT_CHANCE;
             turnsRemaining--;
         }
         else
