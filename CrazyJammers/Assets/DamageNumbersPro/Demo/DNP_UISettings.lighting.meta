@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: d741ac9eae3d50e4ebfa4aa8d9b5c63a
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 4890085278179872738
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 186447
+  packageName: Damage Numbers Pro
+  packageVersion: 4.39
+  assetPath: Assets/DamageNumbersPro/Demo/DNP_UISettings.lighting
+  uploadId: 699234
