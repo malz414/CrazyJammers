@@ -4,6 +4,7 @@ using TMPro;
 using System.Collections.Generic;
 using System.Collections;
 using Code.Utility.Events;
+using DamageNumbersPro;
 
 public class TurnManager : MonoBehaviour
 {
@@ -34,6 +35,8 @@ public class TurnManager : MonoBehaviour
     [SerializeField] CharacterHUD[] enemyHUDs;
 
     [SerializeField] CharacterHUD bossHUD;
+
+    [SerializeField] private DamageNumber popupPrefab;
 
     private Hero hero;
     private List<Enemy> enemies;
@@ -82,6 +85,11 @@ public class TurnManager : MonoBehaviour
         enemies.Add(mageObj.GetComponent<Enemy>());
         enemies.Add(archerObj.GetComponent<Enemy>());
 
+        enemies[0].Init(popupPrefab);
+        enemies[1].Init(popupPrefab);
+        enemies[2].Init(popupPrefab);
+        enemies[3].Init(popupPrefab);
+
         enemyHUDs[0].Init(enemies[0]);
         enemyHUDs[1].Init(enemies[1]);
         enemyHUDs[2].Init(enemies[2]);
@@ -94,6 +102,8 @@ public class TurnManager : MonoBehaviour
         GameObject bossObj = SpawnPrefabAtPosition(bossPrefab, bossSpawn);
 
         hero = bossObj.GetComponent<Hero>();
+
+        hero.Init(popupPrefab);
 
         bossHUD.Init(hero);
 

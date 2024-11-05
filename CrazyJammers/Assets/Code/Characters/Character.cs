@@ -2,6 +2,7 @@ using Code.Utility.Events;
 using System.Collections;
 using UnityEngine;
 using System.Collections.Generic;
+using DamageNumbersPro;
 
 public abstract class Character : MonoBehaviour
 {
@@ -17,11 +18,20 @@ public abstract class Character : MonoBehaviour
 
     private CharacterStatusUpdateEvent statusUpdateEvent;
 
+    private DamageNumber popupPrefab;
+
+    private const float DAMAGE_POPUP_LIFETIME = 1.5f;
+
     protected virtual void Start()
     {
         currentHealth = maxHealth;
 
         statusUpdateEvent = new CharacterStatusUpdateEvent();
+    }
+
+    public void Init(DamageNumber popupPrefab)
+    {
+        this.popupPrefab = popupPrefab;
     }
 
     public virtual void TakeDamage(int damage)
@@ -32,7 +42,7 @@ public abstract class Character : MonoBehaviour
             Die();
         }
 
-        StartCoroutine(DoHitRoutine());
+        StartCoroutine(DoHitRoutine(damage));
     }
 
     public void DoAttackAnimation()
@@ -40,11 +50,16 @@ public abstract class Character : MonoBehaviour
         animator.SetTrigger("Attack");
     }
 
-    private IEnumerator DoHitRoutine()
+    private IEnumerator DoHitRoutine(int damage)
     {
         yield return new WaitForSeconds(DAMAGE_ANIM_DELAY_DURATION);
 
-        if(currentHealth <= 0)
+        DamageNumber newPopup = popupPrefab.Spawn(gameObject.transform.position + new Vector3(0, 0.25f, -1), damage); //Spawn DamageNumber     <-----     [REQUIRED]
+
+        newPopup.permanent = false;
+        newPopup.lifetime = DAMAGE_POPUP_LIFETIME;
+
+        if (currentHealth <= 0)
         {
             DoDeathAnimation();
         } else
