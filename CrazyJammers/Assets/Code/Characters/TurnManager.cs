@@ -49,6 +49,8 @@ public class TurnManager : MonoBehaviour
 
     private List<AttackSO> enemyAttacksUsed;
 
+    private GameplayBlurbEvent blurbEvent;
+
     public bool TargetingMode => targetingMode;
 
     private bool targetingMode = false;
@@ -111,6 +113,8 @@ public class TurnManager : MonoBehaviour
 
         enemyAttacksUsed = new List<AttackSO>();
 
+        blurbEvent = new GameplayBlurbEvent();
+
         StartCoroutine(DoBattleStartRoutine());
 
     }
@@ -162,6 +166,9 @@ public class TurnManager : MonoBehaviour
         {
             if (!enemy.CanAct())
             {
+                blurbEvent.Set($"{enemy.characterName} is paralyzed and cannot act this turn!");
+                EventBus.Publish(blurbEvent);
+
                 Debug.Log("ENEMY is paralyzed and cannot act this turn!");
                 continue;
             }
@@ -172,6 +179,10 @@ public class TurnManager : MonoBehaviour
             AttackSO enemyAttack = enemy.PerformRandomAttack();
             enemyAttacksUsed.Add(enemyAttack);
             hero.TakeDamage(enemyAttack.GetDamage());
+
+            blurbEvent.Set($"{enemy.characterName} used {enemyAttack.attackName}!");
+            EventBus.Publish(blurbEvent);
+
             Debug.Log($"Enemy {enemy.name} used {enemyAttack.attackName}, dealing {enemyAttack.GetDamage()} damage to the hero.");
             if (enemyAttack.attributes.Contains("Burn"))
             {
@@ -179,6 +190,8 @@ public class TurnManager : MonoBehaviour
                 if (Random.value <= 0.3f) 
                 {
                     hero.ApplyBurn(10, 3);
+                    blurbEvent.Set($"Boss has been burned by {enemyAttack.attackName}!");
+                    EventBus.Publish(blurbEvent);
                     Debug.Log($"Hero has been burned by {enemyAttack.attackName}!");
                 }
             }
@@ -188,7 +201,9 @@ public class TurnManager : MonoBehaviour
                
                 if (Random.value <= 1f) 
                 {
-                    hero.ApplyParalysis(5, false); 
+                    hero.ApplyParalysis(5, false);
+                    blurbEvent.Set($"Boss has been paralyzed by {enemyAttack.attackName}!");
+                    EventBus.Publish(blurbEvent);
                     Debug.Log($"Hero has been paralyzed by {enemyAttack.attackName}!");
                 }
             }
@@ -207,6 +222,8 @@ public class TurnManager : MonoBehaviour
 
         if (!hero.CanAct())
         {
+            blurbEvent.Set($"Boss is paralyzed and cannot act this turn!");
+            EventBus.Publish(blurbEvent);
             Debug.Log("Hero is paralyzed and cannot act this turn!");
             StartTurn(); // Skip the hero's turn
         }
@@ -308,14 +325,19 @@ public class TurnManager : MonoBehaviour
 
         int damage = hero.GetDamage();
         targetEnemy.TakeDamage(damage);
-        Debug.Log($"Hero attacked {targetEnemy.name}, dealing {damage} damage.");
+
+
+        blurbEvent.Set($"Boss attacked {targetEnemy.characterName}");
+        EventBus.Publish(blurbEvent);
+        Debug.Log($"Boss attacked {targetEnemy.characterName}, dealing {damage} damage.");
         if (combinedAttack.attributes.Contains("Burn"))
             {
                 if (Random.value <= 0.3f) 
                 {
                     targetEnemy.ApplyBurn(10, 3);
-                    Debug.Log($"Hero has burned {targetEnemy.name}!");
-                }
+                    blurbEvent.Set($"{targetEnemy.characterName} was burned!");
+                    EventBus.Publish(blurbEvent);
+            }
             }
 
         if (combinedAttack.attributes.Contains("Paralysis"))
@@ -323,9 +345,10 @@ public class TurnManager : MonoBehaviour
                
                 if (Random.value <= 1f) 
                 {
-                    targetEnemy.ApplyParalysis(5, true); 
-                    Debug.Log($"Hero has paralyzed by {targetEnemy.name}!");
-                }
+                    targetEnemy.ApplyParalysis(5, true);
+                    blurbEvent.Set($"{targetEnemy.characterName} was paralysed!");
+                    EventBus.Publish(blurbEvent);
+            }
             }
 
         if (combinedAttack.attributes.Contains("Heal"))
@@ -340,7 +363,8 @@ public class TurnManager : MonoBehaviour
 
         if (targetEnemy.currentHealth <= 0)
         {
-            Debug.Log($"{targetEnemy.name} has been defeated!");
+            blurbEvent.Set($"{targetEnemy.characterName} has been defeated!");
+            EventBus.Publish(blurbEvent);
             RemoveEnemy(targetEnemy);
         }
 
