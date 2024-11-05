@@ -188,7 +188,7 @@ public class TurnManager : MonoBehaviour
                
                 if (Random.value <= 1f) 
                 {
-                    hero.ApplyParalysis(5); 
+                    hero.ApplyParalysis(5, false); 
                     Debug.Log($"Hero has been paralyzed by {enemyAttack.attackName}!");
                 }
             }
@@ -323,7 +323,7 @@ public class TurnManager : MonoBehaviour
                
                 if (Random.value <= 1f) 
                 {
-                    hero.ApplyParalysis(5); 
+                    targetEnemy.ApplyParalysis(5, true); 
                     Debug.Log($"Hero has paralyzed by {targetEnemy.name}!");
                 }
             }

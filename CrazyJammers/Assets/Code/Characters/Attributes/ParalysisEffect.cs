@@ -9,11 +9,15 @@ public class ParalysisEffect
     private bool isActivatedThisTurn;
 
     private const float PARALYSIS_EFFECT_CHANCE = .15f;
+    private const float PARALYSIS_EFFECT_ENHANCED_CHANCE = .6f;
 
-    public ParalysisEffect(int duration)
+    private bool isEnhancedParalysis = false;
+
+    public ParalysisEffect(int duration, bool enhanced)
     {
+        isEnhancedParalysis = enhanced;
         turnsRemaining = duration;
-        isActivatedThisTurn = Random.value <= PARALYSIS_EFFECT_CHANCE;
+        isActivatedThisTurn = Random.value <= (isEnhancedParalysis ? PARALYSIS_EFFECT_ENHANCED_CHANCE : PARALYSIS_EFFECT_CHANCE);
     }
 
 
@@ -21,7 +25,7 @@ public class ParalysisEffect
     {
         if (turnsRemaining > 0)
         {
-            isActivatedThisTurn = Random.value <= PARALYSIS_EFFECT_CHANCE;
+            isActivatedThisTurn = Random.value <= (isEnhancedParalysis ? PARALYSIS_EFFECT_ENHANCED_CHANCE : PARALYSIS_EFFECT_CHANCE);
             turnsRemaining--;
         }
         else

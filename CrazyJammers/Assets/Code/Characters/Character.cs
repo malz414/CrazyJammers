@@ -95,9 +95,9 @@ public abstract class Character : MonoBehaviour
         activeBurns.Add(burnEffect);
     }
 
-       public void ApplyParalysis(int duration)
+       public void ApplyParalysis(int duration, bool enhanced)
     {
-        paralysisEffect = new ParalysisEffect(duration);
+        paralysisEffect = new ParalysisEffect(duration, enhanced);
     }
 
     public bool CanAct()
