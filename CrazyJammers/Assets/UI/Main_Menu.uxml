@@ -1,0 +1,4 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI/Default_Style_Sheet.uss?fileID=7433441132597879392&amp;guid=5deabae4f644be94d800319551c7bdf1&amp;type=3#Default_Style_Sheet" />
+    <ui:VisualElement name="Panel" class="panel hide" style="flex-grow: 1;" />
+</ui:UXML>

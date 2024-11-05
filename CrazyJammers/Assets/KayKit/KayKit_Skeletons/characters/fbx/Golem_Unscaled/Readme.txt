@@ -1,0 +1,2 @@
+Use the Skeleton_Golem_Unscaled if you're experienceing issues related to scale transforms or in some cases incorrectly playing animations.
+If you end up using this version, it is recommended to scale the Golem to scale 2, for it to be the correct visual size and match the rest of the characters.
