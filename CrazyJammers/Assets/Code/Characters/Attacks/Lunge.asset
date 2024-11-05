@@ -15,4 +15,5 @@ MonoBehaviour:
   attackName: Lunge
   baseDamage: 10
   upgradeLevel: 0
-  attributes: []
+  attributes:
+  - Lunge

@@ -199,6 +199,7 @@ MonoBehaviour:
   characterName: Rogue
   maxHealth: 400
   currentHealth: 0
+  barrierCount: 0
   animator: {fileID: 2218215351894552384}
   possibleAttacks:
   - {fileID: 11400000, guid: aec4e051ab40fff41ba32fcdccf8f765, type: 2}

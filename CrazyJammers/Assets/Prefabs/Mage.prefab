@@ -204,6 +204,7 @@ MonoBehaviour:
   characterName: Mage
   maxHealth: 300
   currentHealth: 0
+  barrierCount: 0
   animator: {fileID: 1568177226905324059}
   possibleAttacks:
   - {fileID: 11400000, guid: 8d1fafe2eae2346468755b04daeaa076, type: 2}

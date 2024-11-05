@@ -9,8 +9,11 @@ public abstract class Character : MonoBehaviour
     public string characterName;
     public int maxHealth;
     public int currentHealth;
+    public int barrierCount;
+
     private List<BurnEffect> activeBurns = new List<BurnEffect>();
     private ParalysisEffect paralysisEffect;
+    private GameplayBlurbEvent blurbEvent;
 
     [SerializeField] private Animator animator;
 
@@ -36,12 +39,23 @@ public abstract class Character : MonoBehaviour
 
     public virtual void TakeDamage(int damage)
     {
-        currentHealth -= damage;
+        if(barrierCount > 0)
+        {
+            blurbEvent.Set("Barrier Broken");
+            EventBus.Publish(blurbEvent);
+            barrierCount--;
+            currentHealth -= (int)(damage *.80);
+        }
+        else
+        {
+            currentHealth -= damage;
+        }
+        
         if (currentHealth <= 0)
         {
             Die();
         }
-
+        //Barrier Animation?
         StartCoroutine(DoHitRoutine(damage));
     }
 
