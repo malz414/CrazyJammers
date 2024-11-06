@@ -151,6 +151,11 @@ public class TurnManager : MonoBehaviour
     {
         hero.UpdateEffects();
         bideAttribute--;
+        if (bideAttribute = 0)
+        {
+            hero.bideLevel = 1.0f;
+            hero.bideUses = 0;
+        }
         foreach (var enemy in enemies)
         {
             enemy.UpdateEffects();
@@ -357,12 +362,13 @@ public class TurnManager : MonoBehaviour
         bossAttackCoroutine = StartCoroutine(DoBossAttackRoutine(enemy));
     }
     
-    private void OnBideButtonClicked()
+    public void OnBideButtonClicked()
     {
         bool bideSuccessful = hero.UseBide();
 
         if (bideSuccessful)
         {
+            bideAttribute = 3;
             attackOptionsParent.SetActive(false);
             bideBuff = true;
             StartTurn();
@@ -379,7 +385,7 @@ public class TurnManager : MonoBehaviour
         //Crit Damage
         if(Random.value <= 0.3f)
         {
-            damage *= (int)(damage * 1.2);
+            damage = (int)(damage * 1.2);
             blurbEvent.Set("Critical Hit!");
             EventBus.Publish(blurbEvent);
             targetEnemy.TakeDamage(damage);

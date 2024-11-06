@@ -10,10 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b5e7bacec33957842aab0a5078b42018, type: 3}
-  m_Name: Heal
+  m_Name: Slash 1
   m_EditorClassIdentifier: 
-  attackName: Heal
-  baseDamage: 10
+  attackName: Slash
+  baseDamage: 5
   upgradeLevel: 0
-  attributes:
-  - Heal
+  attributes: []
