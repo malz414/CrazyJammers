@@ -1,6 +1,27 @@
-.panel {
+.unity-button {
 }
 
-.hide {
-    display: flex;
+.unity-group-box {
+    background-color: rgba(0, 0, 0, 0.31);
+}
+
+.info-text {
+}
+
+.unity-text-element {
+}
+
+.health-bar {
+    background-color: rgb(0, 255, 32);
+    width: initial;
+    height: 4px;
+}
+
+.container {
+    position: absolute;
+}
+
+.panel {
+    top: auto;
+    align-items: center;
 }

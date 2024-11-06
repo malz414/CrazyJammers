@@ -1,9 +1,46 @@
-<?xml version="1.0" encoding="utf-8"?>
-<engine:UXML
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:engine="UnityEngine.UIElements"
-    xmlns:editor="UnityEditor.UIElements"
-    xsi:noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd"
->
-    
+<engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI/Default_Style_Sheet.uss?fileID=7433441132597879392&amp;guid=5deabae4f644be94d800319551c7bdf1&amp;type=3#Default_Style_Sheet" />
+    <engine:VisualElement name="Panel" class="panel" style="flex-grow: 1;">
+        <engine:VisualElement name="InfoTextContainer" class="container" style="bottom: auto; top: 480px;">
+            <engine:GroupBox name="TextGroup">
+                <engine:Label text="Info Text" name="InfoText" class="info-text" />
+            </engine:GroupBox>
+        </engine:VisualElement>
+        <engine:VisualElement name="ActionContainer" class="container" style="left: 40px; bottom: auto; top: 433px; right: auto;">
+            <engine:GroupBox name="Actions">
+                <engine:Button text="Remix" name="Remix" />
+                <engine:Button text="Bide" name="Bide" />
+                <engine:Button text="Item" name="Item" />
+            </engine:GroupBox>
+        </engine:VisualElement>
+        <engine:VisualElement name="MonsterHealthContainer" class="container" style="flex-grow: 1; height: 64px; width: 164px; top: 34px; left: 912px;">
+            <engine:GroupBox name="Monster">
+                <engine:Label text="Monster" name="MonsterLabel" />
+                <engine:VisualElement name="MonsterHealth" class="health-bar" style="flex-grow: 1;" />
+                <engine:Label text="5000/5000" name="MonsterHealthNumber" style="align-self: center;" />
+            </engine:GroupBox>
+        </engine:VisualElement>
+        <engine:VisualElement name="AdventurerHealthContainer" class="container" style="flex-grow: 1; height: 64px; width: 164px; top: 28px; left: 39px;">
+            <engine:GroupBox name="AdventurerA">
+                <engine:Label text="Adventurer_A" name="AdventurerLabel" />
+                <engine:VisualElement name="AdventurerHealth" class="health-bar" style="flex-grow: 1;" />
+                <engine:Label text="5000/5000" name="AdvnturerHealthNumber" style="align-self: center;" />
+            </engine:GroupBox>
+            <engine:GroupBox name="AdventurerB">
+                <engine:Label text="Adventurer_A" name="AdventurerLabel" />
+                <engine:VisualElement name="AdventurerHealth" class="health-bar" style="flex-grow: 1;" />
+                <engine:Label text="5000/5000" name="AdvnturerHealthNumber" style="align-self: center;" />
+            </engine:GroupBox>
+            <engine:GroupBox name="AdventurerC">
+                <engine:Label text="Adventurer_A" name="AdventurerLabel" />
+                <engine:VisualElement name="AdventurerHealth" class="health-bar" style="flex-grow: 1;" />
+                <engine:Label text="5000/5000" name="AdvnturerHealthNumber" style="align-self: center;" />
+            </engine:GroupBox>
+            <engine:GroupBox name="AdventurerD">
+                <engine:Label text="Adventurer_A" name="AdventurerLabel" />
+                <engine:VisualElement name="AdventurerHealth" class="health-bar" style="flex-grow: 1;" />
+                <engine:Label text="5000/5000" name="AdvnturerHealthNumber" style="align-self: center;" />
+            </engine:GroupBox>
+        </engine:VisualElement>
+    </engine:VisualElement>
 </engine:UXML>

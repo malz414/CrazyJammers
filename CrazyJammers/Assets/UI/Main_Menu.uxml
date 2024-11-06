@@ -1,4 +1,15 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
     <Style src="project://database/Assets/UI/Default_Style_Sheet.uss?fileID=7433441132597879392&amp;guid=5deabae4f644be94d800319551c7bdf1&amp;type=3#Default_Style_Sheet" />
-    <ui:VisualElement name="Panel" class="panel hide" style="flex-grow: 1;" />
+    <ui:VisualElement name="Panel" class="panel">
+        <ui:VisualElement name="MenuContainer" class="container" style="top: 150px; left: auto; right: auto; bottom: auto;">
+            <ui:VisualElement name="Logo" style="flex-grow: 1;">
+                <ui:Label text="Place Logo Here" name="LogoPlaceholder" />
+            </ui:VisualElement>
+            <ui:GroupBox name="MenuGroup">
+                <ui:Button text="Start Game" name="Start" />
+                <ui:Button text="Settings" name="Settings" />
+                <ui:Button text="Quit" name="Quit" />
+            </ui:GroupBox>
+        </ui:VisualElement>
+    </ui:VisualElement>
 </ui:UXML>
