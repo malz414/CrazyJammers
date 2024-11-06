@@ -7,7 +7,7 @@ public class Hero : Character
     public CombinedAttackSO currentAttack;
     public List<AttackSO> allAttacks;
     public float bideLevel = 1.0f;
-    private int bideUses = 0; 
+    public int bideUses = 0; 
     
     
 

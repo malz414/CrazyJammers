@@ -151,7 +151,7 @@ public class TurnManager : MonoBehaviour
     {
         hero.UpdateEffects();
         bideAttribute--;
-        if (bideAttribute = 0)
+        if (bideAttribute == 0)
         {
             hero.bideLevel = 1.0f;
             hero.bideUses = 0;
