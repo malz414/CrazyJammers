@@ -276,11 +276,11 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
-  m_Type: 0
+  m_Sprite: {fileID: 21300000, guid: b325a13e94f3bac4199e75b91fa98449, type: 3}
+  m_Type: 3
   m_PreserveAspect: 0
   m_FillCenter: 1
-  m_FillMethod: 4
+  m_FillMethod: 0
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
@@ -2222,14 +2222,14 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
-  m_Type: 0
+  m_Sprite: {fileID: 21300000, guid: b325a13e94f3bac4199e75b91fa98449, type: 3}
+  m_Type: 3
   m_PreserveAspect: 0
   m_FillCenter: 1
-  m_FillMethod: 4
+  m_FillMethod: 0
   m_FillAmount: 1
   m_FillClockwise: 1
-  m_FillOrigin: 0
+  m_FillOrigin: 1
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
 --- !u!1 &3212605430100303489
@@ -2551,6 +2551,7 @@ GameObject:
   - component: {fileID: 4107255295517198223}
   - component: {fileID: 4896482378512208716}
   - component: {fileID: 1414508178385347381}
+  - component: {fileID: 8327353946831131282}
   m_Layer: 5
   m_Name: Enemy HP Bar (3)
   m_TagString: Untagged
@@ -2620,6 +2621,21 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &8327353946831131282
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3475959134499757416}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 70ef5b7c786648843a4a78f4e7210612, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  nameText: {fileID: 3247277509818821673}
+  hpFill: {fileID: 7846778047732595437}
+  hpText: {fileID: 5797557422695340284}
 --- !u!1 &3597297400324757633
 GameObject:
   m_ObjectHideFlags: 0
@@ -2871,11 +2887,11 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
-  m_Type: 0
+  m_Sprite: {fileID: 21300000, guid: b325a13e94f3bac4199e75b91fa98449, type: 3}
+  m_Type: 3
   m_PreserveAspect: 0
   m_FillCenter: 1
-  m_FillMethod: 4
+  m_FillMethod: 0
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
@@ -4003,6 +4019,8 @@ GameObject:
   - component: {fileID: 5426072768033375361}
   - component: {fileID: 8376361232737419907}
   - component: {fileID: 7639782451590663332}
+  - component: {fileID: 1441164812830108768}
+  - component: {fileID: 781262403589761825}
   m_Layer: 5
   m_Name: Battle Menu
   m_TagString: Untagged
@@ -4069,10 +4087,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
-  m_ReferenceResolution: {x: 800, y: 600}
+  m_ReferenceResolution: {x: 1128, y: 600}
   m_ScreenMatchMode: 0
   m_MatchWidthOrHeight: 0
   m_PhysicalUnit: 3
@@ -4097,6 +4115,38 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
+--- !u!225 &1441164812830108768
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5873752527491434368}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
+--- !u!114 &781262403589761825
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5873752527491434368}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 35f72cdf86e2bee43bb57bd52f09156e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  prologueText: 
+  nextBattleText: 
+  enemyQuote: []
+  category: 1
+  fadeScreen: {fileID: 1441164812830108768}
+  prologueTextUI: {fileID: 0}
+  skipButton: {fileID: 0}
+  quoteBoxManager: {fileID: 0}
 --- !u!1 &5975906931565038950
 GameObject:
   m_ObjectHideFlags: 0
@@ -4357,6 +4407,7 @@ GameObject:
   - component: {fileID: 2857155062318401766}
   - component: {fileID: 2767410569289756147}
   - component: {fileID: 586158810761930767}
+  - component: {fileID: 4544000393899934637}
   m_Layer: 5
   m_Name: Monster HP Bar
   m_TagString: Untagged
@@ -4426,6 +4477,21 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &4544000393899934637
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6578090624644499121}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 70ef5b7c786648843a4a78f4e7210612, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  nameText: {fileID: 8543713860812588801}
+  hpFill: {fileID: 1566166692288087923}
+  hpText: {fileID: 1360131374692923370}
 --- !u!1 &6591151718595879771
 GameObject:
   m_ObjectHideFlags: 0
@@ -4437,6 +4503,7 @@ GameObject:
   - component: {fileID: 8606056110246938718}
   - component: {fileID: 6950464026708779867}
   - component: {fileID: 695733118238072647}
+  - component: {fileID: 6927217085407995390}
   m_Layer: 5
   m_Name: Enemy HP Bar (1)
   m_TagString: Untagged
@@ -4506,6 +4573,21 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &6927217085407995390
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6591151718595879771}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 70ef5b7c786648843a4a78f4e7210612, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  nameText: {fileID: 5326398994323428305}
+  hpFill: {fileID: 348588410520250820}
+  hpText: {fileID: 5326398994323428305}
 --- !u!1 &6660904497978038454
 GameObject:
   m_ObjectHideFlags: 0
@@ -4857,11 +4939,11 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
-  m_Type: 0
+  m_Sprite: {fileID: 21300000, guid: b325a13e94f3bac4199e75b91fa98449, type: 3}
+  m_Type: 3
   m_PreserveAspect: 0
   m_FillCenter: 1
-  m_FillMethod: 4
+  m_FillMethod: 0
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
@@ -4878,6 +4960,7 @@ GameObject:
   - component: {fileID: 4970189054595403023}
   - component: {fileID: 8444567795574429493}
   - component: {fileID: 3593351319435484989}
+  - component: {fileID: 5343230657339124425}
   m_Layer: 5
   m_Name: Enemy HP Bar
   m_TagString: Untagged
@@ -4947,6 +5030,21 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &5343230657339124425
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7401487280090963542}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 70ef5b7c786648843a4a78f4e7210612, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  nameText: {fileID: 6156511456325139469}
+  hpFill: {fileID: 3483844880119850104}
+  hpText: {fileID: 5273574019537502318}
 --- !u!1 &7519456334296380419
 GameObject:
   m_ObjectHideFlags: 0
@@ -4958,6 +5056,7 @@ GameObject:
   - component: {fileID: 743174078076448485}
   - component: {fileID: 5272042798598815796}
   - component: {fileID: 2575156194965252414}
+  - component: {fileID: 4946663230947214591}
   m_Layer: 5
   m_Name: Enemy HP Bar (2)
   m_TagString: Untagged
@@ -5027,6 +5126,21 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &4946663230947214591
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7519456334296380419}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 70ef5b7c786648843a4a78f4e7210612, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  nameText: {fileID: 5198450789051705619}
+  hpFill: {fileID: 2486127618303592433}
+  hpText: {fileID: 8633128603382522513}
 --- !u!1 &7557682749195118909
 GameObject:
   m_ObjectHideFlags: 0
@@ -6261,11 +6375,11 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
-  m_Type: 0
+  m_Sprite: {fileID: 21300000, guid: b325a13e94f3bac4199e75b91fa98449, type: 3}
+  m_Type: 3
   m_PreserveAspect: 0
   m_FillCenter: 1
-  m_FillMethod: 4
+  m_FillMethod: 0
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
