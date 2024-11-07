@@ -12,7 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b5e7bacec33957842aab0a5078b42018, type: 3}
   m_Name: Heal
   m_EditorClassIdentifier: 
-  attackName: Stab
+  attackName: Heal
   baseDamage: 10
   upgradeLevel: 0
-  attributes: []
+  attributes:
+  - Heal

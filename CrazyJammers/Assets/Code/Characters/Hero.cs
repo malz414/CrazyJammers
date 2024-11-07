@@ -3,14 +3,12 @@ using System.Collections.Generic;
 
 public class Hero : Character
 {
-    
     public CombinedAttackSO currentAttack;
     public List<AttackSO> allAttacks;
     public float bideLevel = 1.0f;
-    private int bideUses = 0; 
+    public int bideUses = 0; 
+  
     
-    
-
     protected override void Start()
     {
         base.Start();
@@ -22,22 +20,15 @@ public class Hero : Character
         currentAttack.Combine(attack1, attack2);
     }
 
-    // public AttackSO RandomlySelectAttack()
-    // {
-    //     if (allAttacks.Count > 0)
-    //     {
-    //         int randomIndex = Random.Range(0, allAttacks.Count);
-    //         currentAttack = allAttacks[randomIndex];
-    //         Debug.Log($"Randomly selected attack: {currentAttack.attackName} with damage: {currentAttack.GetDamage()}");
-    //         return currentAttack;
-    //     }
-    //     else
-    //     {
-    //         Debug.Log("No attacks available to select.");
-    //         currentAttack = null; 
-    //         return null;
-    //     }
-    // }
+    public void RemoveHeroBurns()
+    {
+        this.burning=0;
+    }
+
+    public void RemoveHeroParalysis()
+    {
+        paralysisEffect = null;  
+    }
 
     public bool UseBide()
     {
@@ -55,11 +46,11 @@ public class Hero : Character
         }
     }
 
+    // Method to calculate damage
     public int GetDamage()
     {
         if (currentAttack != null)
         {
-            // Calculate the damage and round to an integer
             int damage = (int)(currentAttack.GetDamage() * bideLevel);
             Debug.Log($"Damage with bide applied: {damage} (Base: {currentAttack.GetDamage()}, Bide Level: {bideLevel})");
             return damage;
@@ -71,6 +62,5 @@ public class Hero : Character
     {
         Debug.Log($"{characterName} has been defeated!");
         TurnManager.Instance.EndGame(false);
-       
     }
 }

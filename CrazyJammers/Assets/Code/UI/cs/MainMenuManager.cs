@@ -32,14 +32,11 @@ public class MainMenuManager : MonoBehaviour
 
     private IEnumerator DoStartGameRoutine()
     {
-        EventBus.Publish(new FadeOutEvent());
+        EventBus.Publish(new FadeOutEvent(UICategoryEnums.OpeningTransitionUI));
 
         yield return new WaitForSeconds(2f);
 
-
         gameObject.SetActive(false);
-
-        TurnManager.Instance.StartBattle();
     }
 
 }
