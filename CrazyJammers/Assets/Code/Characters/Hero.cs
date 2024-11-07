@@ -7,7 +7,6 @@ public class Hero : Character
     public List<AttackSO> allAttacks;
     public float bideLevel = 1.0f;
     public int bideUses = 0; 
-  
     
     protected override void Start()
     {
@@ -20,15 +19,6 @@ public class Hero : Character
         currentAttack.Combine(attack1, attack2);
     }
 
-    public void RemoveHeroBurns()
-    {
-        this.burning=0;
-    }
-
-    public void RemoveHeroParalysis()
-    {
-        paralysisEffect = null;  
-    }
 
     public bool UseBide()
     {
@@ -46,7 +36,6 @@ public class Hero : Character
         }
     }
 
-    // Method to calculate damage
     public int GetDamage()
     {
         if (currentAttack != null)
