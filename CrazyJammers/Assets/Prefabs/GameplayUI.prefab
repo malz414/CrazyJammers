@@ -1353,6 +1353,8 @@ GameObject:
   - component: {fileID: 4280320569893141199}
   - component: {fileID: 6634324283718823314}
   - component: {fileID: 2459600101692114571}
+  - component: {fileID: 3596660877062734337}
+  - component: {fileID: 8174159164394607001}
   m_Layer: 5
   m_Name: GameplayUI
   m_TagString: Untagged
@@ -1483,6 +1485,37 @@ MonoBehaviour:
   m_InputActionsPerSecond: 10
   m_RepeatDelay: 0.5
   m_ForceModuleActive: 0
+--- !u!225 &3596660877062734337
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1861504102970384730}
+  m_Enabled: 1
+  m_Alpha: 0
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
+--- !u!114 &8174159164394607001
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1861504102970384730}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 35f72cdf86e2bee43bb57bd52f09156e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  prologueText: 
+  nextBattleText: 
+  enemyQuote: []
+  category: 1
+  fadeScreen: {fileID: 3596660877062734337}
+  prologueTextUI: {fileID: 0}
+  skipButton: {fileID: 0}
 --- !u!1 &1870477257323212281
 GameObject:
   m_ObjectHideFlags: 0
