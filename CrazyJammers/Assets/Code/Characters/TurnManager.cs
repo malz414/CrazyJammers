@@ -26,6 +26,8 @@ public class TurnManager : MonoBehaviour
 
     [SerializeField] GameObject attackOptionsParent;
 
+    [SerializeField] GameObject potionOptions;
+
     [SerializeField] GameObject targetingHUDParent;
 
     [SerializeField] GameObject winScreen;
@@ -38,11 +40,17 @@ public class TurnManager : MonoBehaviour
 
     [SerializeField] private DamageNumber popupPrefab;
 
+    private List<AttackSO> enemyAttacksByIndex = new List<AttackSO> { null, null, null, null };
+
     private Hero hero;
     private List<Enemy> enemies;
 
     public Button[] attackButtons; 
     public Button bideButton;
+
+    public Button potionButton;
+    public Button panaceaButton;
+
 
     private AttackSO selectedAttack1;
     private AttackSO selectedAttack2;
@@ -62,6 +70,9 @@ public class TurnManager : MonoBehaviour
     private bool bideBuff = false;
     private int bideAttribute = 0;
     private float randomChance = 0f;
+
+    private int Potion = 1;
+    private int Panacea = 1;
 
     private void Awake()
     {
@@ -150,6 +161,25 @@ public class TurnManager : MonoBehaviour
     public void StartTurn()
     {
         hero.UpdateEffects();
+        if (hero.burning > 0)
+        {
+            hero.currentHealth -= (int)(hero.maxHealth*.1);
+            blurbEvent.Set($" You're Burning for {hero.burning} turns!");
+            EventBus.Publish(blurbEvent);
+            hero.burning--;
+            
+        }
+        
+        foreach (var enemy in enemies)
+        {
+            if (enemy.burning > 0)
+            {
+                enemy.currentHealth -= (int)(enemy.maxHealth*.1);
+                blurbEvent.Set($" {enemy.characterName} is burning for {enemy.burning} turns!");
+                EventBus.Publish(blurbEvent);
+                enemy.burning--;
+            }
+        }
         bideAttribute--;
         if (bideAttribute == 0)
         {
@@ -176,8 +206,9 @@ public class TurnManager : MonoBehaviour
         yield return new WaitForSeconds(.5f);
 
         // Enemies attack hero
-        foreach (var enemy in enemies)
+        for (int i = 0; i < enemies.Count; i++)
         {
+            Enemy enemy = enemies[i];
             if (!enemy.CanAct())
             {
                 blurbEvent.Set($"{enemy.characterName} is paralyzed and cannot act this turn!");
@@ -189,10 +220,11 @@ public class TurnManager : MonoBehaviour
                 
             else
             {
+                
             
 
             AttackSO enemyAttack = enemy.PerformRandomAttack();
-            enemyAttacksUsed.Add(enemyAttack);
+            enemyAttacksByIndex[i] = enemyAttack;
             if (enemyAttack.attributes.Contains("Barrier"))
             {
                 foreach (var enemyBarrier in enemies)
@@ -282,17 +314,16 @@ public class TurnManager : MonoBehaviour
             // Show attack selection UI for the hero
             ShowAttackSelectionUI();
         }
- 
+        
     }
 
     private void ShowAttackSelectionUI()
     {
-
         for (int i = 0; i < attackButtons.Length; i++)
         {
-            if (i < enemyAttacksUsed.Count)
+            if (enemyAttacksByIndex[i] != null)
             {
-                attackButtons[i].GetComponentInChildren<TextMeshProUGUI>().text = enemyAttacksUsed[i].attackName; 
+                attackButtons[i].GetComponentInChildren<TextMeshProUGUI>().text = enemyAttacksByIndex[i].attackName;
                 int index = i;
                 attackButtons[i].onClick.RemoveAllListeners();
                 attackButtons[i].onClick.AddListener(() => OnAttackButtonClicked(index));
@@ -303,27 +334,30 @@ public class TurnManager : MonoBehaviour
                 attackButtons[i].gameObject.SetActive(false);
             }
         }
-
         attackOptionsParent.SetActive(true);
+        potionOptions.SetActive(true);
+    }
 
         // Set up the Bide button
         /*        bideButton.gameObject.SetActive(true);
                 bideButton.onClick.RemoveAllListeners();
                 bideButton.onClick.AddListener(OnBideButtonClicked);
                 bideButton.GetComponentInChildren<TextMeshProUGUI>().text = "Bide";*/
-    }
+    
 
 
     private void OnAttackButtonClicked(int index)
     {
+        if (enemyAttacksByIndex[index] == null) return; // Ensure the selected index has an attack
+
         if (selectedAttack1 == null)
         {
-            selectedAttack1 = enemyAttacksUsed[index];
+            selectedAttack1 = enemyAttacksByIndex[index];
             Debug.Log($"Selected first attack: {selectedAttack1.attackName}");
         }
         else if (selectedAttack2 == null)
         {
-            selectedAttack2 = enemyAttacksUsed[index];
+            selectedAttack2 = enemyAttacksByIndex[index];
             Debug.Log($"Selected second attack: {selectedAttack2.attackName}");
 
             // Combine selected attacks
@@ -333,21 +367,13 @@ public class TurnManager : MonoBehaviour
             selectedAttack1 = null;
             selectedAttack2 = null;
 
-            
-            //hero.RandomlySelectAttack();
-
             attackOptionsParent.SetActive(false);
+            potionOptions.SetActive(false);
             targetingHUDParent.SetActive(true);
             targetingMode = true;
-
-            enemyAttacksUsed.Clear();
-            /*            heroAttackEnemy();
-
-                        StartTurn();*/
-
-
         }
     }
+
 
     public void SelectEnemyTotAttack(Enemy enemy)
     {
@@ -370,10 +396,56 @@ public class TurnManager : MonoBehaviour
         {
             bideAttribute = 3;
             attackOptionsParent.SetActive(false);
+            potionOptions.SetActive(false);
             bideBuff = true;
             StartTurn();
         }
     }
+
+    public void onPotionClicked()
+    {
+        if(Potion > 0)
+        {
+            hero.currentHealth += 100;
+            if(hero.currentHealth>hero.maxHealth)
+            {
+                hero.currentHealth = hero.maxHealth;
+            }
+            blurbEvent.Set($"HEALED");
+            EventBus.Publish(blurbEvent);
+            Potion --;
+            attackOptionsParent.SetActive(false);
+            potionOptions.SetActive(false);
+            StartTurn();
+        }
+        else
+        {
+            blurbEvent.Set($"No Potion");
+            EventBus.Publish(blurbEvent);
+        }
+        
+    }
+    public void onPanaceaClicked()
+    {
+        if(Panacea > 0)
+        {
+            hero.RemoveHeroBurns();
+            hero.RemoveHeroParalysis();
+            blurbEvent.Set($"Status Healed");
+            EventBus.Publish(blurbEvent);
+            Panacea --;
+            attackOptionsParent.SetActive(false);
+            potionOptions.SetActive(false);
+            StartTurn();
+        }
+        else
+        {
+            blurbEvent.Set($"No Panacea");
+            EventBus.Publish(blurbEvent);
+        }
+    }
+
+
 
     private IEnumerator DoBossAttackRoutine(Enemy targetEnemy)
     {
@@ -383,7 +455,7 @@ public class TurnManager : MonoBehaviour
 
         int damage = hero.GetDamage();
         //Crit Damage
-        if(Random.value <= 0.3f)
+        if(Random.value <= 0.03f)
         {
             damage = (int)(damage * 1.2);
             blurbEvent.Set("Critical Hit!");
@@ -405,7 +477,7 @@ public class TurnManager : MonoBehaviour
             {   randomChance = (bideAttribute > 0) ? 0.4f : 0.2f;
                 if (Random.value <= randomChance) 
                 {
-                    targetEnemy.ApplyBurn(10, 3);
+                    targetEnemy.ApplyBurn(1000, 3);
                     blurbEvent.Set($"{targetEnemy.characterName} was burned!");
                     EventBus.Publish(blurbEvent);
                 }
@@ -465,12 +537,15 @@ public class TurnManager : MonoBehaviour
 
     public void RemoveEnemy(Enemy enemy)
     {
+        int index = enemies.IndexOf(enemy);
         enemies.Remove(enemy);
         if (enemies.Count == 0)
         {
             EndGame(true); // Player wins
         }
+       
     }
+ 
 
     public void EndGame(bool playerWon)
     {

@@ -19,6 +19,8 @@ public class CombinedAttackSO : ScriptableObject
         { "Barrier, Slash", "Sword Field" },
         //NOTE FIRE BLADE DOESNT WORK IDK WHY
         { "Fireball, Arrow Bolt", "Fire Blade" },
+        { "Arrow Bolt, Fireball", "Fire Blade" },
+        
         { "Fireball, Lunge", "Flame Jolt" },
         { "Fireball, Barrier", "Flame Gate" },
         { "Fireball, Heal", "Flame Drain" },
