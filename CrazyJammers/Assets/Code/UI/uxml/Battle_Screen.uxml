@@ -1,16 +1,11 @@
 <engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
-    <Style src="project://database/Assets/UI/Default_Style_Sheet.uss?fileID=7433441132597879392&amp;guid=5deabae4f644be94d800319551c7bdf1&amp;type=3#Default_Style_Sheet" />
-    <engine:VisualElement name="Panel" class="panel" style="flex-grow: 1;">
-        <engine:VisualElement name="InfoTextContainer" class="container" style="bottom: auto; top: 480px;">
-            <engine:GroupBox name="TextGroup">
-                <engine:Label text="Info Text" name="InfoText" class="info-text" />
-            </engine:GroupBox>
-        </engine:VisualElement>
-        <engine:VisualElement name="ActionContainer" class="container" style="left: 40px; bottom: auto; top: 433px; right: auto;">
-            <engine:GroupBox name="Actions">
-                <engine:Button text="Remix" name="Remix" />
-                <engine:Button text="Bide" name="Bide" />
-                <engine:Button text="Item" name="Item" />
+    <Style src="project://database/Assets/Code/UI/uss/Default_Style_Sheet.uss?fileID=7433441132597879392&amp;guid=5deabae4f644be94d800319551c7bdf1&amp;type=3#Default_Style_Sheet" />
+    <engine:VisualElement name="Panel" class="panel" style="flex-grow: 1; width: 1103px; overflow: visible;">
+        <engine:VisualElement name="ActionContainer" class="container" style="left: 49px; bottom: auto; top: 433px; right: auto; -unity-text-outline-color: rgba(83, 83, 83, 0.78); width: 81px; height: 94px;">
+            <engine:GroupBox name="Actions" style="width: 89px; height: 88px;">
+                <engine:Button text="Remix" name="Remix" style="height: 23px; width: 74px; opacity: 1; background-color: rgba(188, 188, 188, 0.08); -unity-font-definition: url(&quot;project://database/Assets/Modern%20UI%20Pack/Fonts/Roboto-Regular.ttf?fileID=12800000&amp;guid=24f52a8f823a19b4fb681e93eb6dee3d&amp;type=3#Roboto-Regular&quot;);" />
+                <engine:Button text="Bide" name="Bide" style="height: 23px; width: 74px; opacity: 1; background-color: rgba(188, 188, 188, 0.08); -unity-font-definition: url(&quot;project://database/Assets/Modern%20UI%20Pack/Fonts/Roboto-Regular.ttf?fileID=12800000&amp;guid=24f52a8f823a19b4fb681e93eb6dee3d&amp;type=3#Roboto-Regular&quot;);" />
+                <engine:Button text="Item" name="Item" style="height: 23px; width: 74px; opacity: 1; background-color: rgba(188, 188, 188, 0.08); -unity-font-definition: url(&quot;project://database/Assets/Modern%20UI%20Pack/Fonts/Roboto-Regular.ttf?fileID=12800000&amp;guid=24f52a8f823a19b4fb681e93eb6dee3d&amp;type=3#Roboto-Regular&quot;);" />
             </engine:GroupBox>
         </engine:VisualElement>
         <engine:VisualElement name="MonsterHealthContainer" class="container" style="flex-grow: 1; height: 64px; width: 164px; top: 34px; left: 912px;">
@@ -40,6 +35,11 @@
                 <engine:Label text="Adventurer_A" name="AdventurerLabel" />
                 <engine:VisualElement name="AdventurerHealth" class="health-bar" style="flex-grow: 1;" />
                 <engine:Label text="5000/5000" name="AdvnturerHealthNumber" style="align-self: center;" />
+            </engine:GroupBox>
+        </engine:VisualElement>
+        <engine:VisualElement name="InfoTextContainer" class="container" style="bottom: auto; top: 480px;">
+            <engine:GroupBox name="TextGroup">
+                <engine:Label text="Info Text" name="InfoText" class="info-text" style="width: 636px; height: 79px;" />
             </engine:GroupBox>
         </engine:VisualElement>
     </engine:VisualElement>
