@@ -15,8 +15,49 @@ public class TurnManager : MonoBehaviour
     [SerializeField] private GameObject swordsmanPrefab;
     [SerializeField] private GameObject archerPrefab;
 
+
     [SerializeField] private GameObject SteadyAttack;
     [SerializeField] private GameObject SteadyHit;
+
+    [SerializeField] private GameObject lungeAttack;
+    [SerializeField] private GameObject lungeHit;
+
+    [SerializeField] private GameObject arrowAttack;
+    [SerializeField] private GameObject arrowHit;
+
+    [SerializeField] private GameObject slashAttack;
+    [SerializeField] private GameObject slashHit;
+
+    [SerializeField] private GameObject iceAttack;
+    [SerializeField] private GameObject iceHit;
+
+
+    [SerializeField] private GameObject fireAttack;
+    [SerializeField] private GameObject fireHit;
+
+    [SerializeField] private GameObject barrier1;
+    [SerializeField] private GameObject barrier2;
+    [SerializeField] private GameObject barrier3;
+
+    [SerializeField] private GameObject heal;
+
+    [SerializeField] private GameObject healfield;
+
+    [SerializeField] private GameObject zapAttack;
+    [SerializeField] private GameObject zapHit;
+
+    [SerializeField] private GameObject para;
+
+    [SerializeField] private GameObject burn;
+
+    [SerializeField] private GameObject bideani;
+
+    [SerializeField] private GameObject potionAni;
+
+    [SerializeField] private GameObject panaceaAni;
+    
+
+
 
     public CombinedAttackSO combinedAttack;
 
@@ -101,13 +142,21 @@ public class TurnManager : MonoBehaviour
     {
         SetUpBattle();
     }
+    //VFX called with delay for some so attacks go off then theres a delay on the hit more time is given to the duration so with delay + duration it doesnt  cancel early 
 
-    private void ApplyEffect(GameObject effectPrefab, Transform target)
+    private void ApplyEffectWithDelay(GameObject effectPrefab, Transform target, float delay, float effectDuration = 2f)
     {
+        StartCoroutine(DelayedEffectCoroutine(effectPrefab, target, delay, effectDuration));
+    }
+
+    private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform target, float delay, float effectDuration)
+    {
+        yield return new WaitForSeconds(delay);
         GameObject effect = Instantiate(effectPrefab, target.position, Quaternion.identity);
         effect.transform.SetParent(target); 
-        Destroy(effect, 2f); 
+        Destroy(effect, delay + effectDuration); // Ensures the effect lasts for delay + effectDuration seconds
     }
+
 
     private void SetUpBattle()
     {
@@ -254,6 +303,9 @@ public class TurnManager : MonoBehaviour
                 foreach (var enemyBarrier in enemies)
                 {
                     enemyBarrier.barrierCount += 1;
+                    ApplyEffectWithDelay(barrier1, enemyBarrier.transform, 0f, 2.0f);
+                    ApplyEffectWithDelay(barrier2, enemyBarrier.transform, 0f, 2.0f);
+                    ApplyEffectWithDelay(barrier3, hero.transform, 0f, 2.0f);
                     blurbEvent.Set($"The heroes gained a barrier.");
                     EventBus.Publish(blurbEvent);
 
@@ -272,6 +324,8 @@ public class TurnManager : MonoBehaviour
                     }
                     enemyHeal.RemoveBurns();
                     enemyHeal.RemoveParalysis();
+                    ApplyEffectWithDelay(heal, enemyHeal.transform, 0f, 2.0f);
+                    ApplyEffectWithDelay(panaceaAni, enemyHeal.transform, 0f, 2.0f);
                     blurbEvent.Set($"The heroes healed and status cured.");
                     blurbEvent.Set($"The heroes gained a barrier.");
                     EventBus.Publish(blurbEvent);
@@ -290,7 +344,7 @@ public class TurnManager : MonoBehaviour
                     {
                         enemyHeal.currentHealth = enemyHeal.maxHealth;
                     }
-                enemy.currentHealth += enemyAttack.GetDamage();
+                ApplyEffectWithDelay(heal, enemyHeal.transform, 0f, 2.0f);
                 blurbEvent.Set($"{enemy.characterName} was healed.");
                 EventBus.Publish(blurbEvent);
                 continue;
@@ -300,12 +354,14 @@ public class TurnManager : MonoBehaviour
             if (enemyAttack.attributes.Contains("Ice"))
             {
                 hero.TakeDamage(enemyAttack.GetDamage());
+                ApplyEffectWithDelay(iceAttack, enemy.transform, 0f, 2.0f);
+                ApplyEffectWithDelay(iceHit, hero.transform, .5f, 3.0f);
             }
 
             if (enemyAttack.attributes.Contains("Steady"))
             {
-                ApplyEffect(SteadyAttack, enemy.transform);
-                ApplyEffect(SteadyHit, hero.transform);
+                ApplyEffectWithDelay(SteadyAttack, enemy.transform, 0f, 2.0f);
+                ApplyEffectWithDelay(SteadyHit, hero.transform, .5f, 3.0f);
                 hero.TakeDamage(enemyAttack.GetDamage());
             }
 
@@ -329,6 +385,8 @@ public class TurnManager : MonoBehaviour
                     EventBus.Publish(blurbEvent);
                     Debug.Log($"Hero has been burned by {enemyAttack.attackName}!");
                 }
+                ApplyEffectWithDelay(fireAttack, enemy.transform, 0f, 2.0f);
+                ApplyEffectWithDelay(fireHit, hero.transform, .5f, 3.0f);
             }
 
             if (enemyAttack.attributes.Contains("Paralysis"))
@@ -341,6 +399,8 @@ public class TurnManager : MonoBehaviour
                     EventBus.Publish(blurbEvent);
                     Debug.Log($"Hero has been paralyzed by {enemyAttack.attackName}!");
                 }
+                ApplyEffectWithDelay(zapAttack, enemy.transform, 0f, 2.0f);
+                ApplyEffectWithDelay(zapHit, hero.transform, .5f, 3.0f);
             }
 
 
@@ -459,6 +519,7 @@ public class TurnManager : MonoBehaviour
 
         if (bideSuccessful)
         {
+            ApplyEffectWithDelay(bideani, hero.transform, 0f, 2.0f);
             bideAttribute = 3;
             attackOptionsParent.SetActive(false);
             potionOptions.SetActive(false);
@@ -472,6 +533,7 @@ public class TurnManager : MonoBehaviour
     {
         if(Potion > 0)
         {
+
             hero.currentHealth += 100;
             if(hero.currentHealth>hero.maxHealth)
             {
@@ -482,6 +544,7 @@ public class TurnManager : MonoBehaviour
             Potion --;
             attackOptionsParent.SetActive(false);
             potionOptions.SetActive(false);
+            ApplyEffectWithDelay(potionAni, hero.transform, 0f, 2.0f);
             StartTurn();
         }
         else
@@ -504,6 +567,7 @@ public class TurnManager : MonoBehaviour
             Panacea --;
             attackOptionsParent.SetActive(false);
             potionOptions.SetActive(false);
+            ApplyEffectWithDelay(panaceaAni, hero.transform, 0f, 2.0f);
             StartTurn();
         }
         else
@@ -526,8 +590,9 @@ public class TurnManager : MonoBehaviour
         if (combinedAttack.attributes.Contains("Steady"))
             {
                 heroCritRate = 0.4f;
-                ApplyEffect(SteadyAttack, hero.transform);
-                ApplyEffect(SteadyHit, targetEnemy.transform);
+                ApplyEffectWithDelay(SteadyAttack, hero.transform, 0f, 2.0f);
+                ApplyEffectWithDelay(SteadyHit, targetEnemy.transform, .5f, 3.0f);
+                
             }
         
         if(Random.value <= heroCritRate)
@@ -551,13 +616,17 @@ public class TurnManager : MonoBehaviour
 
 
         if (combinedAttack.attributes.Contains("Burn"))
-            {   randomChance = (bideAttribute > 0) ? 0.4f : 0.2f;
+            {   
+                randomChance = (bideAttribute > 0) ? 0.4f : 0.2f;
                 if (Random.value <= randomChance)
                 {
                     targetEnemy.ApplyBurn(1000, 3);
                     blurbEvent.Set($"{targetEnemy.characterName} was burned!");
                     EventBus.Publish(blurbEvent);
+                    
                 }
+                ApplyEffectWithDelay(fireAttack, hero.transform, 0f, 2.0f);
+                ApplyEffectWithDelay(fireHit, targetEnemy.transform, .5f, 3.0f);
             }
 
         if (combinedAttack.attributes.Contains("Paralysis"))
@@ -569,6 +638,8 @@ public class TurnManager : MonoBehaviour
                     blurbEvent.Set($"{targetEnemy.characterName} was paralysed!");
                     EventBus.Publish(blurbEvent);
                 }
+                ApplyEffectWithDelay(zapAttack, hero.transform, 0f, 2.0f);
+                ApplyEffectWithDelay(zapHit, targetEnemy.transform, .5f, 3.0f);
             }
 
         if (combinedAttack.attributes.Contains("Heal"))
@@ -576,18 +647,36 @@ public class TurnManager : MonoBehaviour
                     hero.currentHealth += damage;
                     blurbEvent.Set($"{damage} Health Recovered!");
                     EventBus.Publish(blurbEvent);
+                    ApplyEffectWithDelay(heal, hero.transform, 0f, 2.0f);
+                    
              }
 
-        if (combinedAttack.attributes.Contains("Barrier"))
+        
           if (combinedAttack.attributes.Contains("Barrier"))
             {
                     hero.barrierCount += 1;
                     blurbEvent.Set("Barrier raised");
                     EventBus.Publish(blurbEvent);
+                    ApplyEffectWithDelay(barrier1, hero.transform, 0f, 2.0f);
+                    ApplyEffectWithDelay(barrier2, hero.transform, 0f, 2.0f);
+                    ApplyEffectWithDelay(barrier3, hero.transform, 0f, 2.0f);
 
             }
 
-
+        if (combinedAttack.attributes.Contains("Field"))
+            {
+                    hero.currentHealth += damage;
+                    blurbEvent.Set($"{damage} Health Recovered!");
+                    EventBus.Publish(blurbEvent);
+                    hero.RemoveBurns();
+                    hero.RemoveParalysis();
+                    hero.RemoveHeroBurns();
+                    hero.RemoveHeroParalysis();
+                    blurbEvent.Set($"Status Healed");
+                    EventBus.Publish(blurbEvent);
+                    ApplyEffectWithDelay(heal, hero.transform, 0f, 2.0f);
+                    ApplyEffectWithDelay(panaceaAni, hero.transform, 0f, 2.0f);
+            }
 
 
         if (targetEnemy.currentHealth <= 0)
@@ -597,6 +686,7 @@ public class TurnManager : MonoBehaviour
             RemoveEnemy(targetEnemy);
         }
 
+        
         yield return new WaitForSeconds(1f);
         // if (combinedAttack.attributes.Contains("Lunge"))
         // {
@@ -615,6 +705,8 @@ public class TurnManager : MonoBehaviour
             hasIced = true;
             blurbEvent.Set($"You prepare to strike again");
             EventBus.Publish(blurbEvent);
+            ApplyEffectWithDelay(iceAttack, hero.transform, 0f, 2.0f);
+            ApplyEffectWithDelay(iceHit, targetEnemy.transform, .5f, 3.0f);
             targetingMode = true;
             yield break;
         }
@@ -624,6 +716,8 @@ public class TurnManager : MonoBehaviour
             hasLunged = true;
             blurbEvent.Set($"You prepare to strike again");
             EventBus.Publish(blurbEvent);
+            ApplyEffectWithDelay(lungeAttack, hero.transform, 0f, 2.0f);
+            ApplyEffectWithDelay(lungeHit, targetEnemy.transform, .5f, 3.0f);
             targetingMode = true;
             yield break;
         }
