@@ -119,6 +119,11 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!225 &102662467 stripped
+CanvasGroup:
+  m_CorrespondingSourceObject: {fileID: 1177831446253592090, guid: fec496db80a07c640a9a640f4b6a9472, type: 3}
+  m_PrefabInstance: {fileID: 1363350307300302488}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &271166740
 GameObject:
   m_ObjectHideFlags: 0
@@ -614,6 +619,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &523172089 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 777251875402700812, guid: fec496db80a07c640a9a640f4b6a9472, type: 3}
+  m_PrefabInstance: {fileID: 1363350307300302488}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 66d4305eb2d48c44dbc6b89f4f641ab2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!43 &544633467
 Mesh:
   m_ObjectHideFlags: 0
@@ -965,6 +981,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 3106818309668337980, guid: bdca80ec484d2484880037cea5c59fba, type: 3}
+      propertyPath: m_Name
+      value: CreditsObj
+      objectReference: {fileID: 0}
     - target: {fileID: 5080362037884209092, guid: bdca80ec484d2484880037cea5c59fba, type: 3}
       propertyPath: m_Pivot.x
       value: 0
@@ -1048,6 +1068,10 @@ PrefabInstance:
     - target: {fileID: 5833526138698229305, guid: bdca80ec484d2484880037cea5c59fba, type: 3}
       propertyPath: m_Name
       value: MainMenuCanvas (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 5931781137087685039, guid: bdca80ec484d2484880037cea5c59fba, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -814
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1544,11 +1568,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1135154112}
   m_LocalEulerAnglesHint: {x: 0, y: -90, z: 0}
---- !u!1 &1509053304 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 6739459252620959445, guid: fec496db80a07c640a9a640f4b6a9472, type: 3}
-  m_PrefabInstance: {fileID: 1363350307300302488}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1559641379
 GameObject:
   m_ObjectHideFlags: 0
@@ -1585,6 +1604,17 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 326001223331256996, guid: fec496db80a07c640a9a640f4b6a9472, type: 3}
   m_PrefabInstance: {fileID: 1363350307300302488}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1855927589 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7645943024846056938, guid: fec496db80a07c640a9a640f4b6a9472, type: 3}
+  m_PrefabInstance: {fileID: 1363350307300302488}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1920406169
 GameObject:
   m_ObjectHideFlags: 0
@@ -1896,14 +1926,14 @@ PrefabInstance:
     - target: {fileID: 4290602206895722103, guid: fec496db80a07c640a9a640f4b6a9472, type: 3}
       propertyPath: m_FirstSelected
       value: 
-      objectReference: {fileID: 1509053304}
+      objectReference: {fileID: 0}
     - target: {fileID: 6129923606258279351, guid: fec496db80a07c640a9a640f4b6a9472, type: 3}
       propertyPath: m_Name
       value: FadeCanvas
       objectReference: {fileID: 0}
     - target: {fileID: 6129923606258279351, guid: fec496db80a07c640a9a640f4b6a9472, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -2260,6 +2290,10 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 6634324283718823314, guid: 7ca3c677b08438948a575a0b43574e32, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7391475899570406855, guid: 7ca3c677b08438948a575a0b43574e32, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -2336,6 +2370,30 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8174159164394607001, guid: 7ca3c677b08438948a575a0b43574e32, type: 3}
+      propertyPath: fadeScreen
+      value: 
+      objectReference: {fileID: 102662467}
+    - target: {fileID: 8174159164394607001, guid: 7ca3c677b08438948a575a0b43574e32, type: 3}
+      propertyPath: skipButton
+      value: 
+      objectReference: {fileID: 1815146222}
+    - target: {fileID: 8174159164394607001, guid: 7ca3c677b08438948a575a0b43574e32, type: 3}
+      propertyPath: prologueText
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 8174159164394607001, guid: 7ca3c677b08438948a575a0b43574e32, type: 3}
+      propertyPath: nextBattleText
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 8174159164394607001, guid: 7ca3c677b08438948a575a0b43574e32, type: 3}
+      propertyPath: prologueTextUI
+      value: 
+      objectReference: {fileID: 1855927589}
+    - target: {fileID: 8174159164394607001, guid: 7ca3c677b08438948a575a0b43574e32, type: 3}
+      propertyPath: quoteBoxManager
+      value: 
+      objectReference: {fileID: 523172089}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:
