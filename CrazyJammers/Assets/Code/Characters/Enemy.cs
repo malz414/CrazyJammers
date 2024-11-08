@@ -17,20 +17,16 @@ public class Enemy : Character
         currentHealth = maxHealth; 
     }
 
-    void OnMouseOver()
+    public void OnMouseOverr()
     {
-        if (!TurnManager.Instance.TargetingMode || dead)
+        if (dead)
             return;
 
-        if(Input.GetMouseButtonUp(0))
-        {
-            TurnManager.Instance.SelectEnemyTotAttack(this);
+        TurnManager.Instance.SelectEnemyTotAttack(this);
 
-            TargetingIndicator.SetActive(false);
-            return;
-        }
+        TargetingIndicator.SetActive(false);
+        return;
 
-        TargetingIndicator.SetActive(true);
     }
 
     void OnMouseExit()
