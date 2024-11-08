@@ -3046,6 +3046,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 5888089156087290115, guid: 80410d8b46e427a41adfb2738e980a86, type: 3}
     - target: {fileID: 8485419520516605267, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
+      propertyPath: attackOptionsMenu
+      value: 
+      objectReference: {fileID: 1797794562}
+    - target: {fileID: 8485419520516605267, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
       propertyPath: targetingHUDParent
       value: 
       objectReference: {fileID: 1604813160}

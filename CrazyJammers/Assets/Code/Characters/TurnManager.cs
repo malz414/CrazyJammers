@@ -70,6 +70,7 @@ public class TurnManager : MonoBehaviour
     [SerializeField] GameObject MainUIParent;
 
     [SerializeField] GameObject attackOptionsParent;
+    [SerializeField] GameObject attackOptionsMenu;
 
     [SerializeField] GameObject potionOptions;
 
@@ -502,6 +503,7 @@ public class TurnManager : MonoBehaviour
             selectedAttack2 = null;
 
             attackOptionsParent.SetActive(false);
+            attackOptionsMenu.SetActive(false);
             potionOptions.SetActive(false);
             targetingHUDParent.SetActive(true);
             targetingMode = true;
