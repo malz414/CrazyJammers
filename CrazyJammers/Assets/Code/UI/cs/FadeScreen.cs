@@ -38,6 +38,10 @@ public class FadeScreen : MonoBehaviour
     [SerializeField] TextMeshProUGUI prologueTextUI;
     [SerializeField] GameObject skipButton;
     [SerializeField] QuoteBoxManager quoteBoxManager;
+    [SerializeField] private AudioSource audioSrc;
+    [SerializeField] private AudioClip PrologueMusic;
+    [SerializeField] private AudioClip BattleMusic;
+
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
@@ -55,6 +59,8 @@ public class FadeScreen : MonoBehaviour
         StopAllCoroutines();
         LeanTween.alphaCanvas(fadeScreen, 0, FADE_OUT_TIME);
         quoteBoxManager.SetQuoteBox(enemyQuote[0]);
+        audioSrc.clip = PrologueMusic;
+        audioSrc.Play();
     }
 
     private void OnFadeOut(FadeOutEvent fadeEvent)
@@ -72,6 +78,8 @@ public class FadeScreen : MonoBehaviour
         skipButton.SetActive(true);
         prologueTextUI.text = introText[0];
         yield return new WaitForSeconds(4f);
+        audioSrc.clip = BattleMusic;
+        audioSrc.Play();
         LeanTween.alphaCanvas(fadeScreen, 0, FADE_OUT_TIME);
         quoteBoxManager.SetQuoteBox(enemyQuote[1]);
     }
