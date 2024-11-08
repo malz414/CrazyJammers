@@ -30,9 +30,7 @@ public class FadeScreen : MonoBehaviour
     private const float FADE_IN_TIME = 1f;
 
     [TextArea(3, 10)]
-    [SerializeField] string prologueText;
-    [TextArea(3, 10)]
-    [SerializeField] string nextBattleText;
+    [SerializeField] string[] introText;
     [TextArea(3, 10)]
     [SerializeField] string[] enemyQuote;
     [SerializeField] UICategoryEnums category;
@@ -46,40 +44,33 @@ public class FadeScreen : MonoBehaviour
     {
         EventBus.Subscribe<FadeOutEvent>(OnFadeOut);
         EventBus.Subscribe<FadeInEvent>(OnFadeIn);
-        skipButton?.SetActive(false);
+        if(skipButton != null)
+        {
+            skipButton.SetActive(false);
+        }
     }
 
     public void SkipToGame()
     {
         StopAllCoroutines();
         LeanTween.alphaCanvas(fadeScreen, 0, FADE_OUT_TIME);
+        quoteBoxManager.SetQuoteBox(enemyQuote[0]);
     }
 
     private void OnFadeOut(FadeOutEvent fadeEvent)
     {
-        if (fadeEvent.category == UICategoryEnums.OpeningTransitionUI)
-        {
-            StartCoroutine(StartGameTransitionCoroutine());
-        }
+        if(fadeEvent.category != this.category) { return; }       
         else if (fadeEvent.category == UICategoryEnums.TransitionUI)
         {
             StartCoroutine(NextBattleTransitionCoroutine());
         }
     }
 
-    private IEnumerator StartGameTransitionCoroutine()
-    {
-        skipButton.SetActive(true);
-        prologueTextUI.text = prologueText;
-        yield return new WaitForSeconds(4f);
-        LeanTween.alphaCanvas(fadeScreen, 0, FADE_OUT_TIME);
-        quoteBoxManager.SetQuoteBox(enemyQuote[0]);
-    }
 
     private IEnumerator NextBattleTransitionCoroutine()
     {
         skipButton.SetActive(true);
-        prologueTextUI.text = nextBattleText;
+        prologueTextUI.text = introText[0];
         yield return new WaitForSeconds(4f);
         LeanTween.alphaCanvas(fadeScreen, 0, FADE_OUT_TIME);
         quoteBoxManager.SetQuoteBox(enemyQuote[1]);
