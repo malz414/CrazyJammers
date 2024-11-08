@@ -31,7 +31,8 @@
         protected virtual void Start()
         {
             currentHealth = maxHealth;
-
+            
+            blurbEvent = new GameplayBlurbEvent();
             statusUpdateEvent = new CharacterStatusUpdateEvent();
         }
 
@@ -68,10 +69,10 @@
                 currentHealth -= (int)(damage *.90);
             }
             else
-            {
+            {   
                 currentHealth -= damage;
             }
-            
+
             if (currentHealth <= 0)
             {
                 Die();
@@ -84,12 +85,10 @@
         {
             this.burning = 0;
         }
-
         public void RemoveParalysis()
         {
             paralysisEffect = null;  
         }
-
         public void DoAttackAnimation()
         {
             animator.SetTrigger("Attack");
@@ -153,10 +152,10 @@
             return paralysisEffect == null || !paralysisEffect.IsActivatedThisTurn;
         }
 
-        
+
         public void UpdateEffects()
         {
-        
+
             paralysisEffect?.CheckForActivation();
 
             foreach (var burn in activeBurns.ToArray())
@@ -168,5 +167,5 @@
                 }
             }
         }
-        
+
     }

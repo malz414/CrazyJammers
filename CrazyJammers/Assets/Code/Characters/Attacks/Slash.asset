@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: Slash
   m_EditorClassIdentifier: 
   attackName: Slash
-  baseDamage: 5
+  baseDamage: 70
   upgradeLevel: 0
   attributes: []
