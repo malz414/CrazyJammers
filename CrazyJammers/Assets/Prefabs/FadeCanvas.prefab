@@ -321,7 +321,7 @@ MonoBehaviour:
   enemyQuote:
   - We will defeat you
   - We will avenge our brothers
-  category: 2
+  category: 3
   fadeScreen: {fileID: 1177831446253592090}
   prologueTextUI: {fileID: 7645943024846056938}
   skipButton: {fileID: 326001223331256996}
@@ -554,7 +554,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 57.95
+  m_fontSize: 58
   m_fontSizeBase: 24
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -877,7 +877,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 26.75
+  m_fontSize: 26.8
   m_fontSizeBase: 24
   m_fontWeight: 400
   m_enableAutoSizing: 1

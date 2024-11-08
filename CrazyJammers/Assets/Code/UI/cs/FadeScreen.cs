@@ -46,17 +46,22 @@ public class FadeScreen : MonoBehaviour
     {
         EventBus.Subscribe<FadeOutEvent>(OnFadeOut);
         EventBus.Subscribe<FadeInEvent>(OnFadeIn);
-        skipButton?.SetActive(false);
+        if(skipButton != null)
+        {
+            skipButton.SetActive(false);
+        }
     }
 
     public void SkipToGame()
     {
         StopAllCoroutines();
         LeanTween.alphaCanvas(fadeScreen, 0, FADE_OUT_TIME);
+        quoteBoxManager.SetQuoteBox(enemyQuote[0]);
     }
 
     private void OnFadeOut(FadeOutEvent fadeEvent)
     {
+        if(fadeEvent.category != this.category) { return; }
         if (fadeEvent.category == UICategoryEnums.OpeningTransitionUI)
         {
             StartCoroutine(StartGameTransitionCoroutine());
