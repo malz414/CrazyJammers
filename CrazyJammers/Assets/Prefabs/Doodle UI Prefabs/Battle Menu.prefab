@@ -9791,7 +9791,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nameText: {fileID: 5326398994323428305}
   hpFill: {fileID: 348588410520250820}
-  hpText: {fileID: 5326398994323428305}
+  hpText: {fileID: 4050662103660813627}
 --- !u!1 &6608902239462413493
 GameObject:
   m_ObjectHideFlags: 0
