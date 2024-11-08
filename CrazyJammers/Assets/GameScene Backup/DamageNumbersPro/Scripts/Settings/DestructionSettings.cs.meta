@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: d452366a9a558c34bbbcafd0e50fdb74
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 186447
+  packageName: Damage Numbers Pro
+  packageVersion: 4.39
+  assetPath: Assets/DamageNumbersPro/Scripts/Settings/DestructionSettings.cs
+  uploadId: 699234

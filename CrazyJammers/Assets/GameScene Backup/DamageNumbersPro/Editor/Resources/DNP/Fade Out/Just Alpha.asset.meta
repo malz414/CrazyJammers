@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: af4bbbde8de6ceb498a56ecf7c6dc14e
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 186447
+  packageName: Damage Numbers Pro
+  packageVersion: 4.39
+  assetPath: Assets/DamageNumbersPro/Editor/Resources/DNP/Fade Out/Just Alpha.asset
+  uploadId: 699234

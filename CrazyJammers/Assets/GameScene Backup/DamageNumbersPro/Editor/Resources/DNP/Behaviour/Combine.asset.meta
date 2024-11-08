@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: de40a4ab2bfbfaf48b1bbdefcc65492e
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 186447
+  packageName: Damage Numbers Pro
+  packageVersion: 4.39
+  assetPath: Assets/DamageNumbersPro/Editor/Resources/DNP/Behaviour/Combine.asset
+  uploadId: 699234

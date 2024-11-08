@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 59e0c772b45ee284f8659a7aba6d9ac9
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 186447
+  packageName: Damage Numbers Pro
+  packageVersion: 4.39
+  assetPath: Assets/DamageNumbersPro/Editor/Resources/DNP/Style/Blood/Poison Thin.asset
+  uploadId: 699234

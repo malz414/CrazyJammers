@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: d711cb6e89d646d409c0e36567d8aade
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 186447
+  packageName: Damage Numbers Pro
+  packageVersion: 4.39
+  assetPath: Assets/DamageNumbersPro/Editor/Resources/DNP/Fade In/Flip.asset
+  uploadId: 699234

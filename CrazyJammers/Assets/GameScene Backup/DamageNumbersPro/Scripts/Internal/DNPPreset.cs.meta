@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: a95ba2f4cfd70d1498408b2209640f8b
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 186447
+  packageName: Damage Numbers Pro
+  packageVersion: 4.39
+  assetPath: Assets/DamageNumbersPro/Scripts/Internal/DNPPreset.cs
+  uploadId: 699234

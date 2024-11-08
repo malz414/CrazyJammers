@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 32a0bf7c63100964c80d532b2eb61439
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 186447
+  packageName: Damage Numbers Pro
+  packageVersion: 4.39
+  assetPath: Assets/DamageNumbersPro/Scripts/Internal/Editor/DamageNumberEditor.cs
+  uploadId: 699234

@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: f7b53dbc9bb6ac343813415d1981c932
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 186447
+  packageName: Damage Numbers Pro
+  packageVersion: 4.39
+  assetPath: Assets/DamageNumbersPro/Editor/Resources/DNP/Fade Out/Rise.asset
+  uploadId: 699234

@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 7e297050e4dc8e143b1a97e4845c71e0
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 11400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 186447
+  packageName: Damage Numbers Pro
+  packageVersion: 4.39
+  assetPath: Assets/DamageNumbersPro/Editor/Resources/DNP/Style/Cool/Mana.asset
+  uploadId: 699234

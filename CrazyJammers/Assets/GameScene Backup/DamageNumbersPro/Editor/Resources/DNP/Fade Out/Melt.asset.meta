@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 0988866ad972f3640906cdf32ed18493
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 186447
+  packageName: Damage Numbers Pro
+  packageVersion: 4.39
+  assetPath: Assets/DamageNumbersPro/Editor/Resources/DNP/Fade Out/Melt.asset
+  uploadId: 699234

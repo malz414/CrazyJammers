@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: c7f4889dc0a7ba44f8d5d4392353a74a
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 186447
+  packageName: Damage Numbers Pro
+  packageVersion: 4.39
+  assetPath: Assets/DamageNumbersPro/Editor/Resources/DNP/Fade In/Snap.asset
+  uploadId: 699234
