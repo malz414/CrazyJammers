@@ -8,7 +8,7 @@ public class Hero : Character
     public float bideLevel = 1.0f;
     public int bideUses = 0; 
   
-    
+
     protected override void Start()
     {
         base.Start();
@@ -24,7 +24,6 @@ public class Hero : Character
     {
         this.burning=0;
     }
-
     public void RemoveHeroParalysis()
     {
         paralysisEffect = null;  
