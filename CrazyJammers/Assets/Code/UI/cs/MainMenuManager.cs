@@ -1,6 +1,7 @@
 using Code.Utility.Events;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class MainMenuManager : MonoBehaviour
 {
@@ -23,7 +24,7 @@ public class MainMenuManager : MonoBehaviour
 
     public void ShowCredits()
     {
-        CreditsObj.SetActive(true);
+        SceneManager.LoadScene("Scenes/CreditsScene");
     }
     public void HideCredits()
     {
