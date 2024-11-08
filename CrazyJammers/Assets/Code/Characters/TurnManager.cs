@@ -62,17 +62,12 @@ public class TurnManager : MonoBehaviour
     private GameplayBlurbEvent blurbEvent;
 
     private bool hasLunged = false;
-    private int extraAttacks = 0;
-    private bool attackExtra = false;
 
     public bool TargetingMode => targetingMode;
 
     private bool targetingMode = false;
-    public float critMultiplier = 1.2f;
 
-    public float heroCritRate = .05f;
-
-    
+    private bool bideBuff = false;
     private int bideAttribute = 0;
     private float randomChance = 0f;
 
@@ -235,26 +230,7 @@ public class TurnManager : MonoBehaviour
                 foreach (var enemyBarrier in enemies)
                 {
                     enemyBarrier.barrierCount += 1;
-                    blurbEvent.Set($"{enemyBarrier.characterName} gained a barrier.");
-                    EventBus.Publish(blurbEvent);   
-                    
-                }
-                    
-            continue;
-            }
-
-            if (enemyAttack.attributes.Contains("Field"))
-            {
-                foreach (var enemyHeal in enemies)
-                {
-                    enemyHeal.currentHealth += enemyAttack.GetDamage();
-                    if(enemyHeal.currentHealth >= enemyHeal.maxHealth)
-                    {
-                        enemyHeal.currentHealth = enemyHeal.maxHealth;
-                    }
-                    enemyHeal.RemoveBurns();
-                    enemyHeal.RemoveParalysis();
-                    blurbEvent.Set($"{enemyHeal.characterName} was healed and status cured.");
+                    blurbEvent.Set($"{enemy.characterName} gained a barrier.");
                     EventBus.Publish(blurbEvent);   
                     
                 }
@@ -266,28 +242,22 @@ public class TurnManager : MonoBehaviour
             {
                 int randomIndex = Random.Range(0, enemies.Count); 
                 var enemyHeal = enemies[randomIndex];
-                enemyHeal.currentHealth += enemyAttack.GetDamage();
-                if(enemyHeal.currentHealth >= enemyHeal.maxHealth)
-                    {
-                        enemyHeal.currentHealth = enemyHeal.maxHealth;
-                    }
-                blurbEvent.Set($"{enemyHeal.characterName} was healed.");
+                enemy.currentHealth += enemyAttack.GetDamage();
+                blurbEvent.Set($"{enemy.characterName} was healed.");
                 EventBus.Publish(blurbEvent);   
                 continue;
             }
 
-            if (enemyAttack.attributes.Contains("Ice"))
+            if(bideBuff)
             {
-                     
-                blurbEvent.Set($"{enemy.characterName} used {enemyAttack.attackName}");
-                EventBus.Publish(blurbEvent);
-                hero.TakeDamage(enemyAttack.GetDamage());
+                hero.TakeDamage((int)(enemyAttack.GetDamage()*.90));
+                bideBuff = false;
             }
-
-
+            else
+            {
                 hero.TakeDamage(enemyAttack.GetDamage());
                 
-            
+            }
             
 
             blurbEvent.Set($"{enemy.characterName} used {enemyAttack.attackName}!");
@@ -427,7 +397,7 @@ public class TurnManager : MonoBehaviour
             bideAttribute = 3;
             attackOptionsParent.SetActive(false);
             potionOptions.SetActive(false);
-            hero.bideBuff = true;
+            bideBuff = true;
             StartTurn();
         }
     }
@@ -459,8 +429,8 @@ public class TurnManager : MonoBehaviour
     {
         if(Panacea > 0)
         {
-            hero.RemoveBurns();
-            hero.RemoveParalysis();
+            hero.RemoveHeroBurns();
+            hero.RemoveHeroParalysis();
             blurbEvent.Set($"Status Healed");
             EventBus.Publish(blurbEvent);
             Panacea --;
@@ -485,13 +455,9 @@ public class TurnManager : MonoBehaviour
 
         int damage = hero.GetDamage();
         //Crit Damage
-        if (combinedAttack.attributes.Contains("Steady"))
-            {
-                heroCritRate = 0.4f;
-            }
-        if(Random.value <= heroCritRate)
+        if(Random.value <= 0.03f)
         {
-            damage = (int)(damage * critMultiplier);
+            damage = (int)(damage * 1.2);
             blurbEvent.Set("Critical Hit!");
             EventBus.Publish(blurbEvent);
             targetEnemy.TakeDamage(damage);
@@ -506,7 +472,6 @@ public class TurnManager : MonoBehaviour
         blurbEvent.Set($"Boss attacked {targetEnemy.characterName}");
         EventBus.Publish(blurbEvent);
         Debug.Log($"Boss attacked {targetEnemy.characterName}, dealing {damage} damage.");
-        
 
         if (combinedAttack.attributes.Contains("Burn"))
             {   randomChance = (bideAttribute > 0) ? 0.4f : 0.2f;
@@ -536,14 +501,13 @@ public class TurnManager : MonoBehaviour
                     EventBus.Publish(blurbEvent);
              }
              
-        if (combinedAttack.attributes.Contains("Barrier"))
+          if (combinedAttack.attributes.Contains("Barrier"))
             {
                     hero.barrierCount += 1;
                     blurbEvent.Set("Barrier raised");
                     EventBus.Publish(blurbEvent);   
             
             }
-        
 
 
 
@@ -554,52 +518,18 @@ public class TurnManager : MonoBehaviour
             RemoveEnemy(targetEnemy);
         }
 
-
-
         yield return new WaitForSeconds(1f);
-        if (combinedAttack.attributes.Contains("Lunge"))
+        if (combinedAttack.attributes.Contains("Lunge") && !hasLunged)
         {
-            if(attackExtra == false)
-            {
-                extraAttacks = 1;   
-            }
-            else if(attackExtra == true && extraAttacks == 0)
-            {
-                attackExtra = false;
-                StartTurn();
-            }
-        }
-        if (combinedAttack.attributes.Contains("Ice"))
-        {      
-            if(attackExtra == false)
-            {     
-                extraAttacks = 3;  
-            }
-            else if(attackExtra == true && extraAttacks == 0)
-            {
-                attackExtra = false;
-                StartTurn();
-            } 
-        }
-        
-        if(extraAttacks > 0)
-        {
-            attackExtra = true;
-            extraAttacks--;
+            hasLunged = true;
             blurbEvent.Set($"You prepare to strike again");
             EventBus.Publish(blurbEvent);
             targetingMode = true;
             yield break;
-
-        }
-        else if(extraAttacks == 0)
-        {
-            extraAttacks--;
-            StartTurn();
-
         }
         
-        heroCritRate = 0.05f;
+        hasLunged = false;
+
         StartTurn();
     }
 

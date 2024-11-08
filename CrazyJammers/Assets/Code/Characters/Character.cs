@@ -11,7 +11,6 @@
         public int currentHealth;
         public int barrierCount;
         public int burning;
-        public bool bideBuff = false;
 
         //Dont need activeburns
         public List<BurnEffect> activeBurns = new List<BurnEffect>();
@@ -42,30 +41,12 @@
 
         public virtual void TakeDamage(int damage)
         {
-            if(barrierCount > 0 && bideBuff)
-            {
-                
-                blurbEvent.Set("Barrier Broken");
-                EventBus.Publish(blurbEvent);
-                blurbEvent.Set("You powered through it");
-                EventBus.Publish(blurbEvent);
-                barrierCount--;
-                bideBuff = false;
-                currentHealth -= (int)(damage *.70);
-            }
-            else if(barrierCount > 0)
+            if(barrierCount > 0)
             {
                 blurbEvent.Set("Barrier Broken");
                 EventBus.Publish(blurbEvent);
                 barrierCount--;
                 currentHealth -= (int)(damage *.80);
-            }
-            else if(bideBuff)
-            {
-                blurbEvent.Set("You powered through it");
-                EventBus.Publish(blurbEvent);
-                bideBuff = false;
-                currentHealth -= (int)(damage *.90);
             }
             else
             {
@@ -78,16 +59,6 @@
             }
             //Barrier Animation?
             StartCoroutine(DoHitRoutine(damage));
-        }
-
-        public void RemoveBurns()
-        {
-            this.burning = 0;
-        }
-
-        public void RemoveParalysis()
-        {
-            paralysisEffect = null;  
         }
 
         public void DoAttackAnimation()
