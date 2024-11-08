@@ -9229,8 +9229,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 35f72cdf86e2bee43bb57bd52f09156e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  prologueText: 
-  nextBattleText: 
+  introText: []
   enemyQuote: []
   category: 1
   fadeScreen: {fileID: 1441164812830108768}

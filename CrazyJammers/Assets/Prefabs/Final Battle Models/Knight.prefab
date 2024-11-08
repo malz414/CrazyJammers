@@ -82,8 +82,91 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 7997947301047521070, guid: dcbb1e9a510910c46aa27a738288b31e, type: 3}
       insertIndex: 0
       addedObject: {fileID: 7094274228247456160}
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: dcbb1e9a510910c46aa27a738288b31e, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 3837750984643467291}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: dcbb1e9a510910c46aa27a738288b31e, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4641628516705906132}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: dcbb1e9a510910c46aa27a738288b31e, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: -6850613020532108041}
   m_SourcePrefab: {fileID: 100100000, guid: dcbb1e9a510910c46aa27a738288b31e, type: 3}
+--- !u!1 &2296936670753540720 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: dcbb1e9a510910c46aa27a738288b31e, type: 3}
+  m_PrefabInstance: {fileID: 1378438394481768225}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &3837750984643467291
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2296936670753540720}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c7c4542f08e041845913bee4d3129d4f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  characterName: Knight
+  maxHealth: 500
+  currentHealth: 0
+  barrierCount: 0
+  burning: 0
+  bideBuff: 0
+  animator: {fileID: 0}
+  possibleAttacks:
+  - {fileID: 11400000, guid: 49865fb9082415343b15e475cc656757, type: 2}
+  attacksUsed: []
+  dead: 0
+  TargetingIndicator: {fileID: 0}
+--- !u!95 &4641628516705906132
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2296936670753540720}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: a6b00d0e052db4f41ba56f4294834691, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
+--- !u!136 &-6850613020532108041
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2296936670753540720}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.5
+  m_Height: 1
+  m_Direction: 1
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!4 &9070065861915785231 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7997947301047521070, guid: dcbb1e9a510910c46aa27a738288b31e, type: 3}

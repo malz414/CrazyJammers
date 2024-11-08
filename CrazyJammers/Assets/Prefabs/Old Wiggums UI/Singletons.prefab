@@ -194,21 +194,21 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     fromNumber: 10
     toNumber: 100
-  durationFadeIn: 0.2
+  durationFadeIn: 0.25
   enableOffsetFadeIn: 1
-  offsetFadeIn: {x: 0.5, y: 0}
+  offsetFadeIn: {x: 0, y: 0.5}
   enableScaleFadeIn: 1
-  scaleFadeIn: {x: 2, y: 2}
-  enableCrossScaleFadeIn: 0
+  scaleFadeIn: {x: 0.5, y: 2}
+  enableCrossScaleFadeIn: 1
   crossScaleFadeIn: {x: 1, y: 1.5}
-  enableShakeFadeIn: 0
-  shakeOffsetFadeIn: {x: 0, y: 1.5}
+  enableShakeFadeIn: 1
+  shakeOffsetFadeIn: {x: 0, y: 2.5}
   shakeFrequencyFadeIn: 4
   durationFadeOut: 0.2
-  enableOffsetFadeOut: 1
+  enableOffsetFadeOut: 0
   offsetFadeOut: {x: 0.5, y: 0}
-  enableScaleFadeOut: 0
-  scaleFadeOut: {x: 2, y: 2}
+  enableScaleFadeOut: 1
+  scaleFadeOut: {x: 0.4, y: 0.4}
   enableCrossScaleFadeOut: 0
   crossScaleFadeOut: {x: 1, y: 1.5}
   enableShakeFadeOut: 0
@@ -465,13 +465,13 @@ MonoBehaviour:
     desiredDirection: {x: 0, y: 0, z: 0}
   enablePush: 0
   pushSettings:
-    radius: 4
-    pushOffset: 0.8
+    radius: 3
+    pushOffset: 1
   updateDelay: 0.0125
   enablePooling: 0
   poolSize: 50
   disableOnSceneLoad: 1
-  editorLastFont: LiberationSans SDF3D
+  editorLastFont: Neon-Green3D
   position: {x: 0, y: 0, z: 0}
 --- !u!210 &3188177442638608528
 SortingGroup:
@@ -541,7 +541,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  - {fileID: 949568296025708039, guid: 08ef533dfb5dea14ea4f9e6b0b0ec846, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -616,20 +616,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4408cbd1e166ce1479793b2784c5bb22, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  knightPrefab: {fileID: 7535063419431838297, guid: b769f0f2b05d84343a953cc7e5f325e2, type: 3}
-  magePrefab: {fileID: 3111818004308000480, guid: d6ceaccb352ecfe40b7d8a4c0d3f04eb, type: 3}
-  swordsmanPrefab: {fileID: 7211050417971849891, guid: 4d5764ed5b010f54398a4ade3825485f, type: 3}
-  archerPrefab: {fileID: 8894184840840292598, guid: 7f36abe30e315434fbb4601c13f18c47, type: 3}
+  knightPrefab: {fileID: 2296936670753540720, guid: 51ec78924ec03184b88db61db21288d3, type: 3}
+  magePrefab: {fileID: 8752190016439242206, guid: 67348a45c8548214291b57659daa93c2, type: 3}
+  swordsmanPrefab: {fileID: 5888089156087290115, guid: 80410d8b46e427a41adfb2738e980a86, type: 3}
+  archerPrefab: {fileID: 2289685435781549048, guid: 4d60d244a63473f4a89ffcaedae97891, type: 3}
   combinedAttack: {fileID: 11400000, guid: 3687350894a4c0142b0993f34a1ae24d, type: 2}
   enemySpawns:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
-  bossPrefab: {fileID: 8950279824005764672, guid: 8e7b286e49790c74aa937f7f508d97b9, type: 3}
+  bossPrefab: {fileID: 2250012733561660975, guid: e160e45c1eeb0424b993acf8e56f9bdc, type: 3}
   bossSpawn: {fileID: 0}
   MainUIParent: {fileID: 0}
   attackOptionsParent: {fileID: 0}
+  potionOptions: {fileID: 0}
   targetingHUDParent: {fileID: 0}
   winScreen: {fileID: 0}
   loseScreen: {fileID: 0}
@@ -646,6 +647,10 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   bideButton: {fileID: 0}
+  potionButton: {fileID: 0}
+  panaceaButton: {fileID: 0}
+  critMultiplier: 1.2
+  heroCritRate: 0.05
 --- !u!1 &6245697123426695433
 GameObject:
   m_ObjectHideFlags: 0
@@ -706,7 +711,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  - {fileID: 949568296025708039, guid: 08ef533dfb5dea14ea4f9e6b0b0ec846, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -750,15 +755,15 @@ MonoBehaviour:
       m_Calls: []
   m_text: 1
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 08ef533dfb5dea14ea4f9e6b0b0ec846, type: 2}
+  m_sharedMaterial: {fileID: 949568296025708039, guid: 08ef533dfb5dea14ea4f9e6b0b0ec846, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4278190335
-  m_fontColor: {r: 1, g: 0, b: 0, a: 1}
+    rgba: 4294967295
+  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -878,7 +883,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  - {fileID: 949568296025708039, guid: 08ef533dfb5dea14ea4f9e6b0b0ec846, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
