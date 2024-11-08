@@ -14,12 +14,27 @@ public class CharacterHUD : MonoBehaviour
     [SerializeField] Image hpFill;
     [SerializeField] TextMeshProUGUI hpText;
 
+    private Enemy character2;
     private Character character;
 
     private float HPUIlerpSpeed = 6f;
     private float HPUIlerpCurve = .5f;
 
     private float targetHPFill = 1f;
+
+    public void Init(Enemy character)
+    {
+        this.character = character;
+        this.character2 = character;
+
+        nameText.text = character.characterName;
+
+        hpFill.fillAmount = 1;
+        hpText.text = character.maxHealth + " / " + character.maxHealth;
+
+        EventBus.Subscribe<CharacterStatusUpdateEvent>(OnStatusUpdate);
+
+    }
 
     public void Init(Character character)
     {
@@ -55,11 +70,14 @@ public class CharacterHUD : MonoBehaviour
     private void UpdateHPBar()
     {
         //hpFill.fillAmount = fillAmount;
-        hpText.text = Mathf.Max(0,character.currentHealth) + " / " + character.maxHealth;
+        hpText.text = Mathf.Max(0, character.currentHealth) + " / " + character.maxHealth;
 
         targetHPFill = (float)character.currentHealth / (float)character.maxHealth;
-
-
-
     }
+
+    public void AttackCharacter()
+    {
+        this.character2.OnMouseOverr();
+    }
+
 }

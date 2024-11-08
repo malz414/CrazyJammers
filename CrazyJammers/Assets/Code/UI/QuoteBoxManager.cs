@@ -20,7 +20,7 @@ public class QuoteBoxManager : MonoBehaviour
     public void Next()
     {
         TurnManager.Instance.StartBattle();
-        quoteBox.SetActive(false);
+        quoteBox.transform.parent.parent.gameObject.SetActive(false);
         quoteText.text = "";
     }
 }

@@ -1740,7 +1740,7 @@ MonoBehaviour:
   barrierCount: 0
   burning: 0
   bideBuff: 0
-  animator: {fileID: 0}
+  animator: {fileID: -8320443452221068422}
   possibleAttacks:
   - {fileID: 11400000, guid: 49865fb9082415343b15e475cc656757, type: 2}
   attacksUsed: []

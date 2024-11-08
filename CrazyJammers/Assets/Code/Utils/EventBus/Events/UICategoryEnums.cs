@@ -5,5 +5,7 @@ public enum UICategoryEnums
     MainMenuUI,
     GamePlayUI,
     TransitionUI,
-    OpeningTransitionUI
+    OpeningTransitionUI,
+    winUI,
+    LoseUI
 }

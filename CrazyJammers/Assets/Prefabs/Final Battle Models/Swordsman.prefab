@@ -1,5 +1,36 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &3850655556370728736
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1801348684768695707}
+  m_Layer: 0
+  m_Name: GameObject
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1801348684768695707
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3850655556370728736}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6556503596548604857}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &6735089494168740946
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -74,7 +105,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: 7250b46409a4a4840a5fdb6ba75b4d02, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1801348684768695707}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 7250b46409a4a4840a5fdb6ba75b4d02, type: 3}
       insertIndex: -1
@@ -109,12 +143,12 @@ MonoBehaviour:
   barrierCount: 0
   burning: 0
   bideBuff: 0
-  animator: {fileID: 891175079538325115, guid: b769f0f2b05d84343a953cc7e5f325e2, type: 3}
+  animator: {fileID: 8417333182594709080}
   possibleAttacks:
   - {fileID: 11400000, guid: 49865fb9082415343b15e475cc656757, type: 2}
   attacksUsed: []
   dead: 0
-  TargetingIndicator: {fileID: 4623956995792822039, guid: b769f0f2b05d84343a953cc7e5f325e2, type: 3}
+  TargetingIndicator: {fileID: 3850655556370728736}
 --- !u!95 &8417333182594709080
 Animator:
   serializedVersion: 7
@@ -160,3 +194,8 @@ CapsuleCollider:
   m_Height: 1
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!4 &6556503596548604857 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 7250b46409a4a4840a5fdb6ba75b4d02, type: 3}
+  m_PrefabInstance: {fileID: 6735089494168740946}
+  m_PrefabAsset: {fileID: 0}
