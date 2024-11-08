@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Steady Blade
   m_EditorClassIdentifier: 
   attackName: Steady Blade
-  baseDamage: 5
+  baseDamage: 50
   upgradeLevel: 0
   attributes:
   - Steady

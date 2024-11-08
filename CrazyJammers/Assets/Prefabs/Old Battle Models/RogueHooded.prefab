@@ -204,10 +204,14 @@ MonoBehaviour:
   characterName: Archer
   maxHealth: 5
   currentHealth: 0
+  barrierCount: 0
+  burning: 0
+  bideBuff: 0
   animator: {fileID: 6131042976110356707}
   possibleAttacks:
   - {fileID: 11400000, guid: 27cfda9b1a1637746985ceb311c3760c, type: 2}
   attacksUsed: []
+  dead: 0
   TargetingIndicator: {fileID: 1475830969411045798}
 --- !u!95 &6131042976110356707
 Animator:
