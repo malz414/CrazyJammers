@@ -205,10 +205,12 @@ MonoBehaviour:
   maxHealth: 300
   currentHealth: 0
   barrierCount: 0
+  burning: 0
   animator: {fileID: 1568177226905324059}
   possibleAttacks:
   - {fileID: 11400000, guid: 8d1fafe2eae2346468755b04daeaa076, type: 2}
   attacksUsed: []
+  dead: 0
   TargetingIndicator: {fileID: 6834894991224646977}
 --- !u!95 &1568177226905324059
 Animator:
