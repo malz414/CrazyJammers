@@ -75,5 +75,88 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 7250b46409a4a4840a5fdb6ba75b4d02, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: -4156849155055731133}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 7250b46409a4a4840a5fdb6ba75b4d02, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8417333182594709080}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 7250b46409a4a4840a5fdb6ba75b4d02, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7744446138378885743}
   m_SourcePrefab: {fileID: 100100000, guid: 7250b46409a4a4840a5fdb6ba75b4d02, type: 3}
+--- !u!1 &5888089156087290115 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 7250b46409a4a4840a5fdb6ba75b4d02, type: 3}
+  m_PrefabInstance: {fileID: 6735089494168740946}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &-4156849155055731133
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5888089156087290115}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c7c4542f08e041845913bee4d3129d4f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  characterName: Swordsman
+  maxHealth: 500
+  currentHealth: 0
+  barrierCount: 0
+  burning: 0
+  bideBuff: 0
+  animator: {fileID: 891175079538325115, guid: b769f0f2b05d84343a953cc7e5f325e2, type: 3}
+  possibleAttacks:
+  - {fileID: 11400000, guid: 49865fb9082415343b15e475cc656757, type: 2}
+  attacksUsed: []
+  dead: 0
+  TargetingIndicator: {fileID: 4623956995792822039, guid: b769f0f2b05d84343a953cc7e5f325e2, type: 3}
+--- !u!95 &8417333182594709080
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5888089156087290115}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: a6b00d0e052db4f41ba56f4294834691, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
+--- !u!136 &7744446138378885743
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5888089156087290115}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.5
+  m_Height: 1
+  m_Direction: 1
+  m_Center: {x: 0, y: 0, z: 0}
