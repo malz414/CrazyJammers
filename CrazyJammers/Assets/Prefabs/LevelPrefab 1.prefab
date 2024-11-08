@@ -13254,6 +13254,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: RogueHooded
       objectReference: {fileID: 0}
+    - target: {fileID: 2289685435781549048, guid: 4d60d244a63473f4a89ffcaedae97891, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -14524,6 +14528,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Mage
       objectReference: {fileID: 0}
+    - target: {fileID: 8752190016439242206, guid: 67348a45c8548214291b57659daa93c2, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -15329,6 +15337,10 @@ PrefabInstance:
     - target: {fileID: 5888089156087290115, guid: 80410d8b46e427a41adfb2738e980a86, type: 3}
       propertyPath: m_Name
       value: Swordsman
+      objectReference: {fileID: 0}
+    - target: {fileID: 5888089156087290115, guid: 80410d8b46e427a41adfb2738e980a86, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6556503596548604857, guid: 80410d8b46e427a41adfb2738e980a86, type: 3}
       propertyPath: m_LocalPosition.x
@@ -18652,6 +18664,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: cleric
       objectReference: {fileID: 0}
+    - target: {fileID: 41596015883259742, guid: 039e68ad97b513a4c9bac9326a871b7b, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 853458482173269476, guid: 039e68ad97b513a4c9bac9326a871b7b, type: 3}
       propertyPath: m_LocalPosition.x
       value: 9
@@ -20251,6 +20267,10 @@ PrefabInstance:
     - target: {fileID: 2250012733561660975, guid: e160e45c1eeb0424b993acf8e56f9bdc, type: 3}
       propertyPath: m_Name
       value: bosscharacter(1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 2250012733561660975, guid: e160e45c1eeb0424b993acf8e56f9bdc, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

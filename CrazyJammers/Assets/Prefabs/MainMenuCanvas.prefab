@@ -650,6 +650,8 @@ GameObject:
   - component: {fileID: 6370219492384323023}
   - component: {fileID: 9089529593333246984}
   - component: {fileID: 2192215838066566232}
+  - component: {fileID: 4821797628790136807}
+  - component: {fileID: 8796422535731578408}
   m_Layer: 5
   m_Name: MainMenuCanvas
   m_TagString: Untagged
@@ -702,7 +704,7 @@ Canvas:
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_TargetDisplay: 0
 --- !u!114 &6370219492384323023
 MonoBehaviour:
@@ -757,6 +759,38 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   CreditsObj: {fileID: 3106818309668337980}
+--- !u!114 &4821797628790136807
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5833526138698229305}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 35f72cdf86e2bee43bb57bd52f09156e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  prologueText: 
+  nextBattleText: 
+  enemyQuote: []
+  category: 0
+  fadeScreen: {fileID: 8796422535731578408}
+  prologueTextUI: {fileID: 0}
+  skipButton: {fileID: 0}
+  quoteBoxManager: {fileID: 0}
+--- !u!225 &8796422535731578408
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5833526138698229305}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &7816462247202808019
 GameObject:
   m_ObjectHideFlags: 0

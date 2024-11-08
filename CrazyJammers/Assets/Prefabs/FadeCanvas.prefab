@@ -30,6 +30,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 6194996262650025380}
   - {fileID: 7436829165973156991}
   m_Father: {fileID: 6395413921664834328}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -313,14 +314,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 35f72cdf86e2bee43bb57bd52f09156e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  prologueText: Once upon a time there was a powerfull monster that many heroes tried
-    to face.....
-  nextBattleText: '...again and again...
+  introText:
+  - 'Once upon a time, there was a creature who could imitate and repurpose the abilities
+    of every living being.
 
-    ...over and over...'
+
+
+    In fear of his immense power, people deemed him
+    as a monster and locked him away from society.
+
+
+
+    To this day, the mightiest
+    heroes are sent out to eradicate the abhorred creature.
+
+
+
+    The monster, full
+    of resentment, eagerly awaits battle.'
   enemyQuote:
-  - We will defeat you
-  - We will avenge our brothers
+  - We arise from the kingdom of Grimshire to defeat you!
+  - Begone, wretched beast!
+  - "We\u2019ll put bring an end to your tyranny!"
+  - "You may have bested others, but won\u2019t stand a chance against us!"
+  - We traveled across the lands and sea to defeat you once and for all!
   category: 2
   fadeScreen: {fileID: 1177831446253592090}
   prologueTextUI: {fileID: 7645943024846056938}
@@ -765,7 +782,6 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 6194996262650025380}
   - {fileID: 2151430046304625840}
   m_Father: {fileID: 384127171004745356}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -818,7 +834,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 6395413921664834328}
+  m_Father: {fileID: 2151430046304625840}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -875,8 +891,6 @@ GameObject:
   - component: {fileID: 2554171013639807235}
   - component: {fileID: 4278642167217295271}
   - component: {fileID: 8310892474366234236}
-  - component: {fileID: 4290602206895722103}
-  - component: {fileID: 7744592603212069999}
   m_Layer: 5
   m_Name: FadeCanvas
   m_TagString: Untagged
@@ -968,41 +982,6 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
---- !u!114 &4290602206895722103
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6129923606258279351}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 76c392e42b5098c458856cdf6ecaaaa1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_FirstSelected: {fileID: 4805336056993652226}
-  m_sendNavigationEvents: 1
-  m_DragThreshold: 10
---- !u!114 &7744592603212069999
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6129923606258279351}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4f231c4fb786f3946a6b90b886c48677, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_SendPointerHoverToParent: 1
-  m_HorizontalAxis: Horizontal
-  m_VerticalAxis: Vertical
-  m_SubmitButton: Submit
-  m_CancelButton: Cancel
-  m_InputActionsPerSecond: 10
-  m_RepeatDelay: 0.5
-  m_ForceModuleActive: 0
 --- !u!1 &6387495522609169509
 GameObject:
   m_ObjectHideFlags: 0
