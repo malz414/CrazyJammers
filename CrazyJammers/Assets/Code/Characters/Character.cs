@@ -31,7 +31,8 @@
         protected virtual void Start()
         {
             currentHealth = maxHealth;
-
+            
+            blurbEvent = new GameplayBlurbEvent();
             statusUpdateEvent = new CharacterStatusUpdateEvent();
         }
 
@@ -54,7 +55,6 @@
                 currentHealth -= (int)(damage *.70);
             }
             else if(barrierCount > 0)
-            if(barrierCount > 0)
             {
                 blurbEvent.Set("Barrier Broken");
                 EventBus.Publish(blurbEvent);
@@ -69,7 +69,7 @@
                 currentHealth -= (int)(damage *.90);
             }
             else
-            {
+            {   
                 currentHealth -= damage;
             }
 

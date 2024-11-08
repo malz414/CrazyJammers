@@ -14,6 +14,10 @@ public class TurnManager : MonoBehaviour
     [SerializeField] private GameObject magePrefab;
     [SerializeField] private GameObject swordsmanPrefab;
     [SerializeField] private GameObject archerPrefab;
+
+    [SerializeField] private GameObject SteadyAttack;
+    [SerializeField] private GameObject SteadyHit;
+
     public CombinedAttackSO combinedAttack;
 
     [SerializeField] private Transform[] enemySpawns;
@@ -45,7 +49,7 @@ public class TurnManager : MonoBehaviour
     private Hero hero;
     private List<Enemy> enemies;
 
-    public Button[] attackButtons; 
+    public Button[] attackButtons;
     public Button bideButton;
 
     public Button potionButton;
@@ -62,6 +66,8 @@ public class TurnManager : MonoBehaviour
     private GameplayBlurbEvent blurbEvent;
 
     private bool hasLunged = false;
+    private bool hasIced = false;
+
     private int extraAttacks = 0;
     private bool attackExtra = false;
 
@@ -71,7 +77,7 @@ public class TurnManager : MonoBehaviour
     public float critMultiplier = 1.2f;
 
     public float heroCritRate = .05f;
-    
+
     private bool bideBuff = false;
     private int bideAttribute = 0;
     private float randomChance = 0f;
@@ -94,6 +100,13 @@ public class TurnManager : MonoBehaviour
     public void StartBattle()
     {
         SetUpBattle();
+    }
+
+    private void ApplyEffect(GameObject effectPrefab, Transform target)
+    {
+        GameObject effect = Instantiate(effectPrefab, target.position, Quaternion.identity);
+        effect.transform.SetParent(target); 
+        Destroy(effect, 2f); 
     }
 
     private void SetUpBattle()
@@ -182,6 +195,12 @@ public class TurnManager : MonoBehaviour
                 enemy.currentHealth -= (int)(enemy.maxHealth*.1);
                 blurbEvent.Set($" {enemy.characterName} is burning for {enemy.burning} turns!");
                 EventBus.Publish(blurbEvent);
+                if (enemy.currentHealth <= 0)
+                {
+                    blurbEvent.Set($"{enemy.characterName} has been burned to death!");
+                    EventBus.Publish(blurbEvent);
+                    RemoveEnemy(enemy);
+                }
                 enemy.burning--;
             }
         }
@@ -235,11 +254,11 @@ public class TurnManager : MonoBehaviour
                 foreach (var enemyBarrier in enemies)
                 {
                     enemyBarrier.barrierCount += 1;
-                    blurbEvent.Set($"{enemyBarrier.characterName} gained a barrier.");
-                    EventBus.Publish(blurbEvent);   
-                    
+                    blurbEvent.Set($"The heroes gained a barrier.");
+                    EventBus.Publish(blurbEvent);
+
                 }
-                    
+
             continue;
             }
             if (enemyAttack.attributes.Contains("Field"))
@@ -253,9 +272,9 @@ public class TurnManager : MonoBehaviour
                     }
                     enemyHeal.RemoveBurns();
                     enemyHeal.RemoveParalysis();
-                    blurbEvent.Set($"{enemyHeal.characterName} was healed and status cured.");
-                    blurbEvent.Set($"{enemy.characterName} gained a barrier.");
-                    EventBus.Publish(blurbEvent);   
+                    blurbEvent.Set($"The heroes healed and status cured.");
+                    blurbEvent.Set($"The heroes gained a barrier.");
+                    EventBus.Publish(blurbEvent);
 
                 }
 
@@ -264,46 +283,46 @@ public class TurnManager : MonoBehaviour
 
             if (enemyAttack.attributes.Contains("Heal"))
             {
-                int randomIndex = Random.Range(0, enemies.Count); 
+                int randomIndex = Random.Range(0, enemies.Count);
                 var enemyHeal = enemies[randomIndex];
                 enemyHeal.currentHealth += enemyAttack.GetDamage();
                 if(enemyHeal.currentHealth >= enemyHeal.maxHealth)
                     {
                         enemyHeal.currentHealth = enemyHeal.maxHealth;
                     }
-                blurbEvent.Set($"{enemyHeal.characterName} was healed.");
                 enemy.currentHealth += enemyAttack.GetDamage();
                 blurbEvent.Set($"{enemy.characterName} was healed.");
-                EventBus.Publish(blurbEvent);   
+                EventBus.Publish(blurbEvent);
                 continue;
+                
             }
 
             if (enemyAttack.attributes.Contains("Ice"))
-            if(bideBuff)
             {
-                     
-                blurbEvent.Set($"{enemy.characterName} used {enemyAttack.attackName}");
-                EventBus.Publish(blurbEvent);
                 hero.TakeDamage(enemyAttack.GetDamage());
-                hero.TakeDamage((int)(enemyAttack.GetDamage()*.90));
-                bideBuff = false;
             }
-            else
+
+            if (enemyAttack.attributes.Contains("Steady"))
             {
+                ApplyEffect(SteadyAttack, enemy.transform);
+                ApplyEffect(SteadyHit, hero.transform);
                 hero.TakeDamage(enemyAttack.GetDamage());
+            }
 
             
-            }
 
 
+
+            hero.TakeDamage(enemyAttack.GetDamage());
             blurbEvent.Set($"{enemy.characterName} used {enemyAttack.attackName}!");
             EventBus.Publish(blurbEvent);
 
             Debug.Log($"Enemy {enemy.name} used {enemyAttack.attackName}, dealing {enemyAttack.GetDamage()} damage to the hero.");
+
             if (enemyAttack.attributes.Contains("Burn"))
             {
 
-                if (Random.value <= 0.3f) 
+                if (Random.value <= 0.3f)
                 {
                     hero.ApplyBurn(10, 3);
                     blurbEvent.Set($"Boss has been burned by {enemyAttack.attackName}!");
@@ -315,7 +334,7 @@ public class TurnManager : MonoBehaviour
             if (enemyAttack.attributes.Contains("Paralysis"))
             {
 
-                if (Random.value <= 1f) 
+                if (Random.value <= 1f)
                 {
                     hero.ApplyParalysis(5, false);
                     blurbEvent.Set($"Boss has been paralyzed by {enemyAttack.attackName}!");
@@ -386,14 +405,24 @@ public class TurnManager : MonoBehaviour
     {
         if (enemyAttacksByIndex[index] == null) return; // Ensure the selected index has an attack
 
+        var selectedAttack = enemyAttacksByIndex[index];
+
+        
+        if (selectedAttack1 == selectedAttack)
+        {
+            blurbEvent.Set($"Select a different move!");
+            EventBus.Publish(blurbEvent);
+            return; 
+        }
+
         if (selectedAttack1 == null)
         {
-            selectedAttack1 = enemyAttacksByIndex[index];
+            selectedAttack1 = selectedAttack;
             Debug.Log($"Selected first attack: {selectedAttack1.attackName}");
         }
         else if (selectedAttack2 == null)
         {
-            selectedAttack2 = enemyAttacksByIndex[index];
+            selectedAttack2 = selectedAttack;
             Debug.Log($"Selected second attack: {selectedAttack2.attackName}");
 
             // Combine selected attacks
@@ -497,9 +526,11 @@ public class TurnManager : MonoBehaviour
         if (combinedAttack.attributes.Contains("Steady"))
             {
                 heroCritRate = 0.4f;
+                ApplyEffect(SteadyAttack, hero.transform);
+                ApplyEffect(SteadyHit, targetEnemy.transform);
             }
+        
         if(Random.value <= heroCritRate)
-        if(Random.value <= 0.03f)
         {
             damage = (int)(damage * critMultiplier);
             damage = (int)(damage * 1.2);
@@ -517,11 +548,11 @@ public class TurnManager : MonoBehaviour
         blurbEvent.Set($"Boss attacked {targetEnemy.characterName}");
         EventBus.Publish(blurbEvent);
         Debug.Log($"Boss attacked {targetEnemy.characterName}, dealing {damage} damage.");
-        
+
 
         if (combinedAttack.attributes.Contains("Burn"))
             {   randomChance = (bideAttribute > 0) ? 0.4f : 0.2f;
-                if (Random.value <= randomChance) 
+                if (Random.value <= randomChance)
                 {
                     targetEnemy.ApplyBurn(1000, 3);
                     blurbEvent.Set($"{targetEnemy.characterName} was burned!");
@@ -532,7 +563,7 @@ public class TurnManager : MonoBehaviour
         if (combinedAttack.attributes.Contains("Paralysis"))
             {
 
-                if (Random.value <= 1f) 
+                if (Random.value <= 1f)
                 {
                     targetEnemy.ApplyParalysis(5, true);
                     blurbEvent.Set($"{targetEnemy.characterName} was paralysed!");
@@ -552,10 +583,10 @@ public class TurnManager : MonoBehaviour
             {
                     hero.barrierCount += 1;
                     blurbEvent.Set("Barrier raised");
-                    EventBus.Publish(blurbEvent);   
+                    EventBus.Publish(blurbEvent);
 
             }
-        
+
 
 
 
@@ -567,49 +598,55 @@ public class TurnManager : MonoBehaviour
         }
 
         yield return new WaitForSeconds(1f);
-        if (combinedAttack.attributes.Contains("Lunge"))
+        // if (combinedAttack.attributes.Contains("Lunge"))
+        // {
+        //     if(attackExtra == false)
+        //     {
+        //         extraAttacks = 1;
+        //     }
+        //     else if(attackExtra == true && extraAttacks == 0)
+        //     {
+        //         attackExtra = false;
+        //         StartTurn();
+        //     }
+        // }
+        if (combinedAttack.attributes.Contains("Ice") && !hasIced)
         {
-            if(attackExtra == false)
-            {
-                extraAttacks = 1;   
-            }
-            else if(attackExtra == true && extraAttacks == 0)
-            {
-                attackExtra = false;
-                StartTurn();
-            }
+            hasIced = true;
+            blurbEvent.Set($"You prepare to strike again");
+            EventBus.Publish(blurbEvent);
+            targetingMode = true;
+            yield break;
         }
-        if (combinedAttack.attributes.Contains("Ice"))
-        {      
-            if(attackExtra == false)
-            {     
-                extraAttacks = 3;  
-            }
-            else if(attackExtra == true && extraAttacks == 0)
-            {
-                attackExtra = false;
-                StartTurn();
-            } 
-        }
-        
-        if(extraAttacks > 0)
+
         if (combinedAttack.attributes.Contains("Lunge") && !hasLunged)
         {
-            attackExtra = true;
-            extraAttacks--;
             hasLunged = true;
             blurbEvent.Set($"You prepare to strike again");
             EventBus.Publish(blurbEvent);
             targetingMode = true;
             yield break;
         }
-        else if(extraAttacks == 0)
-        {
-            extraAttacks--;
-            StartTurn();
-        }
+
+        
+        // if (combinedAttack.attributes.Contains("Lunge") && !hasLunged)
+        // {
+        //     attackExtra = true;
+        //     extraAttacks--;
+        //     hasLunged = true;
+        //     blurbEvent.Set($"You prepare to strike again");
+        //     EventBus.Publish(blurbEvent);
+        //     targetingMode = true;
+        //     yield break;
+        // }
+        // else if(extraAttacks == 0)
+        // {
+        //     extraAttacks--;
+        //     StartTurn();
+        // }
 
         heroCritRate = 0.05f;
+        hasIced = false;
         hasLunged = false;
         StartTurn();
     }

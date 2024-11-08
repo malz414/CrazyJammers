@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Fireball
   m_EditorClassIdentifier: 
   attackName: Fireball
-  baseDamage: 10
+  baseDamage: 20
   upgradeLevel: 0
   attributes:
   - Burn

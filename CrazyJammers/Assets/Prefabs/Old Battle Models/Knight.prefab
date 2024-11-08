@@ -202,12 +202,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   characterName: Knight
-  maxHealth: 500
+  maxHealth: 5
   currentHealth: 0
+  barrierCount: 0
+  burning: 0
+  bideBuff: 0
   animator: {fileID: 891175079538325115}
   possibleAttacks:
-  - {fileID: 11400000, guid: 49865fb9082415343b15e475cc656757, type: 2}
+  - {fileID: 11400000, guid: 08102d5fa4fdad24cbec5cd4b2aff646, type: 2}
   attacksUsed: []
+  dead: 0
   TargetingIndicator: {fileID: 4623956995792822039}
 --- !u!95 &891175079538325115
 Animator:
