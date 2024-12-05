@@ -138,17 +138,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   characterName: Swordsman
-  maxHealth: 500
+  maxHealth: 400
   currentHealth: 0
   barrierCount: 0
   burning: 0
   bideBuff: 0
   animator: {fileID: 8417333182594709080}
   possibleAttacks:
-  - {fileID: 11400000, guid: 49865fb9082415343b15e475cc656757, type: 2}
+  - {fileID: 11400000, guid: aec4e051ab40fff41ba32fcdccf8f765, type: 2}
   attacksUsed: []
   dead: 0
-  TargetingIndicator: {fileID: 3850655556370728736}
+  TargetingIndicator: {fileID: 919132149155446097, guid: 0b2f1b0cbce978a48bc80a0e16d4bcd8, type: 3}
 --- !u!95 &8417333182594709080
 Animator:
   serializedVersion: 7

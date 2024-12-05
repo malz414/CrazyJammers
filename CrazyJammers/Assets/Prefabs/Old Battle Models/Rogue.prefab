@@ -197,7 +197,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   characterName: Rogue
-  maxHealth: 0
+  maxHealth: 2
   currentHealth: 0
   barrierCount: 0
   burning: 0
