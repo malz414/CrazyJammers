@@ -125,7 +125,7 @@ public class TurnManager : MonoBehaviour
     private int bideAttribute = 0;
     private float randomChance = 0f;
 
-    private int Potion = 2;
+    private int Potion = 1;
     private int Panacea = 1;
 
     public TextMeshProUGUI PotAmount; 
@@ -581,7 +581,7 @@ public class TurnManager : MonoBehaviour
         if(Potion > 0)
         {
 
-            hero.currentHealth += 100;
+            hero.currentHealth += 1000;
             if(hero.currentHealth>hero.maxHealth)
             {
                 hero.currentHealth = hero.maxHealth;
