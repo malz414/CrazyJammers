@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: b68b99c2e57cef4419465c63c527201b
+ShaderImporter:
+  externalObjects: {}
+  defaultTextures: []
+  nonModifiableTextures: []
+  preprocessorOverride: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 133704
+  packageName: RPG VFX Bundle
+  packageVersion: 5.1.0
+  assetPath: Assets/Hovl Studio/HSFiles/Shaders/Blend_CenterGlow.shader
+  uploadId: 703043
