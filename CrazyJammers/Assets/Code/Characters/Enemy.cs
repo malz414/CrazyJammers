@@ -5,7 +5,7 @@ public class Enemy : Character
 {
     public List<AttackSO> possibleAttacks = new List<AttackSO>();
     public List<AttackSO> attacksUsed = new List<AttackSO>();
-    public bool dead;
+    public bool dead;   
     //public CharacterSO characterData;
 
     [SerializeField] public GameObject TargetingIndicator;

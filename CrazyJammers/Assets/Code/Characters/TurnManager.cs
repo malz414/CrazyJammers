@@ -130,6 +130,7 @@ public class TurnManager : MonoBehaviour
 
     public TextMeshProUGUI PotAmount; 
     public TextMeshProUGUI PanAmount; 
+    public TextMeshProUGUI Popop; 
     
 
 
@@ -191,6 +192,7 @@ public class TurnManager : MonoBehaviour
         enemyHUDs[1].Init(enemies[1]);
         enemyHUDs[2].Init(enemies[2]);
         enemyHUDs[3].Init(enemies[3]);
+        
 
 
 
@@ -248,6 +250,11 @@ public class TurnManager : MonoBehaviour
             //blurbEvent.Set($" You're Burning for {hero.burning} turns!");
             //EventBus.Publish(blurbEvent);
             hero.burning--;
+            if(hero.currentHealth <= 0) 
+            {
+                EndGame(false);
+                return;
+            }
 
         }
 
@@ -257,6 +264,7 @@ public class TurnManager : MonoBehaviour
             {
                 enemy.currentHealth -= (int)(enemy.maxHealth*.1);
                 ApplyEffectWithDelay(burn, enemy.transform, 0f, 3.0f);
+                enemy.burning--;
                 //blurbEvent.Set($" {enemy.characterName} is burning for {enemy.burning} turns!");
                 //EventBus.Publish(blurbEvent);
                 if (enemy.currentHealth <= 0)
@@ -265,7 +273,7 @@ public class TurnManager : MonoBehaviour
                     //EventBus.Publish(blurbEvent);
                     RemoveEnemy(enemy);
                 }
-                enemy.burning--;
+                
             }
         }
         bideAttribute--;
@@ -279,13 +287,13 @@ public class TurnManager : MonoBehaviour
             enemy.UpdateEffects();
         }
 
-        if (hero.currentHealth <= 0 || enemies.Count == 0)
+    
+        enemyAttacksUsed.Clear();
+        if(hero.currentHealth <= 0) 
         {
+            EndGame(false);
             return;
         }
-
-        enemyAttacksUsed.Clear();
-
         StartCoroutine(DoTurnRoutine());
     }
 
@@ -310,9 +318,13 @@ public class TurnManager : MonoBehaviour
             {
 
 
-
+                
             AttackSO enemyAttack = enemy.PerformRandomAttack();
             enemyAttacksByIndex[i] = enemyAttack;
+
+            Debug.Log($"Enemy {enemy.name} used {enemyAttack.attackName}, assigning to slot {i}, dealing {enemyAttack.GetDamage()} damage.");
+
+
             if (enemyAttack.attributes.Contains("Barrier"))
             {
                 foreach (var enemyBarrier in enemies)
@@ -761,28 +773,31 @@ public class TurnManager : MonoBehaviour
             }
         if (combinedAttack.attributes.Contains("Ice") && !hasIced)
         {
-            hasIced = true;
+            //hasIced = true;
+            targetEnemy.TakeDamage(damage);
+            
             ApplyEffectWithDelay(iceAttack, hero.transform, 0f, 3.0f);
             ApplyEffectWithDelay(iceHit, targetEnemy.transform, .5f, 3.0f);
-            targetingHUDParent.SetActive(true);
-            targetingMode = true;
+            // targetingHUDParent.SetActive(true);
+            // targetingMode = true;
             // blurbEvent.Set($"You prepare to strike again");
             // EventBus.Publish(blurbEvent);
             
-            yield break;
+            
         }
 
         if (combinedAttack.attributes.Contains("Lunge") && !hasLunged)
         {
-            hasLunged = true;
+            //hasLunged = true;
+            targetEnemy.TakeDamage(damage);
             ApplyEffectWithDelay(lungeAttack, hero.transform, 0f, 3.0f);
             ApplyEffectWithDelay(lungeHit, targetEnemy.transform, .5f, 3.0f);
-            targetingHUDParent.SetActive(true);
-            targetingMode = true;
+            // targetingHUDParent.SetActive(true);
+            // targetingMode = true;
             // blurbEvent.Set($"You prepare to strike again");
             // EventBus.Publish(blurbEvent);
             
-            yield break;
+            
         }
 
         

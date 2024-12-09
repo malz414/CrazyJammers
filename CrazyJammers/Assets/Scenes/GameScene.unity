@@ -2211,6 +2211,10 @@ PrefabInstance:
       propertyPath: m_TextWrappingMode
       value: 3
       objectReference: {fileID: 0}
+    - target: {fileID: 8093069114878249170, guid: 5bc48eb34602b7d4b9e3d44d54050c50, type: 3}
+      propertyPath: m_text
+      value: Select a target
+      objectReference: {fileID: 0}
     - target: {fileID: 8259190321390510502, guid: 5bc48eb34602b7d4b9e3d44d54050c50, type: 3}
       propertyPath: m_IsActive
       value: 1
@@ -3602,19 +3606,19 @@ PrefabInstance:
     - target: {fileID: 8485419520516605267, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
       propertyPath: 'enemyHUDs.Array.data[0]'
       value: 
-      objectReference: {fileID: 1797794563}
+      objectReference: {fileID: 1797794566}
     - target: {fileID: 8485419520516605267, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
       propertyPath: 'enemyHUDs.Array.data[1]'
       value: 
-      objectReference: {fileID: 1797794564}
+      objectReference: {fileID: 1797794565}
     - target: {fileID: 8485419520516605267, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
       propertyPath: 'enemyHUDs.Array.data[2]'
       value: 
-      objectReference: {fileID: 1797794565}
+      objectReference: {fileID: 1797794564}
     - target: {fileID: 8485419520516605267, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
       propertyPath: 'enemyHUDs.Array.data[3]'
       value: 
-      objectReference: {fileID: 1797794566}
+      objectReference: {fileID: 1797794563}
     - target: {fileID: 8485419520516605267, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
       propertyPath: attackButtons.Array.size
       value: 9
