@@ -5,6 +5,7 @@ using System.Collections.Generic;
 public class AttackSO : ScriptableObject
 {
     public string attackName;
+    public string attackDesctiption;
     public int baseDamage;
     public int upgradeLevel;
     public List<string> attributes;
