@@ -4,6 +4,7 @@ using TMPro;
 using System.Collections.Generic;
 using System.Collections;
 using Code.Utility.Events;
+using UnityEngine.EventSystems;
 using DamageNumbersPro;
 
 public class TurnManager : MonoBehaviour
@@ -31,7 +32,6 @@ public class TurnManager : MonoBehaviour
     [SerializeField] private GameObject iceAttack;
     [SerializeField] private GameObject iceHit;
 
-
     [SerializeField] private GameObject fireAttack;
     [SerializeField] private GameObject fireHit;
 
@@ -55,9 +55,6 @@ public class TurnManager : MonoBehaviour
     [SerializeField] private GameObject potionAni;
 
     [SerializeField] private GameObject panaceaAni;
-    
-
-
 
     public CombinedAttackSO combinedAttack;
 
@@ -128,8 +125,9 @@ public class TurnManager : MonoBehaviour
     private int Potion = 1;
     private int Panacea = 1;
 
-    public TextMeshProUGUI PotAmount; 
-    public TextMeshProUGUI PanAmount; 
+    [SerializeField] private TextMeshProUGUI PotAmount; 
+    [SerializeField] private TextMeshProUGUI PanAmount; 
+    [SerializeField] private TextMeshProUGUI descriptionText;
     public TextMeshProUGUI Popop; 
 
     private CharacterStatusUpdateEvent statusUpdateEvent;
@@ -500,6 +498,7 @@ public class TurnManager : MonoBehaviour
                     int index = i;
                     attackButtons[i].onClick.RemoveAllListeners();
                     attackButtons[i].onClick.AddListener(() => OnAttackButtonClicked(index));
+                    AddHoverEvents(attackButtons[i], enemyAttacksByIndex[i].attackDesctiption);
                     attackButtons[i].gameObject.SetActive(true);
                 }               
             }
@@ -520,7 +519,43 @@ public class TurnManager : MonoBehaviour
                 bideButton.onClick.AddListener(OnBideButtonClicked);
                 bideButton.GetComponentInChildren<TextMeshProUGUI>().text = "Bide";*/
 
+private void AddHoverEvents(Button button, string description)
+{
+    EventTrigger trigger = button.gameObject.GetComponent<EventTrigger>();
+    if (trigger == null)
+    {
+        trigger = button.gameObject.AddComponent<EventTrigger>();
+    }
+    trigger.triggers.Clear();
 
+    EventTrigger.Entry pointerEnterEntry = new EventTrigger.Entry
+    {
+        eventID = EventTriggerType.PointerEnter
+    };
+    pointerEnterEntry.callback.AddListener((_) => ShowDescription(description));
+    trigger.triggers.Add(pointerEnterEntry);
+
+    
+    EventTrigger.Entry pointerExitEntry = new EventTrigger.Entry
+    {
+        eventID = EventTriggerType.PointerExit
+    };
+    pointerExitEntry.callback.AddListener((_) => HideDescription());
+    trigger.triggers.Add(pointerExitEntry);
+}
+
+private void ShowDescription(string description)
+{
+    
+    descriptionText.text = description;
+    
+}
+
+private void HideDescription()
+{
+    descriptionText.text = "Select a move";
+
+}
 
     private void OnAttackButtonClicked(int index)
     {
@@ -800,14 +835,18 @@ public class TurnManager : MonoBehaviour
 
         if (combinedAttack.attributes.Contains("Lunge") && !hasLunged)
         {
-            //hasLunged = true;
+              blurbEvent.Set($"You strike twice");
+            EventBus.Publish(blurbEvent);
+            
+            hasLunged = true;
+            targetingHUDParent.SetActive(true);
+            targetingMode = true;
+            yield return new WaitUntil(() => !targetingMode);
             targetEnemy.TakeDamage(damage);
             ApplyEffectWithDelay(lungeAttack, hero.transform, 0f, 3.0f);
             ApplyEffectWithDelay(lungeHit, targetEnemy.transform, .5f, 3.0f);
-            // targetingHUDParent.SetActive(true);
-            // targetingMode = true;
-             blurbEvent.Set($"You strike again");
-             EventBus.Publish(blurbEvent);
+            
+          
             
             
         }
@@ -831,6 +870,7 @@ public class TurnManager : MonoBehaviour
 
         heroCritRate = 0.05f;
         hasIced = false;
+        
         hasLunged = false;
         StartTurn();
     }

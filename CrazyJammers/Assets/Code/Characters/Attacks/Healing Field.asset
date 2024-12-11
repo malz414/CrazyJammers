@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Healing Field
   m_EditorClassIdentifier: 
   attackName: Healing Field
+  attackDesctiption: A spell that your HP and may cure Ailments.
   baseDamage: 10
   upgradeLevel: 0
   attributes:
