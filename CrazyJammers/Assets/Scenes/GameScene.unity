@@ -3586,7 +3586,7 @@ PrefabInstance:
     - target: {fileID: 8485419520516605267, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
       propertyPath: swordsmanPrefab
       value: 
-      objectReference: {fileID: 5888089156087290115, guid: 80410d8b46e427a41adfb2738e980a86, type: 3}
+      objectReference: {fileID: 2246635138541587790, guid: 031848746f35d5741b1253c7236d15a3, type: 3}
     - target: {fileID: 8485419520516605267, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
       propertyPath: attackOptionsMenu
       value: 
@@ -3673,7 +3673,7 @@ PrefabInstance:
       objectReference: {fileID: 1797794553}
     - target: {fileID: 8485419520516605267, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
       propertyPath: listOfObjectToDeactivateAtStartOfBattle.Array.size
-      value: 4
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 8485419520516605267, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
       propertyPath: 'listOfObjectToDeactivateAtStartOfBattle.Array.data[0]'
@@ -3694,7 +3694,7 @@ PrefabInstance:
     - target: {fileID: 8485419520516605267, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
       propertyPath: 'listOfObjectToDeactivateAtStartOfBattle.Array.data[4]'
       value: 
-      objectReference: {fileID: 1510252550}
+      objectReference: {fileID: 919132149155446097, guid: 4d02b133d12e7c943838bec9edd05a22, type: 3}
     - target: {fileID: 8485419520516605267, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
       propertyPath: 'listOfObjectToDeactivateAtStartOfBattle.Array.data[5]'
       value: 
