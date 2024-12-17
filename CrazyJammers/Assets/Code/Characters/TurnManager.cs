@@ -4,6 +4,7 @@ using TMPro;
 using System.Collections.Generic;
 using System.Collections;
 using Code.Utility.Events;
+using UnityEngine.EventSystems;
 using DamageNumbersPro;
 
 public class TurnManager : MonoBehaviour
@@ -31,7 +32,6 @@ public class TurnManager : MonoBehaviour
     [SerializeField] private GameObject iceAttack;
     [SerializeField] private GameObject iceHit;
 
-
     [SerializeField] private GameObject fireAttack;
     [SerializeField] private GameObject fireHit;
 
@@ -55,9 +55,6 @@ public class TurnManager : MonoBehaviour
     [SerializeField] private GameObject potionAni;
 
     [SerializeField] private GameObject panaceaAni;
-    
-
-
 
     public CombinedAttackSO combinedAttack;
 
@@ -88,6 +85,9 @@ public class TurnManager : MonoBehaviour
 
     private List<AttackSO> enemyAttacksByIndex = new List<AttackSO> { null, null, null, null };
 
+    private List<Enemy> selectedEnemies = new List<Enemy>();
+    private bool selectingEnemies = false;
+
     private Hero hero;
     private List<Enemy> enemies;
 
@@ -106,7 +106,7 @@ public class TurnManager : MonoBehaviour
 
     private List<AttackSO> enemyAttacksUsed;
 
-    //private GameplayBlurbEvent blurbEvent;
+    private GameplayBlurbEvent blurbEvent;
 
     private bool hasLunged = false;
     private bool hasIced = false;
@@ -127,9 +127,15 @@ public class TurnManager : MonoBehaviour
 
     private int Potion = 1;
     private int Panacea = 1;
+    private int enemiesDead = 0;
 
-    public TextMeshProUGUI PotAmount; 
-    public TextMeshProUGUI PanAmount; 
+
+    [SerializeField] private TextMeshProUGUI PotAmount; 
+    [SerializeField] private TextMeshProUGUI PanAmount; 
+    [SerializeField] private TextMeshProUGUI descriptionText;
+    public TextMeshProUGUI Popop; 
+
+    private CharacterStatusUpdateEvent statusUpdateEvent;
     
 
 
@@ -145,6 +151,10 @@ public class TurnManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
+    }
+    private void Start()
+    {
+        statusUpdateEvent = new CharacterStatusUpdateEvent();
     }
 
     public void StartBattle()
@@ -191,6 +201,7 @@ public class TurnManager : MonoBehaviour
         enemyHUDs[1].Init(enemies[1]);
         enemyHUDs[2].Init(enemies[2]);
         enemyHUDs[3].Init(enemies[3]);
+        
 
 
 
@@ -213,7 +224,7 @@ public class TurnManager : MonoBehaviour
 
         enemyAttacksUsed = new List<AttackSO>();
 
-        //blurbEvent = new GameplayBlurbEvent();
+        blurbEvent = new GameplayBlurbEvent();
 
         StartCoroutine(DoBattleStartRoutine());
 
@@ -245,9 +256,15 @@ public class TurnManager : MonoBehaviour
         {
             hero.currentHealth -= (int)(hero.maxHealth*.1);
             ApplyEffectWithDelay(burn, hero.transform, 0f, 3.0f);
-            //blurbEvent.Set($" You're Burning for {hero.burning} turns!");
-            //EventBus.Publish(blurbEvent);
+            blurbEvent.Set($" You're Burning for {hero.burning} turns!");
+            EventBus.Publish(blurbEvent);
             hero.burning--;
+            EventBus.Publish(statusUpdateEvent);
+            if(hero.currentHealth <= 0) 
+            {
+                EndGame(false);
+                return;
+            }
 
         }
 
@@ -257,15 +274,20 @@ public class TurnManager : MonoBehaviour
             {
                 enemy.currentHealth -= (int)(enemy.maxHealth*.1);
                 ApplyEffectWithDelay(burn, enemy.transform, 0f, 3.0f);
-                //blurbEvent.Set($" {enemy.characterName} is burning for {enemy.burning} turns!");
-                //EventBus.Publish(blurbEvent);
                 if (enemy.currentHealth <= 0)
                 {
-                    //blurbEvent.Set($"{enemy.characterName} has been burned to death!");
-                    //EventBus.Publish(blurbEvent);
+                    blurbEvent.Set($"{enemy.characterName} has been burned to death!");
+                    EventBus.Publish(blurbEvent);
                     RemoveEnemy(enemy);
                 }
-                enemy.burning--;
+                else
+                {
+                    enemy.burning--;
+                    blurbEvent.Set($" {enemy.characterName} is burning for {enemy.burning} turns!");
+                    EventBus.Publish(blurbEvent);
+
+                }
+                
             }
         }
         bideAttribute--;
@@ -279,19 +301,21 @@ public class TurnManager : MonoBehaviour
             enemy.UpdateEffects();
         }
 
-        if (hero.currentHealth <= 0 || enemies.Count == 0)
+    
+        enemyAttacksUsed.Clear();
+        if(hero.currentHealth <= 0) 
         {
+            EndGame(false);
             return;
         }
-
-        enemyAttacksUsed.Clear();
-
         StartCoroutine(DoTurnRoutine());
     }
 
     private IEnumerator DoTurnRoutine()
     {
         yield return new WaitForSeconds(.5f);
+        
+        
 
         // Enemies attack hero
         for (int i = 0; i < enemies.Count; i++)
@@ -299,10 +323,14 @@ public class TurnManager : MonoBehaviour
             Enemy enemy = enemies[i];
             if (!enemy.CanAct())
             {
-                //blurbEvent.Set($"{enemy.characterName} is paralyzed and cannot act this turn!");
-                //EventBus.Publish(blurbEvent);
+                blurbEvent.Set($"{enemy.characterName} is paralyzed and cannot act this turn!");
+                EventBus.Publish(blurbEvent);
                 ApplyEffectWithDelay(para, enemy.transform, 0f, 3.0f);
-                Debug.Log("ENEMY is paralyzed and cannot act this turn!");
+           
+                continue;
+            }
+            else if (enemy.dead)
+            {
                 continue;
             }
 
@@ -310,9 +338,13 @@ public class TurnManager : MonoBehaviour
             {
 
 
-
+                
             AttackSO enemyAttack = enemy.PerformRandomAttack();
             enemyAttacksByIndex[i] = enemyAttack;
+
+            Debug.Log($"Enemy {enemy.name} used {enemyAttack.attackName}, assigning to slot {i}, dealing {enemyAttack.GetDamage()} damage.");
+
+
             if (enemyAttack.attributes.Contains("Barrier"))
             {
                 foreach (var enemyBarrier in enemies)
@@ -321,8 +353,8 @@ public class TurnManager : MonoBehaviour
                     ApplyEffectWithDelay(barrier1, enemyBarrier.transform, 0f, 2.0f);
                     ApplyEffectWithDelay(barrier2, enemyBarrier.transform, 0f, 2.0f);
                     ApplyEffectWithDelay(barrier3, hero.transform, 0f, 2.0f);
-                    //blurbEvent.Set($"The heroes gained a barrier.");
-                    //EventBus.Publish(blurbEvent);
+                    blurbEvent.Set($"The heroes gained a barrier.");
+                    EventBus.Publish(blurbEvent);
 
                 }
 
@@ -341,9 +373,9 @@ public class TurnManager : MonoBehaviour
                     enemyHeal.RemoveParalysis();
                     ApplyEffectWithDelay(heal, enemyHeal.transform, 0f, 2.0f);
                     ApplyEffectWithDelay(panaceaAni, enemyHeal.transform, 0f, 2.0f);
-                    //blurbEvent.Set($"The heroes healed and status cured.");
-                    //blurbEvent.Set($"The heroes gained a barrier.");
-                    //EventBus.Publish(blurbEvent);
+                    blurbEvent.Set($"The heroes healed and status cured.");
+                    blurbEvent.Set($"The heroes gained a barrier.");
+                    EventBus.Publish(blurbEvent);
 
                 }
 
@@ -360,8 +392,8 @@ public class TurnManager : MonoBehaviour
                         enemyHeal.currentHealth = enemyHeal.maxHealth;
                     }
                 ApplyEffectWithDelay(heal, enemyHeal.transform, 0f, 2.0f);
-                // blurbEvent.Set($"{enemy.characterName} was healed.");
-                // EventBus.Publish(blurbEvent);
+                 blurbEvent.Set($"{enemy.characterName} was healed.");
+                 EventBus.Publish(blurbEvent);
                 continue;
                 
             }
@@ -402,19 +434,19 @@ public class TurnManager : MonoBehaviour
 
 
             hero.TakeDamage(enemyAttack.GetDamage());
-            // blurbEvent.Set($"{enemy.characterName} used {enemyAttack.attackName}!");
-            // EventBus.Publish(blurbEvent);
+            blurbEvent.Set($"{enemy.characterName} used {enemyAttack.attackName}!");
+            EventBus.Publish(blurbEvent);
 
             Debug.Log($"Enemy {enemy.name} used {enemyAttack.attackName}, dealing {enemyAttack.GetDamage()} damage to the hero.");
 
             if (enemyAttack.attributes.Contains("Burn"))
             {
 
-                if (Random.value <= 0.3f)
+                if (Random.value <= 0.3f && hero.GetParalysisTurnsRemaining() < 1 && hero.burning < 1)
                 {
                     hero.ApplyBurn(10, 3);
-                    // blurbEvent.Set($"Boss has been burned by {enemyAttack.attackName}!");
-                    // EventBus.Publish(blurbEvent);
+                    blurbEvent.Set($"Boss has been burned by {enemyAttack.attackName}!");
+                    EventBus.Publish(blurbEvent);
                     Debug.Log($"Hero has been burned by {enemyAttack.attackName}!");
                 }
                 ApplyEffectWithDelay(fireAttack, enemy.transform, 0f, 3.0f);
@@ -424,11 +456,11 @@ public class TurnManager : MonoBehaviour
             if (enemyAttack.attributes.Contains("Paralysis"))
             {
 
-                if (Random.value <= 1f)
+                if (Random.value <= 1f && hero.GetParalysisTurnsRemaining() < 1 && hero.burning < 1)
                 {
                     hero.ApplyParalysis(5, false);
-                    // blurbEvent.Set($"Boss has been paralyzed by {enemyAttack.attackName}!");
-                    // EventBus.Publish(blurbEvent);
+                    blurbEvent.Set($"Boss has been paralyzed by {enemyAttack.attackName}!");
+                     EventBus.Publish(blurbEvent);
                     Debug.Log($"Hero has been paralyzed by {enemyAttack.attackName}!");
                 }
                 ApplyEffectWithDelay(arrowAttack, enemy.transform, 0f, 3.0f);
@@ -451,8 +483,8 @@ public class TurnManager : MonoBehaviour
 
         if (!hero.CanAct())
         {
-            // blurbEvent.Set($"Boss is paralyzed and cannot act this turn!");
-            // EventBus.Publish(blurbEvent);
+             blurbEvent.Set($"Boss is paralyzed and cannot act this turn!");
+             EventBus.Publish(blurbEvent);
             ApplyEffectWithDelay(para, hero.transform, 0f, 3.0f);
             Debug.Log("Hero is paralyzed and cannot act this turn!");
             StartTurn(); // Skip the hero's turn
@@ -477,6 +509,7 @@ public class TurnManager : MonoBehaviour
                     int index = i;
                     attackButtons[i].onClick.RemoveAllListeners();
                     attackButtons[i].onClick.AddListener(() => OnAttackButtonClicked(index));
+                    AddHoverEvents(attackButtons[i], enemyAttacksByIndex[i].attackDesctiption);
                     attackButtons[i].gameObject.SetActive(true);
                 }               
             }
@@ -497,7 +530,43 @@ public class TurnManager : MonoBehaviour
                 bideButton.onClick.AddListener(OnBideButtonClicked);
                 bideButton.GetComponentInChildren<TextMeshProUGUI>().text = "Bide";*/
 
+private void AddHoverEvents(Button button, string description)
+{
+    EventTrigger trigger = button.gameObject.GetComponent<EventTrigger>();
+    if (trigger == null)
+    {
+        trigger = button.gameObject.AddComponent<EventTrigger>();
+    }
+    trigger.triggers.Clear();
 
+    EventTrigger.Entry pointerEnterEntry = new EventTrigger.Entry
+    {
+        eventID = EventTriggerType.PointerEnter
+    };
+    pointerEnterEntry.callback.AddListener((_) => ShowDescription(description));
+    trigger.triggers.Add(pointerEnterEntry);
+
+    
+    EventTrigger.Entry pointerExitEntry = new EventTrigger.Entry
+    {
+        eventID = EventTriggerType.PointerExit
+    };
+    pointerExitEntry.callback.AddListener((_) => HideDescription());
+    trigger.triggers.Add(pointerExitEntry);
+}
+
+private void ShowDescription(string description)
+{
+    
+    descriptionText.text = description;
+    
+}
+
+private void HideDescription()
+{
+    descriptionText.text = "Select a move";
+
+}
 
     private void OnAttackButtonClicked(int index)
     {
@@ -508,8 +577,8 @@ public class TurnManager : MonoBehaviour
         
         if (selectedAttack1 == selectedAttack)
         {
-            // blurbEvent.Set($"Select a different move!");
-            // EventBus.Publish(blurbEvent);
+             blurbEvent.Set($"Select a different move!");
+             EventBus.Publish(blurbEvent);
             return; 
         }
 
@@ -548,17 +617,67 @@ public class TurnManager : MonoBehaviour
 
 
     public void SelectEnemyTotAttack(Enemy enemy)
-    {
-        targetingMode = false;
-        targetingHUDParent.SetActive(false);
+{
+    // Check for "Lunge" attribute to determine multi-target behavior
+    if (!combinedAttack.attributes.Contains("Lunge")) 
+    {   Debug.Log("ATTACKING NO lunge");
+        blurbEvent.Set("Attacking");
+        EventBus.Publish(blurbEvent);
 
+        // Stop any existing attack coroutine
         if (bossAttackCoroutine != null)
         {
             StopCoroutine(bossAttackCoroutine);
         }
 
+        // Single-target attack
+        targetingMode = false;
+        targetingHUDParent.SetActive(false);
+        Debug.Log($"Single-target attack on {enemy.characterName}");
         bossAttackCoroutine = StartCoroutine(DoBossAttackRoutine(enemy));
     }
+    else
+    {
+        Debug.Log("ATTACKING WITH lunge");
+        // Multi-target attack
+        if (!selectingEnemies)
+        {
+            // Start multi-selection mode
+            selectedEnemies.Clear();
+            selectingEnemies = true;
+            blurbEvent.Set("Select two different enemies to attack!");
+            EventBus.Publish(blurbEvent);
+        }
+
+        // Prevent selecting the same enemy twice
+        if (selectedEnemies.Contains(enemy))
+        {
+            blurbEvent.Set("Enemy already selected! Choose a different enemy.");
+            EventBus.Publish(blurbEvent);
+            Debug.Log($"Enemy {enemy.characterName} already selected!");
+            return;
+        }
+
+        // Add the selected enemy
+        selectedEnemies.Add(enemy);
+        blurbEvent.Set($"Selected: {enemy.characterName}");
+        EventBus.Publish(blurbEvent);
+        Debug.Log($"Enemy {enemy.characterName} selected. Total selected: {selectedEnemies.Count}");
+
+        // If two enemies are selected, start the attack coroutine
+        if (selectedEnemies.Count == 2)
+        {
+            Debug.Log("Two enemies selected. Starting multi-target attack.");
+            StartCoroutine(DoBossAttackRoutine(selectedEnemies.ToArray()));
+
+            // Reset multi-selection mode
+            selectingEnemies = false;
+            targetingHUDParent.SetActive(false);
+            targetingMode = false;
+        }
+    }
+}
+
 
     public void OnBideButtonClicked()
     {
@@ -586,19 +705,20 @@ public class TurnManager : MonoBehaviour
             {
                 hero.currentHealth = hero.maxHealth;
             }
-            // blurbEvent.Set($"HEALED");
-            // EventBus.Publish(blurbEvent);
+             blurbEvent.Set($"Potion Used");
+             EventBus.Publish(blurbEvent);
             Potion --;
             attackOptionsParent.SetActive(false);
             potionOptions.SetActive(false);
             itemOptions.SetActive(false);
             ApplyEffectWithDelay(potionAni, hero.transform, 0f, 2.0f);
+            EventBus.Publish(statusUpdateEvent);
             StartTurn();
         }
         else
         {
-            // blurbEvent.Set($"No Potion");
-            // EventBus.Publish(blurbEvent);
+             blurbEvent.Set($"No Potion");
+             EventBus.Publish(blurbEvent);
         }
 
     }
@@ -610,8 +730,8 @@ public class TurnManager : MonoBehaviour
             hero.RemoveParalysis();
             hero.RemoveHeroBurns();
             hero.RemoveHeroParalysis();
-            // blurbEvent.Set($"Status Healed");
-            // EventBus.Publish(blurbEvent);
+             blurbEvent.Set($"Status Healed");
+             EventBus.Publish(blurbEvent);
             Panacea --;
             attackOptionsParent.SetActive(false);
             potionOptions.SetActive(false);
@@ -622,15 +742,19 @@ public class TurnManager : MonoBehaviour
         }
         else
         {
-            // blurbEvent.Set($"No Panacea");
-            // EventBus.Publish(blurbEvent);
+             blurbEvent.Set($"No Panacea");
+             EventBus.Publish(blurbEvent);
         }
     }
 
 
 
-    private IEnumerator DoBossAttackRoutine(Enemy targetEnemy)
+    private IEnumerator DoBossAttackRoutine(params Enemy[] targetEnemies)
     {
+        Debug.Log("DoBossAttackRoutine started.");
+        Debug.Log(targetEnemies);
+        foreach (var targetEnemy in targetEnemies){
+
         yield return new WaitForSeconds(1f);
 
         hero.DoAttackAnimation();
@@ -649,8 +773,8 @@ public class TurnManager : MonoBehaviour
         {
             damage = (int)(damage * critMultiplier);
             damage = (int)(damage * 1.2);
-            // blurbEvent.Set("Critical Hit!");
-            // EventBus.Publish(blurbEvent);
+             blurbEvent.Set("Critical Hit!");
+             EventBus.Publish(blurbEvent);
             targetEnemy.TakeDamage(damage);
         }
         else
@@ -660,19 +784,19 @@ public class TurnManager : MonoBehaviour
 
 
 
-        // blurbEvent.Set($"Boss attacked {targetEnemy.characterName}");
-        // EventBus.Publish(blurbEvent);
+         blurbEvent.Set($"Boss attacked {targetEnemy.characterName}");
+         EventBus.Publish(blurbEvent);
         Debug.Log($"Boss attacked {targetEnemy.characterName}, dealing {damage} damage.");
 
 
         if (combinedAttack.attributes.Contains("Burn"))
             {   
                 randomChance = (bideAttribute > 0) ? 0.4f : 0.2f;
-                if (Random.value <= randomChance)
+                if (Random.value <= randomChance  && targetEnemy.GetParalysisTurnsRemaining() < 1 && targetEnemy.burning < 1)
                 {
                     targetEnemy.ApplyBurn(1000, 3);
-                    // blurbEvent.Set($"{targetEnemy.characterName} was burned!");
-                    // EventBus.Publish(blurbEvent);
+                     blurbEvent.Set($"{targetEnemy.characterName} was burned!");
+                     EventBus.Publish(blurbEvent);
                     
                 }
                 ApplyEffectWithDelay(fireAttack, hero.transform, 0f, 3.0f);
@@ -682,12 +806,12 @@ public class TurnManager : MonoBehaviour
         if (combinedAttack.attributes.Contains("Paralysis"))
             {
 
-                if (Random.value <= 1f)
+                if (Random.value <= 1f && targetEnemy.GetParalysisTurnsRemaining() < 1 && targetEnemy.burning < 1)
                 {
                    
                     targetEnemy.ApplyParalysis(5, true);
-                    // blurbEvent.Set($"{targetEnemy.characterName} was paralysed!");
-                    // EventBus.Publish(blurbEvent);
+                     blurbEvent.Set($"{targetEnemy.characterName} was paralysed!");
+                     EventBus.Publish(blurbEvent);
                 }
                 ApplyEffectWithDelay(arrowAttack, hero.transform, 0f, 3.0f);
                 ApplyEffectWithDelay(arrowHit, targetEnemy.transform, .5f, 3.0f);
@@ -696,8 +820,8 @@ public class TurnManager : MonoBehaviour
         if (combinedAttack.attributes.Contains("Heal"))
             {
                     hero.currentHealth += damage;
-                    // blurbEvent.Set($"{damage} Health Recovered!");
-                    // EventBus.Publish(blurbEvent);
+                     blurbEvent.Set($"{damage} Health Recovered!");
+                     EventBus.Publish(blurbEvent);
                     ApplyEffectWithDelay(heal, hero.transform, 0f, 3.0f);
                     
              }
@@ -706,8 +830,8 @@ public class TurnManager : MonoBehaviour
           if (combinedAttack.attributes.Contains("Barrier"))
             {
                     hero.barrierCount += 1;
-                    // blurbEvent.Set("Barrier raised");
-                    // EventBus.Publish(blurbEvent);
+                     blurbEvent.Set("Barrier raised");
+                     EventBus.Publish(blurbEvent);
                     ApplyEffectWithDelay(barrier1, hero.transform, 0f, 3.0f);
                     ApplyEffectWithDelay(barrier2, hero.transform, 0f, 3.0f);
                     ApplyEffectWithDelay(barrier3, hero.transform, 0f, 3.0f);
@@ -717,14 +841,14 @@ public class TurnManager : MonoBehaviour
         if (combinedAttack.attributes.Contains("Field"))
             {
                     hero.currentHealth += damage;
-                    // blurbEvent.Set($"{damage} Health Recovered!");
-                    // EventBus.Publish(blurbEvent);
+                     blurbEvent.Set($"{damage} Health Recovered!");
+                     EventBus.Publish(blurbEvent);
                     hero.RemoveBurns();
                     hero.RemoveParalysis();
                     hero.RemoveHeroBurns();
                     hero.RemoveHeroParalysis();
-                    // blurbEvent.Set($"Status Healed");
-                    // EventBus.Publish(blurbEvent);
+                     blurbEvent.Set($"Status Healed");
+                     EventBus.Publish(blurbEvent);
                     ApplyEffectWithDelay(heal, hero.transform, 0f, 3.0f);
                     ApplyEffectWithDelay(panaceaAni, hero.transform, 0f, 3.0f);
             }
@@ -732,8 +856,8 @@ public class TurnManager : MonoBehaviour
 
         if (targetEnemy.currentHealth <= 0)
         {
-            // blurbEvent.Set($"{targetEnemy.characterName} has been defeated!");
-            // EventBus.Publish(blurbEvent);
+             blurbEvent.Set($"{targetEnemy.characterName} has been defeated!");
+             EventBus.Publish(blurbEvent);
             RemoveEnemy(targetEnemy);
         }
 
@@ -761,28 +885,28 @@ public class TurnManager : MonoBehaviour
             }
         if (combinedAttack.attributes.Contains("Ice") && !hasIced)
         {
-            hasIced = true;
+            //hasIced = true;
+            targetEnemy.TakeDamage(damage);
+            
             ApplyEffectWithDelay(iceAttack, hero.transform, 0f, 3.0f);
             ApplyEffectWithDelay(iceHit, targetEnemy.transform, .5f, 3.0f);
-            targetingHUDParent.SetActive(true);
-            targetingMode = true;
-            // blurbEvent.Set($"You prepare to strike again");
-            // EventBus.Publish(blurbEvent);
+            // targetingHUDParent.SetActive(true);
+            // targetingMode = true;
+             blurbEvent.Set($"YouWW strike again");
+             EventBus.Publish(blurbEvent);
             
-            yield break;
+            
         }
 
-        if (combinedAttack.attributes.Contains("Lunge") && !hasLunged)
+        if (combinedAttack.attributes.Contains("Lunge"))
         {
-            hasLunged = true;
+              blurbEvent.Set($"You strike twice");
+            EventBus.Publish(blurbEvent);
             ApplyEffectWithDelay(lungeAttack, hero.transform, 0f, 3.0f);
             ApplyEffectWithDelay(lungeHit, targetEnemy.transform, .5f, 3.0f);
-            targetingHUDParent.SetActive(true);
-            targetingMode = true;
-            // blurbEvent.Set($"You prepare to strike again");
-            // EventBus.Publish(blurbEvent);
+          
             
-            yield break;
+            
         }
 
         
@@ -804,22 +928,58 @@ public class TurnManager : MonoBehaviour
 
         heroCritRate = 0.05f;
         hasIced = false;
+        
         hasLunged = false;
+        }
         StartTurn();
     }
 
 
 
     public void RemoveEnemy(Enemy enemy)
-    {
-        int index = enemies.IndexOf(enemy);
-        enemies.Remove(enemy);
-        if (enemies.Count == 0)
         {
-            EndGame(true); // Player wins
+        enemy.dead = true;
+        
+        Debug.Log("Enemies dead = " + enemiesDead);
+
+
+        StartCoroutine(FadeOut(enemy.gameObject));  
+        foreach (var body in enemies)
+            {
+                if (body.dead)
+                {
+                    enemiesDead++;
+                    if(enemiesDead == 4)
+                    {
+                         EndGame(true); // Player wins
+
+                    }
+                }
+            }
+        enemiesDead = 0;
         }
 
+
+    private IEnumerator FadeOut(GameObject enemy)
+    {
+        Renderer enemyRenderer = enemy.GetComponent<Renderer>();
+        Material material = enemyRenderer.material;
+        Color startColor = material.color;
+        float fadeDuration = 2f; // Time in seconds for the fade out
+        float timeElapsed = 0f;
+
+        while (timeElapsed < fadeDuration)
+        {
+            timeElapsed += Time.deltaTime;
+            float lerpValue = timeElapsed / fadeDuration;
+            material.color = new Color(startColor.r, startColor.g, startColor.b, Mathf.Lerp(startColor.a, 0f, lerpValue));
+            yield return null;
+        }
+
+        
+      
     }
+
 
 
     public void EndGame(bool playerWon)
@@ -837,6 +997,7 @@ public class TurnManager : MonoBehaviour
         if (playerWon)
         {
             winScreen.SetActive(true);
+            MainUIParent.SetActive(false);
         }
         else
         {

@@ -39,5 +39,9 @@ public class MainMenuManager : MonoBehaviour
 
         gameObject.SetActive(false);
     }
+    public void ResetLevel()
+    {
+         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
 
 }

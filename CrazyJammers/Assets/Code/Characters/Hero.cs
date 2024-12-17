@@ -22,11 +22,16 @@ public class Hero : Character
 
     public void RemoveHeroBurns()
     {
-        this.burning=0;
+        this.burning = 0;
     }
     public void RemoveHeroParalysis()
     {
         paralysisEffect = null;  
+    }
+    
+    public int GetParalysisTurnsRemaining()
+    {
+        return paralysisEffect != null ? paralysisEffect.TurnsRemaining : 0;
     }
 
     public bool UseBide()

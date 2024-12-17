@@ -5,7 +5,7 @@ public class Enemy : Character
 {
     public List<AttackSO> possibleAttacks = new List<AttackSO>();
     public List<AttackSO> attacksUsed = new List<AttackSO>();
-    public bool dead;
+    public bool dead;   
     //public CharacterSO characterData;
 
     [SerializeField] public GameObject TargetingIndicator;
@@ -27,6 +27,10 @@ public class Enemy : Character
         TargetingIndicator.SetActive(false);
         return;
 
+    }
+    public int GetParalysisTurnsRemaining()
+    {
+        return paralysisEffect != null ? paralysisEffect.TurnsRemaining : 0;
     }
 
     void OnMouseExit()
