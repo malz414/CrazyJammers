@@ -43,6 +43,7 @@
 
         public virtual void TakeDamage(int damage)
         {
+            
             if(barrierCount > 0 && bideBuff)
             {
                 

@@ -28,6 +28,10 @@ public class Enemy : Character
         return;
 
     }
+    public int GetParalysisTurnsRemaining()
+    {
+        return paralysisEffect != null ? paralysisEffect.TurnsRemaining : 0;
+    }
 
     void OnMouseExit()
     {

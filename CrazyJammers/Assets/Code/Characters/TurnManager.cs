@@ -85,6 +85,9 @@ public class TurnManager : MonoBehaviour
 
     private List<AttackSO> enemyAttacksByIndex = new List<AttackSO> { null, null, null, null };
 
+    private List<Enemy> selectedEnemies = new List<Enemy>();
+    private bool selectingEnemies = false;
+
     private Hero hero;
     private List<Enemy> enemies;
 
@@ -124,6 +127,8 @@ public class TurnManager : MonoBehaviour
 
     private int Potion = 1;
     private int Panacea = 1;
+    private int enemiesDead = 0;
+
 
     [SerializeField] private TextMeshProUGUI PotAmount; 
     [SerializeField] private TextMeshProUGUI PanAmount; 
@@ -309,6 +314,8 @@ public class TurnManager : MonoBehaviour
     private IEnumerator DoTurnRoutine()
     {
         yield return new WaitForSeconds(.5f);
+        
+        
 
         // Enemies attack hero
         for (int i = 0; i < enemies.Count; i++)
@@ -320,6 +327,10 @@ public class TurnManager : MonoBehaviour
                 EventBus.Publish(blurbEvent);
                 ApplyEffectWithDelay(para, enemy.transform, 0f, 3.0f);
            
+                continue;
+            }
+            else if (enemy.dead)
+            {
                 continue;
             }
 
@@ -431,7 +442,7 @@ public class TurnManager : MonoBehaviour
             if (enemyAttack.attributes.Contains("Burn"))
             {
 
-                if (Random.value <= 0.3f)
+                if (Random.value <= 0.3f && hero.GetParalysisTurnsRemaining() < 1 && hero.burning < 1)
                 {
                     hero.ApplyBurn(10, 3);
                     blurbEvent.Set($"Boss has been burned by {enemyAttack.attackName}!");
@@ -445,10 +456,10 @@ public class TurnManager : MonoBehaviour
             if (enemyAttack.attributes.Contains("Paralysis"))
             {
 
-                if (Random.value <= 1f)
+                if (Random.value <= 1f && hero.GetParalysisTurnsRemaining() < 1 && hero.burning < 1)
                 {
                     hero.ApplyParalysis(5, false);
-                     blurbEvent.Set($"Boss has been paralyzed by {enemyAttack.attackName}!");
+                    blurbEvent.Set($"Boss has been paralyzed by {enemyAttack.attackName}!");
                      EventBus.Publish(blurbEvent);
                     Debug.Log($"Hero has been paralyzed by {enemyAttack.attackName}!");
                 }
@@ -606,17 +617,67 @@ private void HideDescription()
 
 
     public void SelectEnemyTotAttack(Enemy enemy)
-    {
-        targetingMode = false;
-        targetingHUDParent.SetActive(false);
+{
+    // Check for "Lunge" attribute to determine multi-target behavior
+    if (!combinedAttack.attributes.Contains("Lunge")) 
+    {   Debug.Log("ATTACKING NO lunge");
+        blurbEvent.Set("Attacking");
+        EventBus.Publish(blurbEvent);
 
+        // Stop any existing attack coroutine
         if (bossAttackCoroutine != null)
         {
             StopCoroutine(bossAttackCoroutine);
         }
 
+        // Single-target attack
+        targetingMode = false;
+        targetingHUDParent.SetActive(false);
+        Debug.Log($"Single-target attack on {enemy.characterName}");
         bossAttackCoroutine = StartCoroutine(DoBossAttackRoutine(enemy));
     }
+    else
+    {
+        Debug.Log("ATTACKING WITH lunge");
+        // Multi-target attack
+        if (!selectingEnemies)
+        {
+            // Start multi-selection mode
+            selectedEnemies.Clear();
+            selectingEnemies = true;
+            blurbEvent.Set("Select two different enemies to attack!");
+            EventBus.Publish(blurbEvent);
+        }
+
+        // Prevent selecting the same enemy twice
+        if (selectedEnemies.Contains(enemy))
+        {
+            blurbEvent.Set("Enemy already selected! Choose a different enemy.");
+            EventBus.Publish(blurbEvent);
+            Debug.Log($"Enemy {enemy.characterName} already selected!");
+            return;
+        }
+
+        // Add the selected enemy
+        selectedEnemies.Add(enemy);
+        blurbEvent.Set($"Selected: {enemy.characterName}");
+        EventBus.Publish(blurbEvent);
+        Debug.Log($"Enemy {enemy.characterName} selected. Total selected: {selectedEnemies.Count}");
+
+        // If two enemies are selected, start the attack coroutine
+        if (selectedEnemies.Count == 2)
+        {
+            Debug.Log("Two enemies selected. Starting multi-target attack.");
+            StartCoroutine(DoBossAttackRoutine(selectedEnemies.ToArray()));
+
+            // Reset multi-selection mode
+            selectingEnemies = false;
+            targetingHUDParent.SetActive(false);
+            targetingMode = false;
+        }
+    }
+}
+
 
     public void OnBideButtonClicked()
     {
@@ -688,8 +749,12 @@ private void HideDescription()
 
 
 
-    private IEnumerator DoBossAttackRoutine(Enemy targetEnemy)
+    private IEnumerator DoBossAttackRoutine(params Enemy[] targetEnemies)
     {
+        Debug.Log("DoBossAttackRoutine started.");
+        Debug.Log(targetEnemies);
+        foreach (var targetEnemy in targetEnemies){
+
         yield return new WaitForSeconds(1f);
 
         hero.DoAttackAnimation();
@@ -727,7 +792,7 @@ private void HideDescription()
         if (combinedAttack.attributes.Contains("Burn"))
             {   
                 randomChance = (bideAttribute > 0) ? 0.4f : 0.2f;
-                if (Random.value <= randomChance)
+                if (Random.value <= randomChance  && targetEnemy.GetParalysisTurnsRemaining() < 1 && targetEnemy.burning < 1)
                 {
                     targetEnemy.ApplyBurn(1000, 3);
                      blurbEvent.Set($"{targetEnemy.characterName} was burned!");
@@ -741,7 +806,7 @@ private void HideDescription()
         if (combinedAttack.attributes.Contains("Paralysis"))
             {
 
-                if (Random.value <= 1f)
+                if (Random.value <= 1f && targetEnemy.GetParalysisTurnsRemaining() < 1 && targetEnemy.burning < 1)
                 {
                    
                     targetEnemy.ApplyParalysis(5, true);
@@ -833,19 +898,12 @@ private void HideDescription()
             
         }
 
-        if (combinedAttack.attributes.Contains("Lunge") && !hasLunged)
+        if (combinedAttack.attributes.Contains("Lunge"))
         {
               blurbEvent.Set($"You strike twice");
             EventBus.Publish(blurbEvent);
-            
-            hasLunged = true;
-            targetingHUDParent.SetActive(true);
-            targetingMode = true;
-            yield return new WaitUntil(() => !targetingMode);
-            targetEnemy.TakeDamage(damage);
             ApplyEffectWithDelay(lungeAttack, hero.transform, 0f, 3.0f);
             ApplyEffectWithDelay(lungeHit, targetEnemy.transform, .5f, 3.0f);
-            
           
             
             
@@ -872,21 +930,56 @@ private void HideDescription()
         hasIced = false;
         
         hasLunged = false;
+        }
         StartTurn();
     }
 
 
 
     public void RemoveEnemy(Enemy enemy)
-    {
-        int index = enemies.IndexOf(enemy);
-        enemies.Remove(enemy);
-        if (enemies.Count == 0)
         {
-            EndGame(true); // Player wins
+        enemy.dead = true;
+        
+        Debug.Log("Enemies dead = " + enemiesDead);
+
+
+        StartCoroutine(FadeOut(enemy.gameObject));  
+        foreach (var body in enemies)
+            {
+                if (body.dead)
+                {
+                    enemiesDead++;
+                    if(enemiesDead == 4)
+                    {
+                         EndGame(true); // Player wins
+
+                    }
+                }
+            }
+        enemiesDead = 0;
         }
 
+
+    private IEnumerator FadeOut(GameObject enemy)
+    {
+        Renderer enemyRenderer = enemy.GetComponent<Renderer>();
+        Material material = enemyRenderer.material;
+        Color startColor = material.color;
+        float fadeDuration = 2f; // Time in seconds for the fade out
+        float timeElapsed = 0f;
+
+        while (timeElapsed < fadeDuration)
+        {
+            timeElapsed += Time.deltaTime;
+            float lerpValue = timeElapsed / fadeDuration;
+            material.color = new Color(startColor.r, startColor.g, startColor.b, Mathf.Lerp(startColor.a, 0f, lerpValue));
+            yield return null;
+        }
+
+        
+      
     }
+
 
 
     public void EndGame(bool playerWon)
@@ -904,6 +997,7 @@ private void HideDescription()
         if (playerWon)
         {
             winScreen.SetActive(true);
+            MainUIParent.SetActive(false);
         }
         else
         {
