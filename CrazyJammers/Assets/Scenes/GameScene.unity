@@ -1826,6 +1826,11 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 5002837223444332709, guid: 5bc48eb34602b7d4b9e3d44d54050c50, type: 3}
   m_PrefabInstance: {fileID: 1797794550}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1619947234 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 432397091422895480, guid: d5f334b931d89e34283aeea5fcfb47e0, type: 3}
+  m_PrefabInstance: {fileID: 1261390422}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &1751228081 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 4452712198974073342, guid: 5bc48eb34602b7d4b9e3d44d54050c50, type: 3}
@@ -3907,7 +3912,7 @@ PrefabInstance:
     - target: {fileID: 8485419520516605267, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
       propertyPath: knightPrefab
       value: 
-      objectReference: {fileID: 2296936670753540720, guid: 51ec78924ec03184b88db61db21288d3, type: 3}
+      objectReference: {fileID: 4879243938263046864, guid: 5b170e3854ef96f40b66167df373619d, type: 3}
     - target: {fileID: 8485419520516605267, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
       propertyPath: potionButton
       value: 
@@ -4019,7 +4024,7 @@ PrefabInstance:
     - target: {fileID: 8485419520516605267, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
       propertyPath: 'listOfObjectToDeactivateAtStartOfBattle.Array.data[0]'
       value: 
-      objectReference: {fileID: 278731647}
+      objectReference: {fileID: 1619947234}
     - target: {fileID: 8485419520516605267, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
       propertyPath: 'listOfObjectToDeactivateAtStartOfBattle.Array.data[1]'
       value: 
