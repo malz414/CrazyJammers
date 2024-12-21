@@ -93,6 +93,7 @@
         public void DoAttackAnimation()
         {
             animator.SetTrigger("Attack");
+            Debug.Log(this.name);
         }
 
         private IEnumerator DoHitRoutine(int damage)

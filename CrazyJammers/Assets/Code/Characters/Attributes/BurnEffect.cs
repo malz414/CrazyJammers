@@ -18,7 +18,7 @@ public class BurnEffect
     {
         if (turnsRemaining > 0)
         {
-            target.TakeDamage(damagePerTurn);
+            
             turnsRemaining--;
         }
     }

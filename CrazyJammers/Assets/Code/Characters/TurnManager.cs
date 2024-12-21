@@ -6,6 +6,8 @@ using System.Collections;
 using Code.Utility.Events;
 using UnityEngine.EventSystems;
 using DamageNumbersPro;
+using System.Linq;
+
 
 public class TurnManager : MonoBehaviour
 {
@@ -349,10 +351,11 @@ public class TurnManager : MonoBehaviour
             {
                 foreach (var enemyBarrier in enemies)
                 {
+                    if(enemyBarrier.currentHealth <= 0) continue;
                     enemyBarrier.barrierCount += 1;
                     ApplyEffectWithDelay(barrier1, enemyBarrier.transform, 0f, 2.0f);
                     ApplyEffectWithDelay(barrier2, enemyBarrier.transform, 0f, 2.0f);
-                    ApplyEffectWithDelay(barrier3, hero.transform, 0f, 2.0f);
+                    ApplyEffectWithDelay(barrier3, enemyBarrier.transform, 0f, 2.0f);
                     blurbEvent.Set($"The heroes gained a barrier.");
                     EventBus.Publish(blurbEvent);
 
@@ -364,6 +367,7 @@ public class TurnManager : MonoBehaviour
             {
                 foreach (var enemyHeal in enemies)
                 {
+                    if(enemyHeal.currentHealth <= 0) continue;
                     enemyHeal.currentHealth += enemyAttack.GetDamage();
                     if(enemyHeal.currentHealth >= enemyHeal.maxHealth)
                     {
@@ -384,17 +388,30 @@ public class TurnManager : MonoBehaviour
 
             if (enemyAttack.attributes.Contains("Heal"))
             {
-                int randomIndex = Random.Range(0, enemies.Count);
-                var enemyHeal = enemies[randomIndex];
-                enemyHeal.currentHealth += enemyAttack.GetDamage();
-                if(enemyHeal.currentHealth >= enemyHeal.maxHealth)
-                    {
-                        enemyHeal.currentHealth = enemyHeal.maxHealth;
-                    }
-                ApplyEffectWithDelay(heal, enemyHeal.transform, 0f, 2.0f);
-                 blurbEvent.Set($"{enemy.characterName} was healed.");
-                 EventBus.Publish(blurbEvent);
-                continue;
+             var enemyHeal = enemies
+            .Where(e => e.currentHealth > 0) 
+            .OrderBy(e => e.currentHealth) 
+            .FirstOrDefault(); 
+
+        if (enemyHeal != null)
+        {
+           
+            enemyHeal.currentHealth += enemyAttack.GetDamage();
+
+           
+            if (enemyHeal.currentHealth > enemyHeal.maxHealth)
+            {
+                enemyHeal.currentHealth = enemyHeal.maxHealth;
+            }
+
+      
+            ApplyEffectWithDelay(heal, enemyHeal.transform, 0f, 2.0f);
+
+           
+            blurbEvent.Set($"{enemyHeal.characterName} was healed.");
+            EventBus.Publish(blurbEvent);
+            EventBus.Publish(statusUpdateEvent);
+        }
                 
             }
 
@@ -619,6 +636,7 @@ private void HideDescription()
     public void SelectEnemyTotAttack(Enemy enemy)
 {
     // Check for "Lunge" attribute to determine multi-target behavior
+    if(!targetingMode) return;
     if (!combinedAttack.attributes.Contains("Lunge")) 
     {   Debug.Log("ATTACKING NO lunge");
         blurbEvent.Set("Attacking");
@@ -823,6 +841,7 @@ private void HideDescription()
                      blurbEvent.Set($"{damage} Health Recovered!");
                      EventBus.Publish(blurbEvent);
                     ApplyEffectWithDelay(heal, hero.transform, 0f, 3.0f);
+                    EventBus.Publish(statusUpdateEvent);
                     
              }
 
