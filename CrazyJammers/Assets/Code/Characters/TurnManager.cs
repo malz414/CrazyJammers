@@ -368,7 +368,7 @@ public class TurnManager : MonoBehaviour
                 foreach (var enemyHeal in enemies)
                 {
                     if(enemyHeal.currentHealth <= 0) continue;
-                    enemyHeal.currentHealth += enemyAttack.GetDamage();
+                    enemyHeal.currentHealth += enemyAttack.maxHealth*0.2;
                     if(enemyHeal.currentHealth >= enemyHeal.maxHealth)
                     {
                         enemyHeal.currentHealth = enemyHeal.maxHealth;
@@ -396,7 +396,7 @@ public class TurnManager : MonoBehaviour
         if (enemyHeal != null)
         {
            
-            enemyHeal.currentHealth += enemyAttack.GetDamage();
+            enemyHeal.currentHealth += enemyAttack.maxHealth*0.2;
 
            
             if (enemyHeal.currentHealth > enemyHeal.maxHealth)
@@ -497,6 +497,7 @@ public class TurnManager : MonoBehaviour
         }
 
         yield return new WaitForSeconds(1.5f);
+        hero.bideBuff = false;
 
         if (!hero.CanAct())
         {

@@ -66,7 +66,7 @@
             {
                 // blurbEvent.Set("You powered through it");
                 // EventBus.Publish(blurbEvent);
-                bideBuff = false;
+                
                 currentHealth -= (int)(damage *.90);
             }
             else
