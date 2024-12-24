@@ -607,13 +607,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 640213379}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.5, y: 0.5, z: -0.5, w: 0.5}
-  m_LocalPosition: {x: 2.4400024, y: 0, z: 3.4352384}
+  m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: 1.92, y: 0, z: 3.72}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1135154112}
-  m_LocalEulerAnglesHint: {x: 90, y: 90, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
 --- !u!1 &648418183 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3829986677845468158, guid: 5bc48eb34602b7d4b9e3d44d54050c50, type: 3}
@@ -623,6 +623,11 @@ GameObject:
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 8406082953946418216, guid: 7ca3c677b08438948a575a0b43574e32, type: 3}
   m_PrefabInstance: {fileID: 9075993967696190981}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &837476429 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5842929994958537948, guid: d5f334b931d89e34283aeea5fcfb47e0, type: 3}
+  m_PrefabInstance: {fileID: 1261390422}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &915156602
 GameObject:
@@ -3337,6 +3342,11 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 5833526138698229305, guid: 263d454bbece65547ba258ce22da98b2, type: 3}
   m_PrefabInstance: {fileID: 8398868}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1976344668 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5842832993032211828, guid: d5f334b931d89e34283aeea5fcfb47e0, type: 3}
+  m_PrefabInstance: {fileID: 1261390422}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2071277879
 GameObject:
   m_ObjectHideFlags: 0
@@ -3574,11 +3584,6 @@ MonoBehaviour:
 GameObject:
   m_CorrespondingSourceObject: {fileID: 5873752527491434368, guid: 5bc48eb34602b7d4b9e3d44d54050c50, type: 3}
   m_PrefabInstance: {fileID: 1797794550}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &2137123048 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 4305864367723256050, guid: d5f334b931d89e34283aeea5fcfb47e0, type: 3}
-  m_PrefabInstance: {fileID: 1261390422}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1363350307300302488
 PrefabInstance:
@@ -3864,7 +3869,7 @@ PrefabInstance:
     - target: {fileID: 8485419520516605267, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
       propertyPath: bossPrefab
       value: 
-      objectReference: {fileID: 2250012733561660975, guid: e160e45c1eeb0424b993acf8e56f9bdc, type: 3}
+      objectReference: {fileID: 2932479530311384160, guid: f8b0445d176b4fc4a93dfdba6b6ec6fa, type: 3}
     - target: {fileID: 8485419520516605267, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
       propertyPath: fireAttack
       value: 
@@ -3908,7 +3913,7 @@ PrefabInstance:
     - target: {fileID: 8485419520516605267, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
       propertyPath: archerPrefab
       value: 
-      objectReference: {fileID: 2289685435781549048, guid: 4d60d244a63473f4a89ffcaedae97891, type: 3}
+      objectReference: {fileID: 344943568324299905, guid: d10562b8e5a98c647916ca374f9227be, type: 3}
     - target: {fileID: 8485419520516605267, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
       propertyPath: knightPrefab
       value: 
@@ -3932,7 +3937,7 @@ PrefabInstance:
     - target: {fileID: 8485419520516605267, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
       propertyPath: swordsmanPrefab
       value: 
-      objectReference: {fileID: 640957206009386813, guid: 784bdf2138e2d5b40ace00ce2a854f4c, type: 3}
+      objectReference: {fileID: 286656958687433960, guid: 2921c7cfe4b33294facb78b8cbb2e7bf, type: 3}
     - target: {fileID: 8485419520516605267, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
       propertyPath: attackOptionsMenu
       value: 
@@ -4019,7 +4024,7 @@ PrefabInstance:
       objectReference: {fileID: 1797794553}
     - target: {fileID: 8485419520516605267, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
       propertyPath: listOfObjectToDeactivateAtStartOfBattle.Array.size
-      value: 4
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 8485419520516605267, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
       propertyPath: 'listOfObjectToDeactivateAtStartOfBattle.Array.data[0]'
@@ -4028,7 +4033,7 @@ PrefabInstance:
     - target: {fileID: 8485419520516605267, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
       propertyPath: 'listOfObjectToDeactivateAtStartOfBattle.Array.data[1]'
       value: 
-      objectReference: {fileID: 2137123048}
+      objectReference: {fileID: 837476429}
     - target: {fileID: 8485419520516605267, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
       propertyPath: 'listOfObjectToDeactivateAtStartOfBattle.Array.data[2]'
       value: 
@@ -4040,7 +4045,7 @@ PrefabInstance:
     - target: {fileID: 8485419520516605267, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
       propertyPath: 'listOfObjectToDeactivateAtStartOfBattle.Array.data[4]'
       value: 
-      objectReference: {fileID: 1510252550}
+      objectReference: {fileID: 1976344668}
     - target: {fileID: 8485419520516605267, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
       propertyPath: 'listOfObjectToDeactivateAtStartOfBattle.Array.data[5]'
       value: 
