@@ -70,6 +70,8 @@ public class TurnManager : MonoBehaviour
 
     [SerializeField] GameObject attackOptionsParent;
     [SerializeField] GameObject attackOptionsMenu;
+    [SerializeField] private TMP_Dropdown attackDropdown;
+    [SerializeField] private TMP_Dropdown attackDropdown2;
 
     [SerializeField] GameObject potionOptions;
 
@@ -93,16 +95,12 @@ public class TurnManager : MonoBehaviour
     private Hero hero;
     private List<Enemy> enemies;
 
-    public Button[] attackButtons;
+    [SerializeField] private AttackSO[] attacksReset;
     public Button bideButton;
 
     public Button potionButton;
     public Button panaceaButton;
     public GameObject itemOptions;
-
-
-    private AttackSO selectedAttack1;
-    private AttackSO selectedAttack2;
 
     private Coroutine bossAttackCoroutine;
 
@@ -138,6 +136,10 @@ public class TurnManager : MonoBehaviour
     public TextMeshProUGUI Popop; 
 
     private CharacterStatusUpdateEvent statusUpdateEvent;
+
+    
+    public AttackSO selectedAttack1;
+    public AttackSO selectedAttack2;
     
 
 
@@ -157,6 +159,7 @@ public class TurnManager : MonoBehaviour
     private void Start()
     {
         statusUpdateEvent = new CharacterStatusUpdateEvent();
+        SetupAttackDropdowns(); 
     }
 
     public void StartBattle()
@@ -204,6 +207,13 @@ public class TurnManager : MonoBehaviour
         enemyHUDs[2].Init(enemies[2]);
         enemyHUDs[3].Init(enemies[3]);
         
+        foreach (var attack in attacksReset)
+        {
+            attack.upgradeLevel = 1;
+        
+            Debug.Log($"Attack: {attack.attackName}, Upgrade Level: {attack.upgradeLevel}");
+
+        }
 
 
 
@@ -344,7 +354,7 @@ public class TurnManager : MonoBehaviour
             AttackSO enemyAttack = enemy.PerformRandomAttack();
             enemyAttacksByIndex[i] = enemyAttack;
 
-            Debug.Log($"Enemy {enemy.name} used {enemyAttack.attackName}, assigning to slot {i}, dealing {enemyAttack.GetDamage()} damage.");
+            
 
 
             if (enemyAttack.attributes.Contains("Barrier"))
@@ -412,6 +422,7 @@ public class TurnManager : MonoBehaviour
             EventBus.Publish(blurbEvent);
             EventBus.Publish(statusUpdateEvent);
         }
+        continue;
                 
             }
 
@@ -515,32 +526,100 @@ public class TurnManager : MonoBehaviour
 
     }
 
-    private void ShowAttackSelectionUI()
+private void SetupAttackDropdowns()
+{
+    // Add listeners to dropdowns for when selection changes
+    attackDropdown.onValueChanged.AddListener(OnAttack1Selected);
+    attackDropdown2.onValueChanged.AddListener(OnAttack2Selected);
+}
+
+private void OnAttack1Selected(int index)
+{
+    if (index < 0 || index >= enemyAttacksByIndex.Count) return;
+
+    selectedAttack1 = enemyAttacksByIndex[index];
+    Debug.Log($"First attack selected: {selectedAttack1.attackName}");
+}
+
+// Called when the user selects an attack from the second dropdown
+private void OnAttack2Selected(int index)
+{
+    if (index < 0 || index >= enemyAttacksByIndex.Count) return;
+
+    selectedAttack2 = enemyAttacksByIndex[index];
+    Debug.Log($"Second attack selected: {selectedAttack2.attackName}");
+}
+
+
+private void ShowAttackSelectionUI()
+{
+    // Get existing dropdown options for comparison
+    List<TMP_Dropdown.OptionData> dropdownOptions = new List<TMP_Dropdown.OptionData>();
+
+    List<string> descriptions = new List<string>();
+
+    // Iterate through all attacks to process them
+    for (int i = 0; i < enemyAttacksByIndex.Count; i++)
     {
-        for (int i = 0; i < attackButtons.Length; i++)
+        var attack = enemyAttacksByIndex[i];
+        bool found = false;
+
+    
+        foreach (var existingOption in attackDropdown.options) 
         {
-            if (enemyAttacksByIndex.Capacity > i)
+            if (existingOption.text == attack.attackName)
             {
-                if (enemyAttacksByIndex[i] != null)
-                {
-                    attackButtons[i].GetComponentInChildren<TextMeshProUGUI>().text = enemyAttacksByIndex[i].attackName;
-                    int index = i;
-                    attackButtons[i].onClick.RemoveAllListeners();
-                    attackButtons[i].onClick.AddListener(() => OnAttackButtonClicked(index));
-                    AddHoverEvents(attackButtons[i], enemyAttacksByIndex[i].attackDesctiption);
-                    attackButtons[i].gameObject.SetActive(true);
-                }               
-            }
-            else
-            {
-                attackButtons[i].gameObject.SetActive(false);
+                // If the attack already exists, increment the upgrade level
+                Debug.Log("Attack reinforced: " + attack.attackName);
+                attack.upgradeLevel++; 
+                if(attack.upgradeLevel == 4)attack.upgradeLevel=3;
+                Debug.Log("Attack level: " + attack.upgradeLevel);
+                found = true;
+                break;
             }
         }
-        attackOptionsParent.SetActive(true);
-        potionOptions.SetActive(true);
-        PanAmount.text = Potion.ToString();
-        PotAmount.text = Panacea.ToString();
+
+
+        TMP_Dropdown.OptionData newOption = new TMP_Dropdown.OptionData(attack.attackName); 
+        dropdownOptions.Add(newOption);
+
+        descriptions.Add(attack.attackDescription);
+    
     }
+
+
+    attackDropdown.ClearOptions();
+    attackDropdown2.ClearOptions();
+
+    attackDropdown.AddOptions(dropdownOptions);
+    attackDropdown2.AddOptions(dropdownOptions);
+
+    AddHoverEvents(attackDropdown, descriptions); 
+    AddHoverEvents(attackDropdown2, descriptions);
+
+     if (enemyAttacksByIndex.Count > 0)
+    {
+        attackDropdown.value = 0;  
+        OnAttack1Selected(0); 
+    }
+
+   
+    if (enemyAttacksByIndex.Count > 1)
+    {
+        attackDropdown2.value = 1;  
+        OnAttack2Selected(1); 
+    }
+
+    // Set UI elements active
+    attackOptionsParent.SetActive(true);
+    potionOptions.SetActive(true);
+    PanAmount.text = Potion.ToString();
+    PotAmount.text = Panacea.ToString();
+}
+
+
+
+
 
         // Set up the Bide button
         /*        bideButton.gameObject.SetActive(true);
@@ -548,35 +627,77 @@ public class TurnManager : MonoBehaviour
                 bideButton.onClick.AddListener(OnBideButtonClicked);
                 bideButton.GetComponentInChildren<TextMeshProUGUI>().text = "Bide";*/
 
-private void AddHoverEvents(Button button, string description)
+private void AddHoverEvents(TMP_Dropdown dropdown, List<string> descriptions)
 {
-    EventTrigger trigger = button.gameObject.GetComponent<EventTrigger>();
-    if (trigger == null)
+    // Access the dropdown template and its content
+    Transform dropdownTemplate = dropdown.template;
+    Transform dropdownContent = dropdownTemplate.Find("Viewport/Content");
+
+    if (dropdownContent == null)
     {
-        trigger = button.gameObject.AddComponent<EventTrigger>();
+        Debug.LogError("Dropdown content not found. Ensure the template is set up correctly.");
+        return;
     }
-    trigger.triggers.Clear();
 
-    EventTrigger.Entry pointerEnterEntry = new EventTrigger.Entry
-    {
-        eventID = EventTriggerType.PointerEnter
-    };
-    pointerEnterEntry.callback.AddListener((_) => ShowDescription(description));
-    trigger.triggers.Add(pointerEnterEntry);
+    // Get all option objects inside the dropdown content
+    var optionObjects = dropdownContent.GetComponentsInChildren<Transform>(true);
 
-    
-    EventTrigger.Entry pointerExitEntry = new EventTrigger.Entry
+    int optionIndex = 0;
+
+    // Iterate over each option and add hover events
+    foreach (Transform option in optionObjects)
     {
-        eventID = EventTriggerType.PointerExit
-    };
-    pointerExitEntry.callback.AddListener((_) => HideDescription());
-    trigger.triggers.Add(pointerExitEntry);
+        // Skip non-option objects such as the label, background, or spacer
+        if (option.gameObject.name.Contains("Label") || option.gameObject.name.Contains("Background") || option.gameObject.name.Contains("Spacer"))
+            continue;
+
+        // Ensure we're within the bounds of the descriptions
+        if (optionIndex < descriptions.Count)
+        {
+            string description = descriptions[optionIndex];
+
+            // Add EventTrigger to the current option GameObject
+            EventTrigger trigger = option.gameObject.GetComponent<EventTrigger>();
+            if (trigger == null)
+            {
+                trigger = option.gameObject.AddComponent<EventTrigger>();
+            }
+
+            // Clear any previous triggers to avoid duplicates
+            trigger.triggers.Clear();
+
+            // PointerEnter event to show the description
+            EventTrigger.Entry pointerEnterEntry = new EventTrigger.Entry
+            {
+                eventID = EventTriggerType.PointerEnter
+            };
+            pointerEnterEntry.callback.AddListener((_) => ShowDescription(description));
+            trigger.triggers.Add(pointerEnterEntry);
+
+            // PointerExit event to hide the description
+            EventTrigger.Entry pointerExitEntry = new EventTrigger.Entry
+            {
+                eventID = EventTriggerType.PointerExit
+            };
+            pointerExitEntry.callback.AddListener((_) => HideDescription());
+            trigger.triggers.Add(pointerExitEntry);
+        }
+
+        optionIndex++;
+    }
 }
 
 private void ShowDescription(string description)
 {
     
-    descriptionText.text = description;
+    if (descriptionText != null)
+    {
+        descriptionText.text = description;
+    }
+    else 
+    {
+        Debug.Log("NO DESCIPBPOS");
+    }
     
 }
 
@@ -586,44 +707,39 @@ private void HideDescription()
 
 }
 
-    private void OnAttackButtonClicked(int index)
+    public void OnConfirmButtonClicked()
+{
+    // Ensure both attacks are selected
+    if (selectedAttack1 == null || selectedAttack2 == null)
     {
-        if (enemyAttacksByIndex[index] == null) return; // Ensure the selected index has an attack
-
-        var selectedAttack = enemyAttacksByIndex[index];
-
-        
-        if (selectedAttack1 == selectedAttack)
-        {
-             blurbEvent.Set($"Select a different move!");
-             EventBus.Publish(blurbEvent);
-            return; 
-        }
-
-        if (selectedAttack1 == null)
-        {
-            selectedAttack1 = selectedAttack;
-            Debug.Log($"Selected first attack: {selectedAttack1.attackName}");
-        }
-        else if (selectedAttack2 == null)
-        {
-            selectedAttack2 = selectedAttack;
-            Debug.Log($"Selected second attack: {selectedAttack2.attackName}");
-
-            // Combine selected attacks
-            hero.CombineAttacks(selectedAttack1, selectedAttack2);
-
-            // Reset selections
-            selectedAttack1 = null;
-            selectedAttack2 = null;
-
-            attackOptionsParent.SetActive(false);
-            attackOptionsMenu.SetActive(false);
-            potionOptions.SetActive(false);
-            targetingHUDParent.SetActive(true);
-            targetingMode = true;
-        }
+        blurbEvent.Set("Please select both attacks!");
+        EventBus.Publish(blurbEvent);
+        return;
     }
+
+    if (selectedAttack1 == selectedAttack2)
+    {
+        blurbEvent.Set("Select a different move!");
+        EventBus.Publish(blurbEvent);
+        return;
+    }
+
+    // Combine the selected attacks
+    hero.CombineAttacks(selectedAttack1, selectedAttack2);
+    Debug.Log($"Combining attacks: {selectedAttack1.attackName} and {selectedAttack2.attackName}");
+
+    // Reset selections after combining
+    selectedAttack1 = null;
+    selectedAttack2 = null;
+
+    // Hide UI elements after combining
+    attackOptionsParent.SetActive(false);
+    attackOptionsMenu.SetActive(false);
+    potionOptions.SetActive(false);
+    targetingHUDParent.SetActive(true);
+    targetingMode = true;
+}
+
 
     public void OnItemOptionsClicked()
     {
@@ -638,7 +754,7 @@ private void HideDescription()
 {
     // Check for "Lunge" attribute to determine multi-target behavior
     if(!targetingMode) return;
-    if (!combinedAttack.attributes.Contains("Lunge")) 
+    if (!combinedAttack.attributes.Contains("Lunge") || enemiesDead == 3) 
     {   Debug.Log("ATTACKING NO lunge");
         blurbEvent.Set("Attacking");
         EventBus.Publish(blurbEvent);
@@ -810,7 +926,7 @@ private void HideDescription()
 
         if (combinedAttack.attributes.Contains("Burn"))
             {   
-                randomChance = (bideAttribute > 0) ? 0.4f : 0.2f;
+                randomChance = (bideAttribute > 0) ? 0.2f : 0.2f;
                 if (Random.value <= randomChance  && targetEnemy.GetParalysisTurnsRemaining() < 1 && targetEnemy.burning < 1)
                 {
                     targetEnemy.ApplyBurn(1000, 3);

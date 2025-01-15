@@ -79,7 +79,7 @@ public class CombinedAttackSO : ScriptableObject
         }
 
         baseDamage = attack1.GetDamage() + attack2.GetDamage();
-        upgradeLevel = Mathf.Max(attack1.upgradeLevel, attack2.upgradeLevel);
+        upgradeLevel = Mathf.Max(attack1.upgradeLevel + attack2.upgradeLevel);
 
         attributes.Clear(); // Clear previous attributes if necessary
         attributes.AddRange(attack1.attributes);

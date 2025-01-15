@@ -44,35 +44,29 @@
         public virtual void TakeDamage(int damage)
         {
             
-            if(barrierCount > 0 && bideBuff)
+          if(barrierCount > 0 && bideBuff)
             {
-                
-                // blurbEvent.Set("Barrier Broken");
-                // EventBus.Publish(blurbEvent);
-                // blurbEvent.Set("You powered through it");
-                // EventBus.Publish(blurbEvent);
                 barrierCount--;
                 bideBuff = false;
-                currentHealth -= (int)(damage *.70);
+                damage = Mathf.RoundToInt(damage * 0.70f);  
+                currentHealth -= damage;
             }
             else if(barrierCount > 0)
             {
-                // blurbEvent.Set("Barrier Broken");
-                // EventBus.Publish(blurbEvent);
                 barrierCount--;
-                currentHealth -= (int)(damage *.80);
+                damage = Mathf.RoundToInt(damage * 0.80f);  
+                currentHealth -= damage;
             }
             else if(bideBuff)
             {
-                // blurbEvent.Set("You powered through it");
-                // EventBus.Publish(blurbEvent);
-                
-                currentHealth -= (int)(damage *.90);
-            }
-            else
-            {   
+                damage = Mathf.RoundToInt(damage * 0.90f); 
                 currentHealth -= damage;
             }
+            else
+            {
+                currentHealth -= damage;
+            }
+
 
             if (currentHealth <= 0)
             {

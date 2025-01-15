@@ -13,9 +13,8 @@ MonoBehaviour:
   m_Name: Fireball
   m_EditorClassIdentifier: 
   attackName: Fireball
-  attackDesctiption: A spell that deals a small amount of damage. It might inflict
-    Burn.
+  attackDescription: 
   baseDamage: 20
-  upgradeLevel: 0
+  upgradeLevel: 1
   attributes:
   - Burn

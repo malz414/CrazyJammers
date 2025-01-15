@@ -55,9 +55,8 @@ public class Hero : Character
     {
         if (currentAttack != null)
         {
-            int damage = (int)(currentAttack.GetDamage() * bideLevel);
-            Debug.Log($"Damage with bide applied: {damage} (Base: {currentAttack.GetDamage()}, Bide Level: {bideLevel})");
-            return damage;
+            int damage = (int)(currentAttack.GetDamage() * bideLevel) + (currentAttack.upgradeLevel/3);
+              return damage;
         }
         return 0;
     }
