@@ -87,7 +87,7 @@ public class TurnManager : MonoBehaviour
 
     [SerializeField] private DamageNumber popupPrefab;
 
-    private List<AttackSO> enemyAttacksByIndex = new List<AttackSO> { null, null, null, null };
+    public List<AttackSO> enemyAttacksByIndex = new List<AttackSO> { null, null, null, null };
 
     private List<Enemy> selectedEnemies = new List<Enemy>();
     private bool selectingEnemies = false;
@@ -160,6 +160,7 @@ public class TurnManager : MonoBehaviour
     {
         statusUpdateEvent = new CharacterStatusUpdateEvent();
         SetupAttackDropdowns(); 
+      
     }
 
     public void StartBattle()
@@ -322,6 +323,11 @@ public class TurnManager : MonoBehaviour
         }
         StartCoroutine(DoTurnRoutine());
     }
+
+
+
+
+
 
     private IEnumerator DoTurnRoutine()
     {
@@ -553,6 +559,7 @@ private void OnAttack2Selected(int index)
 
 private void ShowAttackSelectionUI()
 {
+ 
     // Get existing dropdown options for comparison
     List<TMP_Dropdown.OptionData> dropdownOptions = new List<TMP_Dropdown.OptionData>();
 
@@ -577,6 +584,7 @@ private void ShowAttackSelectionUI()
                 found = true;
                 break;
             }
+            
         }
 
 
@@ -596,6 +604,8 @@ private void ShowAttackSelectionUI()
 
     AddHoverEvents(attackDropdown, descriptions); 
     AddHoverEvents(attackDropdown2, descriptions);
+    
+    
 
      if (enemyAttacksByIndex.Count > 0)
     {
@@ -686,6 +696,8 @@ private void AddHoverEvents(TMP_Dropdown dropdown, List<string> descriptions)
         optionIndex++;
     }
 }
+
+
 
 private void ShowDescription(string description)
 {
