@@ -122,7 +122,7 @@ public class TurnManager : MonoBehaviour
     public float heroCritRate = .05f;
 
     private bool bideBuff = false;
-    private int bideAttribute = 0;
+    public int bideAttribute = 0;
     private float randomChance = 0f;
 
     private int Potion = 1;
@@ -140,6 +140,9 @@ public class TurnManager : MonoBehaviour
     
     public AttackSO selectedAttack1;
     public AttackSO selectedAttack2;
+
+    public bool drop1Opened;
+    public bool drop2Opened;
     
 
 
@@ -264,6 +267,9 @@ public class TurnManager : MonoBehaviour
 
     public void StartTurn()
     {
+        drop1Opened = false;
+        drop2Opened = false;
+
         hero.UpdateEffects();
         if (hero.burning > 0)
         {
@@ -402,8 +408,8 @@ public class TurnManager : MonoBehaviour
             continue;
             }
 
-            if (enemyAttack.attributes.Contains("Heal"))
-            {
+        if (enemyAttack.attributes.Contains("Heal"))
+        {
              var enemyHeal = enemies
             .Where(e => e.currentHealth > 0) 
             .OrderBy(e => e.currentHealth) 
@@ -444,7 +450,7 @@ public class TurnManager : MonoBehaviour
             {
                 hero.TakeDamage(enemyAttack.GetDamage());
                 ApplyEffectWithDelay(lungeAttack, enemy.transform, 0f, 3.0f);
-                ApplyEffectWithDelay(lungeHit, hero.transform, .5f, 3.0f);
+                ApplyEffectWithDelay(lungeHit, hero.transform, 0f, 3.0f);
             }
 
             if (enemyAttack.attributes.Contains("Slash"))
@@ -575,7 +581,7 @@ private void ShowAttackSelectionUI()
         foreach (var existingOption in attackDropdown.options) 
         {
             if (existingOption.text == attack.attackName)
-            {
+            {   
                 // If the attack already exists, increment the upgrade level
                 Debug.Log("Attack reinforced: " + attack.attackName);
                 attack.upgradeLevel++; 
@@ -641,7 +647,7 @@ private void AddHoverEvents(TMP_Dropdown dropdown, List<string> descriptions)
 {
     // Access the dropdown template and its content
     Transform dropdownTemplate = dropdown.template;
-    Transform dropdownContent = dropdownTemplate.Find("Viewport/Content");
+    Transform dropdownContent = dropdownTemplate.Find("Dropdown List/Viewport/Content");
 
     if (dropdownContent == null)
     {
@@ -705,6 +711,7 @@ private void ShowDescription(string description)
     if (descriptionText != null)
     {
         descriptionText.text = description;
+        Debug.Log("DESCIPBPOS");
     }
     else 
     {

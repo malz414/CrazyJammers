@@ -10,23 +10,36 @@ public class DropdownManager : MonoBehaviour
     private Transform dropdownListParent;
     private List<AttackSO> attacks;
 
+    private bool previousDropdown1State = false; // Track the previous state of dropdown1
+    private bool previousDropdown2State = false; // Track the previous state of dropdown2
+
     private void Update()
     {
-        if (dropdown1.IsExpanded)
+        // Check if dropdown1 was just opened
+        if (dropdown1.IsExpanded && !previousDropdown1State)
         {
             HandleDropdownOpened(dropdown1);
+            turnManager.drop1Opened = true;
         }
-        else if (dropdown2.IsExpanded)
+        else if (!dropdown1.IsExpanded && previousDropdown1State)
+        {
+            turnManager.drop1Opened = false;
+        }
+
+        // Check if dropdown2 was just opened
+        if (dropdown2.IsExpanded && !previousDropdown2State)
         {
             HandleDropdownOpened(dropdown2);
+            turnManager.drop2Opened = true;
         }
-        else
+        else if (!dropdown2.IsExpanded && previousDropdown2State)
         {
-            if (dropdownListParent != null)
-            {
-                dropdownListParent = null;
-            }
+            turnManager.drop2Opened = false;
         }
+
+        // Update the tracked states
+        previousDropdown1State = dropdown1.IsExpanded;
+        previousDropdown2State = dropdown2.IsExpanded;
     }
 
     private void HandleDropdownOpened(TMP_Dropdown dropdown)
@@ -61,7 +74,7 @@ public class DropdownManager : MonoBehaviour
             return;
         }
 
-        for (int i = 1; i < dropdownListParent.childCount; i++) 
+        for (int i = 1; i < dropdownListParent.childCount; i++)
         {
             Transform item = dropdownListParent.GetChild(i);
             TMP_Text itemLabel = item.GetComponentInChildren<TMP_Text>();
@@ -75,21 +88,36 @@ public class DropdownManager : MonoBehaviour
 
     private void EnableBideLevels(Transform item, AttackSO attack)
     {
-        for (int i = 2; i < attack.upgradeLevel + 2; i++)
+        if (turnManager.bideAttribute >= 1)
         {
-            if (i < item.childCount)
+            for (int i = 2; i < attack.upgradeLevel + 2; i++)
             {
-                Transform child = item.GetChild(i);
-                child.gameObject.SetActive(true);
-
-                if (child.name.Contains("Bide Level"))
+                if (i < item.childCount)
                 {
-                    TMP_Text childText = child.GetComponentInChildren<TMP_Text>();
-                    if (childText != null)
+                    Transform child = item.GetChild(i);
+                    child.gameObject.SetActive(true);
+                   
+
+                    if (child.name.Contains("Bide Level"))
                     {
-                        string levelText = $"Level {i - 1}";
-                        childText.text = levelText;
+                        TMP_Text childText = child.GetComponentInChildren<TMP_Text>();
+                        if (childText != null)
+                        {
+                            string levelText = $"Level {i - 1}";
+                            childText.text = levelText;
+                        }
                     }
+                }
+            }
+        }
+        else if (turnManager.bideAttribute < 1)
+        {
+            for (int i = 2; i < 3 + 2; i++)
+            {
+                if (i < item.childCount)
+                {
+                    Transform child = item.GetChild(i);
+                    child.gameObject.SetActive(false);
                 }
             }
         }
