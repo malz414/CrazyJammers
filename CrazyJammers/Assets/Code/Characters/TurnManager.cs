@@ -87,8 +87,9 @@ public class TurnManager : MonoBehaviour
 
     [SerializeField] private DamageNumber popupPrefab;
 
-    public List<AttackSO> enemyAttacksByIndex = new List<AttackSO> { null, null, null, null };
-
+    public List<AttackSO> enemyAttacksByIndex = new List<AttackSO>();
+    
+    public List<AttackSO> previousTurnMoves;
     private List<Enemy> selectedEnemies = new List<Enemy>();
     private bool selectingEnemies = false;
 
@@ -110,6 +111,7 @@ public class TurnManager : MonoBehaviour
 
     private bool hasLunged = false;
     private bool hasIced = false;
+    private bool heroAniPlayed = false;
 
     private int extraAttacks = 0;
     private bool attackExtra = false;
@@ -213,7 +215,7 @@ public class TurnManager : MonoBehaviour
         
         foreach (var attack in attacksReset)
         {
-            attack.upgradeLevel = 1;
+            attack.upgradeLevel = 0;
         
             Debug.Log($"Attack: {attack.attackName}, Upgrade Level: {attack.upgradeLevel}");
 
@@ -321,7 +323,19 @@ public class TurnManager : MonoBehaviour
         }
 
     
-        enemyAttacksUsed.Clear();
+        //   if (hero.bideUses == 2) 
+        // {
+        //     List<AttackSO> previousTurnMoves = new List<AttackSO>(enemyAttacksByIndex);
+        //     enemyAttacksByIndex.Clear();
+
+        //     enemyAttacksByIndex.AddRange(previousTurnMoves);
+        // }
+        // else
+        // {
+        //     enemyAttacksByIndex.Clear();
+        // }
+
+   
         if(hero.currentHealth <= 0) 
         {
             EndGame(false);
@@ -338,6 +352,7 @@ public class TurnManager : MonoBehaviour
     private IEnumerator DoTurnRoutine()
     {
         yield return new WaitForSeconds(.5f);
+        enemyAttacksByIndex.Clear();
         
         
 
@@ -364,7 +379,19 @@ public class TurnManager : MonoBehaviour
 
                 
             AttackSO enemyAttack = enemy.PerformRandomAttack();
-            enemyAttacksByIndex[i] = enemyAttack;
+            enemyAttacksByIndex.Add(enemyAttack);
+            if(!previousTurnMoves.Contains(enemyAttack))
+            {
+                previousTurnMoves.Add(enemyAttack);
+            }
+            
+            
+
+            if (hero.bideUses == 2) 
+            {
+                
+                enemyAttacksByIndex.AddRange(previousTurnMoves);
+            }
 
             
 
@@ -553,7 +580,6 @@ private void OnAttack1Selected(int index)
     Debug.Log($"First attack selected: {selectedAttack1.attackName}");
 }
 
-// Called when the user selects an attack from the second dropdown
 private void OnAttack2Selected(int index)
 {
     if (index < 0 || index >= enemyAttacksByIndex.Count) return;
@@ -565,70 +591,73 @@ private void OnAttack2Selected(int index)
 
 private void ShowAttackSelectionUI()
 {
- 
-    // Get existing dropdown options for comparison
+    // Prepare new options and descriptions for dropdowns
     List<TMP_Dropdown.OptionData> dropdownOptions = new List<TMP_Dropdown.OptionData>();
-
     List<string> descriptions = new List<string>();
 
-    // Iterate through all attacks to process them
+    // Iterate through the list of enemy attacks
     for (int i = 0; i < enemyAttacksByIndex.Count; i++)
     {
         var attack = enemyAttacksByIndex[i];
         bool found = false;
 
-    
-        foreach (var existingOption in attackDropdown.options) 
+        // Check if the attack is already in the dropdown
+        foreach (var existingOption in dropdownOptions)
         {
             if (existingOption.text == attack.attackName)
-            {   
-                // If the attack already exists, increment the upgrade level
+            {
+                // If found, increment the upgrade level
                 Debug.Log("Attack reinforced: " + attack.attackName);
-                attack.upgradeLevel++; 
-                if(attack.upgradeLevel == 4)attack.upgradeLevel=3;
+                attack.upgradeLevel++;
+                
+                // Cap the upgrade level at 2
+                if (attack.upgradeLevel > 2)
+                    attack.upgradeLevel = 2;
+
                 Debug.Log("Attack level: " + attack.upgradeLevel);
                 found = true;
                 break;
             }
-            
         }
 
-
-        TMP_Dropdown.OptionData newOption = new TMP_Dropdown.OptionData(attack.attackName); 
-        dropdownOptions.Add(newOption);
-
-        descriptions.Add(attack.attackDescription);
-    
+        // If not found, add it to the dropdown options
+        if (!found)
+        {
+            TMP_Dropdown.OptionData newOption = new TMP_Dropdown.OptionData(attack.attackName);
+            dropdownOptions.Add(newOption);
+            descriptions.Add(attack.attackDescription);
+        }
     }
 
-
+    // Clear existing options and add updated ones
     attackDropdown.ClearOptions();
     attackDropdown2.ClearOptions();
 
     attackDropdown.AddOptions(dropdownOptions);
     attackDropdown2.AddOptions(dropdownOptions);
 
-    AddHoverEvents(attackDropdown, descriptions); 
+    // Add hover events for descriptions
+    AddHoverEvents(attackDropdown, descriptions);
     AddHoverEvents(attackDropdown2, descriptions);
-    
-    
 
-     if (enemyAttacksByIndex.Count > 0)
+    // Set default values for dropdowns
+    if (enemyAttacksByIndex.Count > 0)
     {
-        attackDropdown.value = 0;  
-        OnAttack1Selected(0); 
+        attackDropdown.value = 0;
+        OnAttack1Selected(0);
     }
 
-   
     if (enemyAttacksByIndex.Count > 1)
     {
-        attackDropdown2.value = 1;  
-        OnAttack2Selected(1); 
+        attackDropdown2.value = 1;
+        OnAttack2Selected(1);
     }
 
     // Set UI elements active
     attackOptionsParent.SetActive(true);
     potionOptions.SetActive(true);
+
+    // Update potion and panacea amounts
     PanAmount.text = Potion.ToString();
     PotAmount.text = Panacea.ToString();
 }
@@ -840,7 +869,7 @@ private void HideDescription()
         if (bideSuccessful)
         {
             ApplyEffectWithDelay(bideani, hero.transform, 0f, 2.0f);
-            bideAttribute = 3;
+            bideAttribute = 2;
             attackOptionsParent.SetActive(false);
             potionOptions.SetActive(false);
             hero.bideBuff = true;
@@ -909,9 +938,14 @@ private void HideDescription()
         Debug.Log(targetEnemies);
         foreach (var targetEnemy in targetEnemies){
 
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(0f);
 
-        hero.DoAttackAnimation();
+        if(!heroAniPlayed)
+        {
+            hero.DoAttackAnimation();
+            heroAniPlayed = true;
+        }
+        
 
         int damage = hero.GetDamage();
         //Crit Damage
@@ -1017,7 +1051,6 @@ private void HideDescription()
         }
 
         
-        yield return new WaitForSeconds(1f);
         // if (combinedAttack.attributes.Contains("Lunge"))
         // {
         //     if(attackExtra == false)
@@ -1086,6 +1119,8 @@ private void HideDescription()
         
         hasLunged = false;
         }
+    
+        heroAniPlayed = false;
         StartTurn();
     }
 

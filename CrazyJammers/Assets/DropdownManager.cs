@@ -65,6 +65,7 @@ public class DropdownManager : MonoBehaviour
         }
 
         attacks = new List<AttackSO>(turnManager.enemyAttacksByIndex);
+        Debug.Log("attacksfor dropdown" + attacks);
     }
 
     private void UpdateDropdownList()
@@ -81,6 +82,7 @@ public class DropdownManager : MonoBehaviour
 
             if (itemLabel != null && i - 1 < attacks.Count && attacks[i - 1] != null)
             {
+
                 EnableBideLevels(item, attacks[i - 1]);
             }
         }
@@ -96,6 +98,7 @@ public class DropdownManager : MonoBehaviour
                 {
                     Transform child = item.GetChild(i);
                     child.gameObject.SetActive(true);
+                    Debug.Log("Child is "+child.name);
                    
 
                     if (child.name.Contains("Bide Level"))
@@ -109,7 +112,9 @@ public class DropdownManager : MonoBehaviour
                     }
                 }
             }
+            Debug.Log(attack.name + " lebel is "+attack.upgradeLevel);
         }
+        
         else if (turnManager.bideAttribute < 1)
         {
             for (int i = 2; i < 3 + 2; i++)

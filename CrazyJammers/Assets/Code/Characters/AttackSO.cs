@@ -7,7 +7,7 @@ public class AttackSO : ScriptableObject
     public string attackName;
     public string attackDescription;
     public int baseDamage;
-    public int upgradeLevel;
+    public int upgradeLevel = 0;
     public List<string> attributes;
 
     public int GetDamage()
