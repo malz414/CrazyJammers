@@ -65,7 +65,7 @@ public class DropdownManager : MonoBehaviour
         }
 
         attacks = new List<AttackSO>(turnManager.enemyAttacksByIndex);
-        Debug.Log("attacksfor dropdown" + attacks);
+       
     }
 
     private void UpdateDropdownList()

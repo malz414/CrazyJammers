@@ -94,6 +94,7 @@ public class TurnManager : MonoBehaviour
      [SerializeField] private DamageNumber popupPrefabgreen;
 
     public List<AttackSO> enemyAttacksByIndex = new List<AttackSO>();
+    public List<AttackSO> enemyAttacksByIndexPerm = new List<AttackSO> { null, null, null, null };
     
     public List<AttackSO> previousTurnMoves;
     private List<Enemy> selectedEnemies = new List<Enemy>();
@@ -372,6 +373,8 @@ public class TurnManager : MonoBehaviour
             Enemy enemy = enemies[i];
             if (!enemy.CanAct())
             {
+                if(!enemyAttacksByIndex.Contains(enemyAttacksByIndexPerm[i]))
+           
                 blurbEvent.Set($"{enemy.characterName} is paralyzed and cannot act this turn!");
                 EventBus.Publish(blurbEvent);
                 ApplyEffectWithDelay(para, enemy.transform, 0f, 3.0f);
@@ -380,6 +383,10 @@ public class TurnManager : MonoBehaviour
             }
             else if (enemy.dead)
             {
+                if(!enemyAttacksByIndex.Contains(enemyAttacksByIndexPerm[i]))
+                {
+                    enemyAttacksByIndex.Add(enemyAttacksByIndexPerm[i]);
+                }
                 continue;
             }
 
@@ -389,7 +396,15 @@ public class TurnManager : MonoBehaviour
 
                 
             AttackSO enemyAttack = enemy.PerformRandomAttack();
-            enemyAttacksByIndex.Add(enemyAttack);
+            
+
+            enemyAttacksByIndexPerm[i] = enemyAttack;
+
+            if(!enemyAttacksByIndex.Contains(enemyAttacksByIndexPerm[i]))
+            {
+                enemyAttacksByIndex.Add(enemyAttacksByIndexPerm[i]);
+            }
+
             if(!previousTurnMoves.Contains(enemyAttack))
             {
                 previousTurnMoves.Add(enemyAttack);
@@ -644,11 +659,25 @@ private void ShowAttackSelectionUI()
     for (int i = 0; i < enemyAttacksByIndex.Count; i++)
     {
         var attack = enemyAttacksByIndex[i];
+
         bool found = false;
+           
+          // If not found, add it to the dropdown options
+        if (!found)
+        {
+            TMP_Dropdown.OptionData newOption = new TMP_Dropdown.OptionData(attack.attackName);
+            dropdownOptions.Add(newOption);
+            descriptions.Add(attack.attackDescription);
+        }
+        
 
         // Check if the attack is already in the dropdown
         foreach (var existingOption in dropdownOptions)
+        
+         
         {
+     
+            
             if (existingOption.text == attack.attackName)
             {
                 // If found, increment the upgrade level
@@ -665,13 +694,7 @@ private void ShowAttackSelectionUI()
             }
         }
 
-        // If not found, add it to the dropdown options
-        if (!found)
-        {
-            TMP_Dropdown.OptionData newOption = new TMP_Dropdown.OptionData(attack.attackName);
-            dropdownOptions.Add(newOption);
-            descriptions.Add(attack.attackDescription);
-        }
+      
     }
 
     // Clear existing options and add updated ones
@@ -1130,14 +1153,13 @@ private void HideDescription()
                     targetEnemy.ApplyParalysis(5, true);
                     blurbEvent.Set($"{targetEnemy.characterName} was paralysed!");
                     EventBus.Publish(blurbEvent);
-                    Debug.Log($"Hero has been paralyzed by {enemyAttack.attackName}!");
+                    
                 }
                 if (Random.value <= .1f && hero.GetParalysisTurnsRemaining() < 1 && hero.burning < 1)
                 {
                     targetEnemy.ApplyParalysis(5, true);
                     blurbEvent.Set($"{targetEnemy.characterName} was paralysed!");
                     EventBus.Publish(blurbEvent);
-                    Debug.Log($"Hero has been paralyzed by {enemyAttack.attackName}!");
                 }
                 if (Random.value <= .1f && hero.GetParalysisTurnsRemaining() < 1 && hero.burning < 1)
                 {
@@ -1145,10 +1167,9 @@ private void HideDescription()
                     targetEnemy.ApplyParalysis(5, true);
                     blurbEvent.Set($"{targetEnemy.characterName} was paralysed!");
                     EventBus.Publish(blurbEvent);
-                    Debug.Log($"Hero has been paralyzed by {enemyAttack.attackName}!");
                 }
-                ApplyEffectWithDelay(tripleAttack, Hero.transform, 0f, 3.0f);
-                ApplyEffectWithDelay(tripleHit, enemy.transform, .5f, 3.0f);
+                ApplyEffectWithDelay(tripleAttack, hero.transform, 0f, 3.0f);
+                ApplyEffectWithDelay(tripleHit, targetEnemy.transform, .5f, 3.0f);
             }
              
         if (combinedAttack.attributes.Contains("Ice") && !hasIced)
