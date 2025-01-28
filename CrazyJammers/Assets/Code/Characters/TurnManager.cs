@@ -79,6 +79,8 @@ public class TurnManager : MonoBehaviour
     [SerializeField] GameObject potionOptions;
 
     [SerializeField] GameObject targetingHUDParent;
+  
+
 
     [SerializeField] GameObject winScreen;
 
@@ -136,12 +138,13 @@ public class TurnManager : MonoBehaviour
 
     private int Potion = 1;
     private int Panacea = 1;
-    private int enemiesDead = 0;
+    public int enemiesDead = 0;
 
 
     [SerializeField] private TextMeshProUGUI PotAmount; 
     [SerializeField] private TextMeshProUGUI PanAmount; 
     [SerializeField] private TextMeshProUGUI descriptionText;
+    [SerializeField] private TextMeshProUGUI usedMove;
     public TextMeshProUGUI Popop; 
 
     private CharacterStatusUpdateEvent statusUpdateEvent;
@@ -433,6 +436,7 @@ public class TurnManager : MonoBehaviour
                 ApplyEffectWithDelay(barrier3, enemy.transform, 0f, 2.0f);
                 blurbEvent.Set($"The heroes gained a barrier.");
                 EventBus.Publish(blurbEvent);
+                     yield return new WaitForSeconds(1.5f);
                 continue;
 
             }
@@ -458,6 +462,7 @@ public class TurnManager : MonoBehaviour
                     blurbEvent.Set($"The heroes gained a barrier.");
                     EventBus.Publish(blurbEvent);
                     popupPrefab = popupPrefabNeutral;
+                    yield return new WaitForSeconds(1.5f);
 
                 }
 
@@ -492,6 +497,7 @@ public class TurnManager : MonoBehaviour
             EventBus.Publish(blurbEvent);
             EventBus.Publish(statusUpdateEvent);
             popupPrefab = popupPrefabNeutral;
+            yield return new WaitForSeconds(1.5f);
         }
         continue;
                 
@@ -499,6 +505,7 @@ public class TurnManager : MonoBehaviour
 
             if (enemyAttack.attributes.Contains("Ice"))
             {
+                hero.TakeDamage(enemyAttack.GetDamage());
                 hero.TakeDamage(enemyAttack.GetDamage());
                 ApplyEffectWithDelay(iceAttack, enemy.transform, 0f, 3.0f);
                 ApplyEffectWithDelay(iceHit, hero.transform, .5f, 3.0f);
@@ -514,7 +521,7 @@ public class TurnManager : MonoBehaviour
 
             if (enemyAttack.attributes.Contains("Slash"))
             {
-                hero.TakeDamage(enemyAttack.GetDamage());
+                
                 ApplyEffectWithDelay(slashAttack, enemy.transform, 0f, 3.0f);
                 ApplyEffectWithDelay(slashHit, hero.transform, .5f, 3.0f);
             }
@@ -525,13 +532,14 @@ public class TurnManager : MonoBehaviour
             {
                 ApplyEffectWithDelay(SteadyAttack, enemy.transform, 0f, 2.0f);
                 ApplyEffectWithDelay(SteadyHit, hero.transform, .5f, 3.0f);
-                hero.TakeDamage(enemyAttack.GetDamage());
+                yield return new WaitForSeconds(1.5f);
+                
             }
               if (enemyAttack.attributes.Contains("Triple"))
             {
                 hero.TakeDamage(enemyAttack.GetDamage());
                 hero.TakeDamage(enemyAttack.GetDamage());
-                hero.TakeDamage(enemyAttack.GetDamage());
+           
                 if (Random.value <= .1f && hero.GetParalysisTurnsRemaining() < 1 && hero.burning < 1)
                 {
                     hero.ApplyParalysis(5, false);
@@ -607,7 +615,7 @@ public class TurnManager : MonoBehaviour
             }
         }
 
-        yield return new WaitForSeconds(1.5f);
+        yield return new WaitForSeconds(.5f);
         hero.bideBuff = false;
 
         if (!hero.CanAct())
@@ -842,7 +850,6 @@ private void HideDescription()
 
     // Combine the selected attacks
     hero.CombineAttacks(selectedAttack1, selectedAttack2);
-    Debug.Log($"Combining attacks: {selectedAttack1.attackName} and {selectedAttack2.attackName}");
 
     // Reset selections after combining
     selectedAttack1 = null;
@@ -853,6 +860,8 @@ private void HideDescription()
     attackOptionsMenu.SetActive(false);
     potionOptions.SetActive(false);
     targetingHUDParent.SetActive(true);
+    usedMove.text = ($"Character Used {combinedAttack.attackName}");
+
     targetingMode = true;
 }
 
@@ -869,8 +878,20 @@ private void HideDescription()
     public void SelectEnemyTotAttack(Enemy enemy)
 {
     // Check for "Lunge" attribute to determine multi-target behavior
+    int lungeTargets = 4;
+
+    foreach (var body in enemies)
+            {
+                if (body.dead)
+                {
+                    lungeTargets--;
+                }
+                 
+            }
+       
+
     if(!targetingMode) return;
-    if (!combinedAttack.attributes.Contains("Lunge") || enemiesDead == 3) 
+    if (!combinedAttack.attributes.Contains("Lunge") || lungeTargets == 1 && combinedAttack.attributes.Contains("Lunge") ) 
     {   Debug.Log("ATTACKING NO lunge");
         blurbEvent.Set("Attacking");
         EventBus.Publish(blurbEvent);
@@ -1013,9 +1034,17 @@ private void HideDescription()
             hero.DoAttackAnimation();
             heroAniPlayed = true;
         }
+        int damage;
+        if(bideAttribute <= 0)
+        {
+            damage = hero.GetDamage();
+        }
+        else
+        {
+            float multiplier = 1.0f + (combinedAttack.upgradeLevel/30f);   
+            damage = Mathf.RoundToInt(hero.GetDamage() * multiplier);
+        }
         
-
-        int damage = hero.GetDamage();
         //Crit Damage
         if (combinedAttack.attributes.Contains("Steady"))
             {
@@ -1230,11 +1259,13 @@ private void HideDescription()
     public void RemoveEnemy(Enemy enemy)
         {
         enemy.dead = true;
+        enemy.RemoveParalysis();
+        enemy.RemoveBurns();
         
         Debug.Log("Enemies dead = " + enemiesDead);
 
 
-        StartCoroutine(FadeOut(enemy.gameObject));  
+        //StartCoroutine(FadeOut(enemy.gameObject));  
         foreach (var body in enemies)
             {
                 if (body.dead)

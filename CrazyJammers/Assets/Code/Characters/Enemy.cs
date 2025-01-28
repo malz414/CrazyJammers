@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System.Linq;
 
 public class Enemy : Character
 {
@@ -49,15 +50,32 @@ public class Enemy : Character
     public AttackSO PerformRandomAttack()
     {
         if (possibleAttacks.Count > 0)
+    {
+        Enemy[] allEnemies = FindObjectsOfType<Enemy>();
+        Debug.Log(allEnemies[1]);
+        bool allEnemiesFullHealth = allEnemies.All(enemy => enemy.IsFullHealth());
+        List<AttackSO> validAttacks = allEnemiesFullHealth 
+            ? possibleAttacks.Where(attack => attack.attackName != "Heal" && attack.attackName != "Healing Field" ).ToList() 
+            : possibleAttacks;
+
+        if (validAttacks.Count > 0)
         {
-            int randomIndex = Random.Range(0, possibleAttacks.Count);
-            AttackSO chosenAttack = possibleAttacks[randomIndex];
+            int randomIndex = Random.Range(0, validAttacks.Count);
+            AttackSO chosenAttack = validAttacks[randomIndex];
             int damage = chosenAttack.GetDamage();
             attacksUsed.Add(chosenAttack);
             DoAttackAnimation();
             return chosenAttack; 
         }
         Debug.LogError($"No available attacks for enemy: {gameObject.name}");
-        return null;
+       
+    }
+     return null;
+}
+
+
+    public bool IsFullHealth()
+    {
+        return currentHealth >= maxHealth;
     }
 }
