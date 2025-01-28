@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Barrier
   m_EditorClassIdentifier: 
   attackName: Barrier
-  attackDesctiption: A spell creates a barrier to weaken the next hit.
+  attackDescription: This move creates a barrier around you shielding from damage
   baseDamage: 10
   upgradeLevel: 0
   attributes:

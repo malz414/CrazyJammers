@@ -13,8 +13,7 @@ MonoBehaviour:
   m_Name: Steady Blade
   m_EditorClassIdentifier: 
   attackName: Steady Blade
-  attackDesctiption: This attack does decent damage and has a much higher chance
-    to CRIT.
+  attackDescription: This attack deals good damage and has an increased crit chance
   baseDamage: 50
   upgradeLevel: 0
   attributes:

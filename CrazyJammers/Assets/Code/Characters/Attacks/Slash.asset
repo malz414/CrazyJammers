@@ -13,7 +13,8 @@ MonoBehaviour:
   m_Name: Slash
   m_EditorClassIdentifier: 
   attackName: Slash
-  attackDesctiption: This attack deals high damage.
+  attackDescription: This attaack deals a great amount of damage
   baseDamage: 70
-  upgradeLevel: 0
-  attributes: []
+  upgradeLevel: 1
+  attributes:
+  - Slash

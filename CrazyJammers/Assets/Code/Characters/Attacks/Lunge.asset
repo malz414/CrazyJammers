@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: Lunge
   m_EditorClassIdentifier: 
   attackName: Lunge
-  attackDesctiption: This attack deals low damage but hits twice.
+  attackDescription: This move is weak but you hit twice.
   baseDamage: 20
-  upgradeLevel: 0
+  upgradeLevel: 1
   attributes:
   - Lunge

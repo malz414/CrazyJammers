@@ -1,17 +1,19 @@
 using UnityEngine;
 using TMPro;
 using System.Collections.Generic;
+using UnityEngine.EventSystems;
 
 public class DropdownManager : MonoBehaviour
 {
     public TMP_Dropdown dropdown1;
     public TMP_Dropdown dropdown2;
     public TurnManager turnManager;
+    public TextMeshProUGUI descriptionText; 
     private Transform dropdownListParent;
     private List<AttackSO> attacks;
 
-    private bool previousDropdown1State = false; // Track the previous state of dropdown1
-    private bool previousDropdown2State = false; // Track the previous state of dropdown2
+    private bool previousDropdown1State = false; 
+    private bool previousDropdown2State = false; 
 
     private void Update()
     {
@@ -65,7 +67,6 @@ public class DropdownManager : MonoBehaviour
         }
 
         attacks = new List<AttackSO>(turnManager.enemyAttacksByIndex);
-       
     }
 
     private void UpdateDropdownList()
@@ -82,8 +83,8 @@ public class DropdownManager : MonoBehaviour
 
             if (itemLabel != null && i - 1 < attacks.Count && attacks[i - 1] != null)
             {
-
                 EnableBideLevels(item, attacks[i - 1]);
+                AttachHoverListener(item, attacks[i - 1].attackDescription);
             }
         }
     }
@@ -98,8 +99,6 @@ public class DropdownManager : MonoBehaviour
                 {
                     Transform child = item.GetChild(i);
                     child.gameObject.SetActive(true);
-                    Debug.Log("Child is "+child.name);
-                   
 
                     if (child.name.Contains("Bide Level"))
                     {
@@ -112,9 +111,7 @@ public class DropdownManager : MonoBehaviour
                     }
                 }
             }
-            Debug.Log(attack.name + " lebel is "+attack.upgradeLevel);
         }
-        
         else if (turnManager.bideAttribute < 1)
         {
             for (int i = 2; i < 3 + 2; i++)
@@ -125,6 +122,43 @@ public class DropdownManager : MonoBehaviour
                     child.gameObject.SetActive(false);
                 }
             }
+        }
+    }
+
+    private void AttachHoverListener(Transform item, string description)
+    {
+        EventTrigger eventTrigger = item.gameObject.GetComponent<EventTrigger>();
+        if (eventTrigger == null)
+        {
+            eventTrigger = item.gameObject.AddComponent<EventTrigger>();
+        }
+
+        EventTrigger.Entry pointerEnterEntry = new EventTrigger.Entry
+        {
+            eventID = EventTriggerType.PointerEnter
+        };
+        pointerEnterEntry.callback.AddListener((eventData) => ShowDescription(description));
+        eventTrigger.triggers.Add(pointerEnterEntry);
+
+        
+        EventTrigger.Entry pointerExitEntry = new EventTrigger.Entry
+        {
+            eventID = EventTriggerType.PointerExit
+        };
+        pointerExitEntry.callback.AddListener((eventData) => ShowDescription(""));
+        eventTrigger.triggers.Add(pointerExitEntry);
+    }
+
+    private void ShowDescription(string description)
+    {
+        if (descriptionText != null)
+        {
+            descriptionText.text = description;
+            Debug.Log("DESCRIPTION: " + description);
+        }
+        else
+        {
+            Debug.Log("NO DESCRIPTION TEXT ASSIGNED");
         }
     }
 }

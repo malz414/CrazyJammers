@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Fireball
   m_EditorClassIdentifier: 
   attackName: Fireball
-  attackDescription: 
+  attackDescription: This move deals damage and can cause burning
   baseDamage: 20
   upgradeLevel: 1
   attributes:

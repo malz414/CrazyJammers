@@ -743,8 +743,7 @@ private void ShowAttackSelectionUI()
 private void AddHoverEvents(TMP_Dropdown dropdown, List<string> descriptions)
 {
     // Access the dropdown template and its content
-    Transform dropdownTemplate = dropdown.template;
-    Transform dropdownContent = dropdownTemplate.Find("Dropdown List/Viewport/Content");
+    Transform dropdownContent = dropdown.transform.Find("Dropdown List/Viewport/Content");
 
     if (dropdownContent == null)
     {
@@ -1137,7 +1136,7 @@ private void HideDescription()
 
         if (combinedAttack.attributes.Contains("Slash"))
             {
-                heroCritRate = 0.4f;
+               
                 ApplyEffectWithDelay(slashAttack, hero.transform, 0f, 3.0f);
                 ApplyEffectWithDelay(slashHit, targetEnemy.transform, .5f, 3.0f);
                 

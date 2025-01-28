@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Arrow Bolt
   m_EditorClassIdentifier: 
   attackName: Arrow Bolt
-  attackDesctiption: This attack deals very low damage. It might inflict Paralysis.
+  attackDescription: This move is weak but has a chance to cause paralysis.
   baseDamage: 10
   upgradeLevel: 0
   attributes:

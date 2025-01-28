@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: Heal
   m_EditorClassIdentifier: 
   attackName: Heal
-  attackDesctiption: A spell that heals some of your HP.
+  attackDescription: Restore some HP
   baseDamage: 10
-  upgradeLevel: 0
+  upgradeLevel: 1
   attributes:
   - Heal

@@ -24,7 +24,7 @@ public class Enemy : Character
 
         TurnManager.Instance.SelectEnemyTotAttack(this);
 
-        TargetingIndicator.SetActive(false);
+        //TargetingIndicator.SetActive(false);
         return;
 
     }
@@ -35,7 +35,7 @@ public class Enemy : Character
 
     void OnMouseExit()
     {
-        TargetingIndicator.SetActive(false);
+//        TargetingIndicator.SetActive(false);
     }
 
     protected override void Die()
