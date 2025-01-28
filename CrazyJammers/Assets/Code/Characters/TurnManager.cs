@@ -423,13 +423,14 @@ public class TurnManager : MonoBehaviour
 
             if (enemyAttack.attributes.Contains("Barrier"))
             {
-                List<Enemy> alive = enemies.FindAll(enemy => enemy.currentHealth >0);
-                int randomRange = Random.Range(0, alive.Count);
-                Enemy enemyBarrier = alive[randomRange];
-                enemyBarrier.barrierCount += 1;
-                ApplyEffectWithDelay(barrier1, enemyBarrier.transform, 0f, 2.0f);
-                ApplyEffectWithDelay(barrier2, enemyBarrier.transform, 0f, 2.0f);
-                ApplyEffectWithDelay(barrier3, enemyBarrier.transform, 0f, 2.0f);
+                // List<Enemy> alive = enemies.FindAll(enemy => enemy.currentHealth >0);
+                // int randomRange = Random.Range(0, alive.Count);
+                // Enemy enemyBarrier = alive[randomRange];
+                
+                enemy.barrierCount += 1;
+                ApplyEffectWithDelay(barrier1, enemy.transform, 0f, 2.0f);
+                ApplyEffectWithDelay(barrier2, enemy.transform, 0f, 2.0f);
+                ApplyEffectWithDelay(barrier3, enemy.transform, 0f, 2.0f);
                 blurbEvent.Set($"The heroes gained a barrier.");
                 EventBus.Publish(blurbEvent);
                 continue;
