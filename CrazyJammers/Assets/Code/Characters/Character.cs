@@ -18,6 +18,9 @@
         public ParalysisEffect paralysisEffect;
         private GameplayBlurbEvent blurbEvent;
 
+        
+         
+
         [SerializeField] private Animator animator;
 
         private const float DAMAGE_ANIM_DELAY_DURATION = .35f;
@@ -76,6 +79,18 @@
             StartCoroutine(DoHitRoutine(damage));
         }
 
+    
+
+        public virtual void HealDamage(int damage)
+        {
+         
+                currentHealth += damage;
+            
+
+            //Barrier Animation?
+            StartCoroutine(DoHealRoutine(damage));
+        }
+
         public void RemoveBurns()
         {
             this.burning = 0;
@@ -95,14 +110,17 @@
             yield return new WaitForSeconds(DAMAGE_ANIM_DELAY_DURATION);
 
             DamageNumber newPopup = popupPrefab.Spawn(gameObject.transform.position + new Vector3(0, 0.25f, -1), damage); //Spawn DamageNumber     <-----     [REQUIRED]
-
+            // newPopup.color = yellow;
+            //var newpreset = Resources.Load<DamageNumberSettings>("Blood Thick");
+            //newPopup.settings = newpreset; 
             newPopup.permanent = false;
             newPopup.lifetime = DAMAGE_POPUP_LIFETIME;
 
             if (currentHealth <= 0)
             {
                 DoDeathAnimation();
-            } else
+            } 
+            else
             {
                 DoHitAnimation();
             }
@@ -110,6 +128,22 @@
             EventBus.Publish(statusUpdateEvent);
 
         }
+
+         private IEnumerator DoHealRoutine(int damage)
+        {
+            yield return new WaitForSeconds(0f);
+
+            DamageNumber newPopup = popupPrefab.Spawn(gameObject.transform.position + new Vector3(0, 0.25f, -1), damage); //Spawn DamageNumber     <-----     [REQUIRED]
+            // newPopup.color = green;
+            //var newpreset = Resources.Load<DamageNumberSettings>("Blood Thick");
+            //newPopup.settings = newpreset; 
+            newPopup.permanent = false;
+            newPopup.lifetime = DAMAGE_POPUP_LIFETIME;
+
+            EventBus.Publish(statusUpdateEvent);
+
+        }
+
 
         public void DoHitAnimation()
         {
