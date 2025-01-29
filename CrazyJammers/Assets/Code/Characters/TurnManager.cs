@@ -266,7 +266,7 @@ public class TurnManager : MonoBehaviour
 
         EventBus.Publish(new FadeInEvent(UICategoryEnums.GamePlayUI));
 
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(1f);
 
         StartTurn();
     }
