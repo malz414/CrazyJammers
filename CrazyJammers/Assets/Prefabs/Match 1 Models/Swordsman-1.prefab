@@ -81,7 +81,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 4d02b133d12e7c943838bec9edd05a22, type: 3}
       propertyPath: m_Name
-      value: Swordsman 1
+      value: Swordsman-1
       objectReference: {fileID: 0}
     - target: {fileID: 5866666021909216657, guid: 4d02b133d12e7c943838bec9edd05a22, type: 3}
       propertyPath: m_Controller
@@ -119,7 +119,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   characterName: Swordsman
-  maxHealth: 113
+  maxHealth: 98
   currentHealth: 0
   barrierCount: 0
   burning: 0
