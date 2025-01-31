@@ -145,6 +145,7 @@ public class TurnManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI PanAmount; 
     [SerializeField] private TextMeshProUGUI descriptionText;
     [SerializeField] private TextMeshProUGUI usedMove;
+    [SerializeField] private TextMeshProUGUI usedMove1;
     public TextMeshProUGUI Popop; 
 
     private CharacterStatusUpdateEvent statusUpdateEvent;
@@ -291,6 +292,7 @@ public class TurnManager : MonoBehaviour
             ApplyEffectWithDelay(burn, hero.transform, 0f, 3.0f);
             blurbEvent.Set($" You're Burning for {hero.burning} turns!");
             EventBus.Publish(blurbEvent);
+            usedMove1.text = $" You're Burning for {hero.burning} turns!";
             hero.burning--;
             EventBus.Publish(statusUpdateEvent);
             if(hero.currentHealth <= 0) 
@@ -312,6 +314,7 @@ public class TurnManager : MonoBehaviour
                 {
                     blurbEvent.Set($"{enemy.characterName} has been burned to death!");
                     EventBus.Publish(blurbEvent);
+                    usedMove1.text = $"{enemy.characterName} has been burned to death!";
                     RemoveEnemy(enemy);
                 }
                 else
@@ -319,6 +322,7 @@ public class TurnManager : MonoBehaviour
                     enemy.burning--;
                     blurbEvent.Set($" {enemy.characterName} is burning for {enemy.burning} turns!");
                     EventBus.Publish(blurbEvent);
+                    usedMove1.text = $"{enemy.characterName} is burning for {enemy.burning} turns!";
 
                 }
                 
@@ -380,6 +384,7 @@ public class TurnManager : MonoBehaviour
            
                 blurbEvent.Set($"{enemy.characterName} is paralyzed and cannot act this turn!");
                 EventBus.Publish(blurbEvent);
+                usedMove1.text = $"{enemy.characterName} is paralyzed and cannot act this turn!";
                 ApplyEffectWithDelay(para, enemy.transform, 0f, 3.0f);
            
                 continue;
@@ -400,7 +405,9 @@ public class TurnManager : MonoBehaviour
                 
             AttackSO enemyAttack = enemy.PerformRandomAttack();
             
-
+            usedMove1.text = $"{enemy.characterName} Used {enemyAttack.attackName}";
+            blurbEvent.Set($"{enemy.characterName} Used {enemyAttack.attackName}");
+            EventBus.Publish(blurbEvent);
             enemyAttacksByIndexPerm[i] = enemyAttack;
 
             if(!enemyAttacksByIndex.Contains(enemyAttacksByIndexPerm[i]))
@@ -434,8 +441,9 @@ public class TurnManager : MonoBehaviour
                 ApplyEffectWithDelay(barrier1, enemy.transform, 0f, 2.0f);
                 ApplyEffectWithDelay(barrier2, enemy.transform, 0f, 2.0f);
                 ApplyEffectWithDelay(barrier3, enemy.transform, 0f, 2.0f);
-                blurbEvent.Set($"The heroes gained a barrier.");
+                blurbEvent.Set($"The Cleric gained a barrier.");
                 EventBus.Publish(blurbEvent);
+                usedMove1.text = $"The Cleric gained a barrier.";
                      yield return new WaitForSeconds(1.5f);
                 continue;
 
@@ -460,6 +468,8 @@ public class TurnManager : MonoBehaviour
                     ApplyEffectWithDelay(panaceaAni, enemyHeal.transform, 0f, 2.0f);
                     blurbEvent.Set($"The heroes healed and status cured.");
                     blurbEvent.Set($"The heroes gained a barrier.");
+                     usedMove1.text = $"The heroes gained a barrier.";
+                      usedMove1.text = $"The heroes healed and status cured.";
                     EventBus.Publish(blurbEvent);
                     popupPrefab = popupPrefabNeutral;
                     yield return new WaitForSeconds(1.5f);
@@ -494,6 +504,7 @@ public class TurnManager : MonoBehaviour
 
            
             blurbEvent.Set($"{enemyHeal.characterName} was healed.");
+             usedMove1.text = $"{enemyHeal.characterName} was healed.";
             EventBus.Publish(blurbEvent);
             EventBus.Publish(statusUpdateEvent);
             popupPrefab = popupPrefabNeutral;
@@ -545,12 +556,14 @@ public class TurnManager : MonoBehaviour
                     hero.ApplyParalysis(5, false);
                     blurbEvent.Set($"Boss has been paralyzed by {enemyAttack.attackName}!");
                     EventBus.Publish(blurbEvent);
+                      usedMove1.text =$"Boss has been paralyzed by {enemyAttack.attackName}!";
                     Debug.Log($"Hero has been paralyzed by {enemyAttack.attackName}!");
                 }
                 if (Random.value <= .1f && hero.GetParalysisTurnsRemaining() < 1 && hero.burning < 1)
                 {
                     hero.ApplyParalysis(5, false);
                     blurbEvent.Set($"Boss has been paralyzed by {enemyAttack.attackName}!");
+                      usedMove1.text =$"Boss has been paralyzed by {enemyAttack.attackName}!";
                     EventBus.Publish(blurbEvent);
                     Debug.Log($"Hero has been paralyzed by {enemyAttack.attackName}!");
                 }
@@ -558,6 +571,7 @@ public class TurnManager : MonoBehaviour
                 {
                     hero.ApplyParalysis(5, false);
                     blurbEvent.Set($"Boss has been paralyzed by {enemyAttack.attackName}!");
+                       usedMove1.text =$"Boss has been paralyzed by {enemyAttack.attackName}!";
                     EventBus.Publish(blurbEvent);
                     Debug.Log($"Hero has been paralyzed by {enemyAttack.attackName}!");
                 }
@@ -583,6 +597,7 @@ public class TurnManager : MonoBehaviour
                     hero.ApplyBurn(10, 3);
                     blurbEvent.Set($"Boss has been burned by {enemyAttack.attackName}!");
                     EventBus.Publish(blurbEvent);
+                       usedMove1.text =$"Boss has been burned by {enemyAttack.attackName}!";
                     Debug.Log($"Hero has been burned by {enemyAttack.attackName}!");
                 }
                 ApplyEffectWithDelay(fireAttack, enemy.transform, 0f, 3.0f);
@@ -597,6 +612,7 @@ public class TurnManager : MonoBehaviour
                     hero.ApplyParalysis(5, false);
                     blurbEvent.Set($"Boss has been paralyzed by {enemyAttack.attackName}!");
                      EventBus.Publish(blurbEvent);
+                     usedMove1.text = $"Boss has been paralyzed by {enemyAttack.attackName}!";
                     Debug.Log($"Hero has been paralyzed by {enemyAttack.attackName}!");
                 }
                 ApplyEffectWithDelay(arrowAttack, enemy.transform, 0f, 3.0f);
@@ -622,6 +638,7 @@ public class TurnManager : MonoBehaviour
         {
              blurbEvent.Set($"Boss is paralyzed and cannot act this turn!");
              EventBus.Publish(blurbEvent);
+                    usedMove1.text = $"Boss is paralyzed and cannot act this turn!";
             ApplyEffectWithDelay(para, hero.transform, 0f, 3.0f);
             Debug.Log("Hero is paralyzed and cannot act this turn!");
             StartTurn(); // Skip the hero's turn
@@ -837,6 +854,8 @@ private void HideDescription()
     if (selectedAttack1 == null || selectedAttack2 == null)
     {
         blurbEvent.Set("Please select both attacks!");
+        
+        usedMove1.text = "Please select both attacks!";
         EventBus.Publish(blurbEvent);
         return;
     }
@@ -844,7 +863,10 @@ private void HideDescription()
     if (selectedAttack1 == selectedAttack2)
     {
         blurbEvent.Set("Select a different move!");
+        
         EventBus.Publish(blurbEvent);
+        
+        usedMove1.text = "Select a different move!";
         return;
     }
 
@@ -860,7 +882,7 @@ private void HideDescription()
     attackOptionsMenu.SetActive(false);
     potionOptions.SetActive(false);
     targetingHUDParent.SetActive(true);
-    usedMove.text = ($"Character Used {combinedAttack.attackName}");
+    usedMove.text = ($"Boss Used {combinedAttack.attackName}");
 
     targetingMode = true;
 }
@@ -979,6 +1001,7 @@ private void HideDescription()
             }
              blurbEvent.Set($"Potion Used");
              EventBus.Publish(blurbEvent);
+             usedMove1.text = "Potion Used";
             Potion --;
             attackOptionsParent.SetActive(false);
             potionOptions.SetActive(false);
@@ -990,6 +1013,7 @@ private void HideDescription()
         else
         {
              blurbEvent.Set($"No Potion");
+              usedMove1.text = "No Potion";
              EventBus.Publish(blurbEvent);
         }
 
@@ -1004,6 +1028,7 @@ private void HideDescription()
             hero.RemoveHeroParalysis();
              blurbEvent.Set($"Status Healed");
              EventBus.Publish(blurbEvent);
+               usedMove1.text = "Status Healed";
             Panacea --;
             attackOptionsParent.SetActive(false);
             potionOptions.SetActive(false);
@@ -1015,6 +1040,7 @@ private void HideDescription()
         else
         {
              blurbEvent.Set($"No Panacea");
+              usedMove1.text = "No Panacea";
              EventBus.Publish(blurbEvent);
         }
     }
@@ -1060,6 +1086,7 @@ private void HideDescription()
             
              blurbEvent.Set("Critical Hit!");
              EventBus.Publish(blurbEvent);
+              usedMove1.text = "Critical Hit";
             targetEnemy.TakeDamage(damage);
         }
         else
@@ -1071,6 +1098,7 @@ private void HideDescription()
 
          blurbEvent.Set($"Boss attacked {targetEnemy.characterName}");
          EventBus.Publish(blurbEvent);
+         usedMove1.text = $"Boss attacked {targetEnemy.characterName}";
         Debug.Log($"Boss attacked {targetEnemy.characterName}, dealing {damage} damage.");
 
 
@@ -1082,6 +1110,7 @@ private void HideDescription()
                     targetEnemy.ApplyBurn(1000, 3);
                      blurbEvent.Set($"{targetEnemy.characterName} was burned!");
                      EventBus.Publish(blurbEvent);
+                     usedMove1.text = $"{targetEnemy.characterName} was burned!";
                     
                 }
                 ApplyEffectWithDelay(fireAttack, hero.transform, 0f, 3.0f);
@@ -1097,6 +1126,8 @@ private void HideDescription()
                     targetEnemy.ApplyParalysis(5, true);
                      blurbEvent.Set($"{targetEnemy.characterName} was paralysed!");
                      EventBus.Publish(blurbEvent);
+                     
+                     usedMove1.text = $"{targetEnemy.characterName} was paralysed!";
                 }
                 ApplyEffectWithDelay(arrowAttack, hero.transform, 0f, 3.0f);
                 ApplyEffectWithDelay(arrowHit, targetEnemy.transform, .5f, 3.0f);
@@ -1108,6 +1139,9 @@ private void HideDescription()
                     hero.HealDamage(damage);
                     blurbEvent.Set($"{damage} Health Recovered!");
                     EventBus.Publish(blurbEvent);
+                    
+                     usedMove1.text = $"{damage} Health Recovered!";
+                    
                     ApplyEffectWithDelay(heal, hero.transform, 0f, 3.0f);
                     EventBus.Publish(statusUpdateEvent);
                     popupPrefab = popupPrefabNeutral;
@@ -1120,6 +1154,7 @@ private void HideDescription()
                     hero.barrierCount += 1;
                      blurbEvent.Set("Barrier raised");
                      EventBus.Publish(blurbEvent);
+                      usedMove1.text = $"Barrier Raised";
                     ApplyEffectWithDelay(barrier1, hero.transform, 0f, 3.0f);
                     ApplyEffectWithDelay(barrier2, hero.transform, 0f, 3.0f);
                     ApplyEffectWithDelay(barrier3, hero.transform, 0f, 3.0f);
@@ -1131,12 +1166,14 @@ private void HideDescription()
                     hero.HealDamage(damage);
                     blurbEvent.Set($"{damage} Health Recovered!");
                     EventBus.Publish(blurbEvent);
+                         usedMove1.text = $"{damage} Health Recovered!";
                     hero.RemoveBurns();
                     hero.RemoveParalysis();
                     hero.RemoveHeroBurns();
                     hero.RemoveHeroParalysis();
                     blurbEvent.Set($"Status Healed");
                     EventBus.Publish(blurbEvent);
+                      usedMove1.text = $"Status Healed";
                     ApplyEffectWithDelay(heal, hero.transform, 0f, 3.0f);
                     ApplyEffectWithDelay(panaceaAni, hero.transform, 0f, 3.0f);
                     popupPrefab = popupPrefabNeutral;
@@ -1147,6 +1184,7 @@ private void HideDescription()
         {
              blurbEvent.Set($"{targetEnemy.characterName} has been defeated!");
              EventBus.Publish(blurbEvent);
+                  usedMove1.text = $"{targetEnemy.characterName} has been defeated!";
             RemoveEnemy(targetEnemy);
         }
 
@@ -1183,12 +1221,15 @@ private void HideDescription()
                     blurbEvent.Set($"{targetEnemy.characterName} was paralysed!");
                     EventBus.Publish(blurbEvent);
                     
+                  usedMove1.text = $"{targetEnemy.characterName} was paralysed!";
+                    
                 }
                 if (Random.value <= .1f && hero.GetParalysisTurnsRemaining() < 1 && hero.burning < 1)
                 {
                     targetEnemy.ApplyParalysis(5, true);
                     blurbEvent.Set($"{targetEnemy.characterName} was paralysed!");
                     EventBus.Publish(blurbEvent);
+                      usedMove1.text = $"{targetEnemy.characterName} was paralysed!";
                 }
                 if (Random.value <= .1f && hero.GetParalysisTurnsRemaining() < 1 && hero.burning < 1)
                 {
@@ -1196,6 +1237,7 @@ private void HideDescription()
                     targetEnemy.ApplyParalysis(5, true);
                     blurbEvent.Set($"{targetEnemy.characterName} was paralysed!");
                     EventBus.Publish(blurbEvent);
+                      usedMove1.text = $"{targetEnemy.characterName} was paralysed!";
                 }
                 ApplyEffectWithDelay(tripleAttack, hero.transform, 0f, 3.0f);
                 ApplyEffectWithDelay(tripleHit, targetEnemy.transform, .5f, 3.0f);
@@ -1210,8 +1252,9 @@ private void HideDescription()
             ApplyEffectWithDelay(iceHit, targetEnemy.transform, .5f, 3.0f);
             // targetingHUDParent.SetActive(true);
             // targetingMode = true;
-             blurbEvent.Set($"YouWW strike again");
+             blurbEvent.Set($"You strike again");
              EventBus.Publish(blurbEvent);
+               usedMove1.text = $"You strike again";
             
             
         }
@@ -1220,6 +1263,7 @@ private void HideDescription()
         {
             blurbEvent.Set($"You strike twice");
             EventBus.Publish(blurbEvent);
+                 usedMove1.text = $"You strike again";
             ApplyEffectWithDelay(lungeAttack, hero.transform, 0f, 3.0f);
             ApplyEffectWithDelay(lungeHit, targetEnemy.transform, .5f, 3.0f);
           
