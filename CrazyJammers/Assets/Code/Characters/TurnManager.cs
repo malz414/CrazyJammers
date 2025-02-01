@@ -136,8 +136,7 @@ public class TurnManager : MonoBehaviour
     public int bideAttribute = 0;
     private float randomChance = 0f;
 
-    private int Potion = 1;
-    private int Panacea = 1;
+
     public int enemiesDead = 0;
 
 
@@ -752,8 +751,10 @@ private void ShowAttackSelectionUI()
     potionOptions.SetActive(true);
 
     // Update potion and panacea amounts
-    PanAmount.text = Potion.ToString();
-    PotAmount.text = Panacea.ToString();
+     PanAmount.text = PotionData.Instance.Potion.ToString();;
+    PotAmount.text = PotionData.Instance.Panacea.ToString();;
+
+
 }
 
 
@@ -891,8 +892,8 @@ private void HideDescription()
     public void OnItemOptionsClicked()
     {
         itemOptions.SetActive(true);
-        PanAmount.text = Panacea.ToString();
-        PotAmount.text = Potion.ToString();
+        PanAmount.text = PotionData.Instance.Panacea.ToString();
+        PotAmount.text = PotionData.Instance.Potion.ToString();
         
     }
 
@@ -991,7 +992,7 @@ private void HideDescription()
 
     public void onPotionClicked()
     {
-        if(Potion > 0)
+        if(  PotionData.Instance.Potion > 0)
         {
 
             hero.HealDamage((int)(hero.maxHealth*.4));
@@ -1002,7 +1003,7 @@ private void HideDescription()
              blurbEvent.Set($"Potion Used");
              EventBus.Publish(blurbEvent);
              usedMove1.text = "Potion Used";
-            Potion --;
+                PotionData.Instance.Potion--;
             attackOptionsParent.SetActive(false);
             potionOptions.SetActive(false);
             itemOptions.SetActive(false);
@@ -1020,16 +1021,16 @@ private void HideDescription()
     }
     public void onPanaceaClicked()
     {
-        if(Panacea > 0)
+        if(PotionData.Instance.Panacea > 0)
         {
             hero.RemoveBurns();
             hero.RemoveParalysis();
             hero.RemoveHeroBurns();
             hero.RemoveHeroParalysis();
-             blurbEvent.Set($"Status Healed");
-             EventBus.Publish(blurbEvent);
-               usedMove1.text = "Status Healed";
-            Panacea --;
+            blurbEvent.Set($"Status Healed");
+            EventBus.Publish(blurbEvent);
+            usedMove1.text = "Status Healed";
+            PotionData.Instance.Panacea--;
             attackOptionsParent.SetActive(false);
             potionOptions.SetActive(false);
             itemOptions.SetActive(false);

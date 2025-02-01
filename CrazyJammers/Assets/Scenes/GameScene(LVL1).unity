@@ -3553,6 +3553,34 @@ PrefabInstance:
       propertyPath: m_SortingOrder
       value: 5
       objectReference: {fileID: 0}
+    - target: {fileID: 3750295338986193131, guid: bdca80ec484d2484880037cea5c59fba, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 3750295338986193131, guid: bdca80ec484d2484880037cea5c59fba, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[2].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3750295338986193131, guid: bdca80ec484d2484880037cea5c59fba, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[2].m_Target
+      value: 
+      objectReference: {fileID: 1658743827}
+    - target: {fileID: 3750295338986193131, guid: bdca80ec484d2484880037cea5c59fba, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[2].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3750295338986193131, guid: bdca80ec484d2484880037cea5c59fba, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[2].m_MethodName
+      value: ResetValues
+      objectReference: {fileID: 0}
+    - target: {fileID: 3750295338986193131, guid: bdca80ec484d2484880037cea5c59fba, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[2].m_TargetAssemblyTypeName
+      value: PotionData, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 3750295338986193131, guid: bdca80ec484d2484880037cea5c59fba, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[2].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
     - target: {fileID: 4893293605321091010, guid: bdca80ec484d2484880037cea5c59fba, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
@@ -4812,6 +4840,52 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 7480061203258564365, guid: edc093f874874f64d9cfa15aa220a370, type: 3}
   m_PrefabInstance: {fileID: 541571726}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1658743826
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1658743828}
+  - component: {fileID: 1658743827}
+  m_Layer: 0
+  m_Name: Potion Manager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1658743827
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1658743826}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: edfe5fd3a094eed42a25913c31222a4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Potion: 1
+  Panacea: 1
+--- !u!4 &1658743828
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1658743826}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 293.57925, y: 171.1556, z: 204.46526}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1664528497
 GameObject:
   m_ObjectHideFlags: 0
@@ -5332,7 +5406,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 27.99997, y: -198}
+  m_AnchoredPosition: {x: 27.99997, y: -37}
   m_SizeDelta: {x: 554.2139, y: 216.0706}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1674857233
@@ -8890,3 +8964,4 @@ SceneRoots:
   - {fileID: 1823022533}
   - {fileID: 8398868}
   - {fileID: 541571726}
+  - {fileID: 1658743828}

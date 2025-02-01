@@ -16,6 +16,8 @@ public class levelUp : MonoBehaviour
     }
     public void StartNextLevel(string scene)
     {
-          SceneManager.LoadScene(scene);
+        PotionData.Instance.Potion++;
+        PotionData.Instance.Panacea++;
+        SceneManager.LoadScene(scene);
     }
 }

@@ -28,7 +28,7 @@ public class MainMenuManager : MonoBehaviour
     }
     public void HideCredits()
     {
-         SceneManager.LoadScene("GameScene");
+         SceneManager.LoadScene("GameScene(LVL1)");
     }
 
     private IEnumerator DoStartGameRoutine()

@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   attackName: Lunge
   attackDescription: This move is weak but you hit twice.
-  baseDamage: 20
-  upgradeLevel: 2
+  baseDamage: 500
+  upgradeLevel: 0
   attributes:
   - Lunge
