@@ -145,6 +145,7 @@ public class TurnManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI descriptionText;
     [SerializeField] private TextMeshProUGUI usedMove;
     [SerializeField] private TextMeshProUGUI usedMove1;
+    [SerializeField] private GameObject usedMoveGO;
     public TextMeshProUGUI Popop; 
 
     private CharacterStatusUpdateEvent statusUpdateEvent;
@@ -189,13 +190,14 @@ public class TurnManager : MonoBehaviour
         StartCoroutine(DelayedEffectCoroutine(effectPrefab, target, delay, effectDuration));
     }
 
-    private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform target, float delay, float effectDuration)
-    {
-        yield return new WaitForSeconds(delay);
-        GameObject effect = Instantiate(effectPrefab, target.position, Quaternion.identity);
-        effect.transform.SetParent(target); 
-        Destroy(effect, delay + effectDuration); // Ensures the effect lasts for delay + effectDuration seconds
-    }
+private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform target, float delay, float effectDuration)
+{
+    yield return new WaitForSeconds(delay);
+    GameObject effect = Instantiate(effectPrefab, target.position, effectPrefab.transform.rotation); // Use Quaternion.identity to not modify the prefab's rotation
+    effect.transform.SetParent(target); 
+    Destroy(effect, delay + effectDuration); // Ensures the effect lasts for delay + effectDuration seconds
+    Debug.Log("Effect Rotation (Prefab's Inspector Value): " + effect.transform.rotation);
+}
 
 
     private void SetUpBattle()
@@ -288,6 +290,7 @@ public class TurnManager : MonoBehaviour
         if (hero.burning > 0)
         {   popupPrefab = popupPrefabfire;
             hero.TakeDamage((int)(hero.maxHealth*.1));
+            usedMoveGO.SetActive(true);
             ApplyEffectWithDelay(burn, hero.transform, 0f, 3.0f);
             blurbEvent.Set($" You're Burning for {hero.burning} turns!");
             EventBus.Publish(blurbEvent);
@@ -305,6 +308,7 @@ public class TurnManager : MonoBehaviour
 
         foreach (var enemy in enemies)
         {
+            usedMoveGO.SetActive(true);
             if (enemy.burning > 0)
             {
                 enemy.currentHealth -= (int)(enemy.maxHealth*.1);
@@ -379,6 +383,7 @@ public class TurnManager : MonoBehaviour
             Enemy enemy = enemies[i];
             if (!enemy.CanAct())
             {
+                usedMoveGO.SetActive(true);
                 if(!enemyAttacksByIndex.Contains(enemyAttacksByIndexPerm[i]))
            
                 blurbEvent.Set($"{enemy.characterName} is paralyzed and cannot act this turn!");
@@ -403,7 +408,7 @@ public class TurnManager : MonoBehaviour
 
                 
             AttackSO enemyAttack = enemy.PerformRandomAttack();
-            
+            usedMoveGO.SetActive(true);
             usedMove1.text = $"{enemy.characterName} Used {enemyAttack.attackName}";
             blurbEvent.Set($"{enemy.characterName} Used {enemyAttack.attackName}");
             EventBus.Publish(blurbEvent);
@@ -532,7 +537,7 @@ public class TurnManager : MonoBehaviour
             if (enemyAttack.attributes.Contains("Slash"))
             {
                 
-                ApplyEffectWithDelay(slashAttack, enemy.transform, 0f, 3.0f);
+          //      ApplyEffectWithDelay(slashAttack, enemy.transform, 0f, 3.0f);
                 ApplyEffectWithDelay(slashHit, hero.transform, .5f, 3.0f);
             }
 
@@ -644,6 +649,7 @@ public class TurnManager : MonoBehaviour
         }
         else
         {
+             usedMoveGO.SetActive(false);
             // Show attack selection UI for the hero
             ShowAttackSelectionUI();
         }
@@ -701,9 +707,12 @@ private void ShowAttackSelectionUI()
         
          
         {
-     
-            
-            if (existingOption.text == attack.attackName)
+
+            int index = dropdownOptions.IndexOf(existingOption);
+        if (index < 3)
+            {
+            var enemy = enemies[index]; 
+            if (!enemy.dead && existingOption.text == attack.attackName && bideAttribute >= 1)
             {
                 // If found, increment the upgrade level
                 Debug.Log("Attack reinforced: " + attack.attackName);
@@ -720,6 +729,7 @@ private void ShowAttackSelectionUI()
         }
 
       
+    }
     }
 
     // Clear existing options and add updated ones
@@ -851,6 +861,7 @@ private void HideDescription()
 
     public void OnConfirmButtonClicked()
 {
+     usedMoveGO.SetActive(true);
     // Ensure both attacks are selected
     if (selectedAttack1 == null || selectedAttack2 == null)
     {
@@ -883,7 +894,7 @@ private void HideDescription()
     attackOptionsMenu.SetActive(false);
     potionOptions.SetActive(false);
     targetingHUDParent.SetActive(true);
-    usedMove.text = ($"Boss Used {combinedAttack.attackName}");
+    usedMove1.text = ($"Boss Used {combinedAttack.attackName}");
 
     targetingMode = true;
 }
