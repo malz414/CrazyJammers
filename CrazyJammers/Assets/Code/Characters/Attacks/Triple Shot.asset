@@ -13,9 +13,8 @@ MonoBehaviour:
   m_Name: Triple Shot
   m_EditorClassIdentifier: 
   attackName: Triple Shot
-  attackDesctiption: This attack deals very low damage but hits multiple times and
-    has a chance to inflict paralysis.
+  attackDescription: 
   baseDamage: 10
   upgradeLevel: 0
   attributes:
-  - Paralysis
+  - Triple

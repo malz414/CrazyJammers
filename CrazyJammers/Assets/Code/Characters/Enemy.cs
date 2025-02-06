@@ -53,13 +53,17 @@ public class Enemy : Character
     {
         Enemy[] allEnemies = FindObjectsOfType<Enemy>();
         Debug.Log(allEnemies[1]);
-        bool allEnemiesFullHealth = allEnemies.All(enemy => enemy.IsFullHealth());
+        bool allEnemiesFullHealth = allEnemies
+            .Where(enemy => !enemy.dead) // Ignore dead enemies
+            .All(enemy => enemy.IsFullHealth());
+
         List<AttackSO> validAttacks = allEnemiesFullHealth 
             ? possibleAttacks.Where(attack => attack.attackName != "Heal" && attack.attackName != "Healing Field" ).ToList() 
             : possibleAttacks;
 
         if (validAttacks.Count > 0)
         {
+      
             int randomIndex = Random.Range(0, validAttacks.Count);
             AttackSO chosenAttack = validAttacks[randomIndex];
             int damage = chosenAttack.GetDamage();

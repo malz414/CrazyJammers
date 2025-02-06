@@ -185,10 +185,31 @@ public class TurnManager : MonoBehaviour
     }
     //VFX called with delay for some so attacks go off then theres a delay on the hit more time is given to the duration so with delay + duration it doesnt  cancel early 
 
-    private void ApplyEffectWithDelay(GameObject effectPrefab, Transform target, float delay, float effectDuration = 2f)
+private void ApplyEffectWithDelay(GameObject effectPrefab, Transform target, float delay, float effectDuration, bool raiseEffect = false)
+{
+    StartCoroutine(DelayedEffectCoroutine(effectPrefab, target, delay, effectDuration, raiseEffect));
+}
+
+private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform target, float delay, float effectDuration, bool raiseEffect)
+{
+    yield return new WaitForSeconds(delay);
+
+    // Default to the target's normal position
+    Vector3 effectPosition = target.position;
+
+    // If raiseEffect is true, modify the Y-axis
+    if (raiseEffect)
     {
-        StartCoroutine(DelayedEffectCoroutine(effectPrefab, target, delay, effectDuration));
+        effectPosition += new Vector3(0f, 1.5f, 0f);
     }
+
+    // Instantiate the effect at the appropriate position
+    GameObject effect = Instantiate(effectPrefab, effectPosition, effectPrefab.transform.rotation);
+    effect.transform.SetParent(target);
+
+    Destroy(effect, effectDuration);
+}
+
 
 private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform target, float delay, float effectDuration)
 {
@@ -537,7 +558,7 @@ private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform ta
             if (enemyAttack.attributes.Contains("Slash"))
             {
                 
-          //      ApplyEffectWithDelay(slashAttack, enemy.transform, 0f, 3.0f);
+                ApplyEffectWithDelay(slashAttack, enemy.transform, 0f, 3.0f, true);
                 ApplyEffectWithDelay(slashHit, hero.transform, .5f, 3.0f);
             }
 
@@ -580,7 +601,7 @@ private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform ta
                     Debug.Log($"Hero has been paralyzed by {enemyAttack.attackName}!");
                 }
                 ApplyEffectWithDelay(tripleAttack, enemy.transform, 0f, 3.0f);
-                ApplyEffectWithDelay(tripleHit, hero.transform, .5f, 3.0f);
+                ApplyEffectWithDelay(tripleHit, hero.transform, .5f, 3.0f, true);
             }
 
             
@@ -604,7 +625,7 @@ private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform ta
                        usedMove1.text =$"Boss has been burned by {enemyAttack.attackName}!";
                     Debug.Log($"Hero has been burned by {enemyAttack.attackName}!");
                 }
-                ApplyEffectWithDelay(fireAttack, enemy.transform, 0f, 3.0f);
+                ApplyEffectWithDelay(fireAttack, enemy.transform, 0f, 3.0f, true);
                 ApplyEffectWithDelay(fireHit, hero.transform, .5f, 3.0f);
             }
 
@@ -884,6 +905,7 @@ private void HideDescription()
 
     // Combine the selected attacks
     hero.CombineAttacks(selectedAttack1, selectedAttack2);
+     usedMove1.text = ($"Choose a target");
 
     // Reset selections after combining
     selectedAttack1 = null;
@@ -894,7 +916,7 @@ private void HideDescription()
     attackOptionsMenu.SetActive(false);
     potionOptions.SetActive(false);
     targetingHUDParent.SetActive(true);
-    usedMove1.text = ($"Boss Used {combinedAttack.attackName}");
+  
 
     targetingMode = true;
 }
@@ -929,6 +951,7 @@ private void HideDescription()
     {   Debug.Log("ATTACKING NO lunge");
         blurbEvent.Set("Attacking");
         EventBus.Publish(blurbEvent);
+       
 
         // Stop any existing attack coroutine
         if (bossAttackCoroutine != null)
@@ -941,11 +964,12 @@ private void HideDescription()
         targetingHUDParent.SetActive(false);
         Debug.Log($"Single-target attack on {enemy.characterName}");
         bossAttackCoroutine = StartCoroutine(DoBossAttackRoutine(enemy));
+          usedMove1.text = ($"Boss Used {combinedAttack.attackName}");
     }
     else
     {
         Debug.Log("ATTACKING WITH lunge");
-        // Multi-target attack
+        usedMove1.text = ($"Choose another target");
         if (!selectingEnemies)
         {
             // Start multi-selection mode
@@ -974,6 +998,8 @@ private void HideDescription()
         if (selectedEnemies.Count == 2)
         {
             Debug.Log("Two enemies selected. Starting multi-target attack.");
+            usedMove1.text = ($"Boss Used {combinedAttack.attackName}");
+           
             StartCoroutine(DoBossAttackRoutine(selectedEnemies.ToArray()));
 
             // Reset multi-selection mode
@@ -1125,7 +1151,7 @@ private void HideDescription()
                      usedMove1.text = $"{targetEnemy.characterName} was burned!";
                     
                 }
-                ApplyEffectWithDelay(fireAttack, hero.transform, 0f, 3.0f);
+                ApplyEffectWithDelay(fireAttack, hero.transform, 0f, 3.0f, true);
                 ApplyEffectWithDelay(fireHit, targetEnemy.transform, .5f, 3.0f);
             }
 
@@ -1252,7 +1278,7 @@ private void HideDescription()
                       usedMove1.text = $"{targetEnemy.characterName} was paralysed!";
                 }
                 ApplyEffectWithDelay(tripleAttack, hero.transform, 0f, 3.0f);
-                ApplyEffectWithDelay(tripleHit, targetEnemy.transform, .5f, 3.0f);
+                ApplyEffectWithDelay(tripleHit, targetEnemy.transform, .5f, 3.0f, true);
             }
              
         if (combinedAttack.attributes.Contains("Ice") && !hasIced)
@@ -1261,12 +1287,12 @@ private void HideDescription()
             targetEnemy.TakeDamage(damage);
             
             ApplyEffectWithDelay(iceAttack, hero.transform, 0f, 3.0f);
-            ApplyEffectWithDelay(iceHit, targetEnemy.transform, .5f, 3.0f);
+            ApplyEffectWithDelay(iceHit, targetEnemy.transform, .5f, 3.0f, true);
             // targetingHUDParent.SetActive(true);
             // targetingMode = true;
              blurbEvent.Set($"You strike again");
              EventBus.Publish(blurbEvent);
-               usedMove1.text = $"You strike again";
+             
             
             
         }
@@ -1275,7 +1301,7 @@ private void HideDescription()
         {
             blurbEvent.Set($"You strike twice");
             EventBus.Publish(blurbEvent);
-                 usedMove1.text = $"You strike again";
+                 
             ApplyEffectWithDelay(lungeAttack, hero.transform, 0f, 3.0f);
             ApplyEffectWithDelay(lungeHit, targetEnemy.transform, .5f, 3.0f);
           
