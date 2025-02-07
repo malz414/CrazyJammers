@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: c29f6e2b19727e9488d2b2bafce1d5f7
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 216010
+  packageName: Stylized VFX
+  packageVersion: 1.0.4
+  assetPath: Assets/Vefects/Stylized VFX/Skills/_Scripts_/MagicAttacks_Manager.cs
+  uploadId: 703650

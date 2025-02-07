@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 87747a1254ff6804f99e93fa4b1d450b
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 216010
+  packageName: Stylized VFX
+  packageVersion: 1.0.4
+  assetPath: Assets/Vefects/Stylized VFX/Skills/_Scripts_/MagicAttacks_Projectile.cs
+  uploadId: 703650

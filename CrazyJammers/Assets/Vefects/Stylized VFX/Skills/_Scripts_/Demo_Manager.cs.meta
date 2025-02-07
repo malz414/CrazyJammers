@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 159dfaf8efd3b3843b1160750cd3d4c2
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 216010
+  packageName: Stylized VFX
+  packageVersion: 1.0.4
+  assetPath: Assets/Vefects/Stylized VFX/Skills/_Scripts_/Demo_Manager.cs
+  uploadId: 703650

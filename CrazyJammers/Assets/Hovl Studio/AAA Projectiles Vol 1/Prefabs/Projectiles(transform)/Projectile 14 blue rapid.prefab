@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 108183858505715088}
   - component: {fileID: 54656780710307248}
   - component: {fileID: 135893600698140846}
-  - component: {fileID: 6197611920556969961}
+  - component: {fileID: -5216086497554965133}
   m_Layer: 0
   m_Name: Projectile 14 blue rapid
   m_TagString: Untagged
@@ -31,7 +31,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 1, z: 0}
-  m_LocalScale: {x: 2, y: 2, z: 2}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1815089661323758428}
@@ -176,7 +176,7 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 0.15
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &6197611920556969961
+--- !u!114 &-5216086497554965133
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -9975,37 +9975,6 @@ ParticleSystemRenderer:
   m_MeshWeighting2: 1
   m_MeshWeighting3: 1
   m_MaskInteraction: 0
---- !u!1 &3111228923966496244
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 1059172723860074, guid: 058c6c6f7bee2fc45a91fbdb528a9035, type: 3}
-  m_PrefabInstance: {fileID: 3111579935706693534}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 3107992496685620010}
-  m_Layer: 0
-  m_Name: 'Flash 14 blue rapid (Missing Prefab with guid: 058c6c6f7bee2fc45a91fbdb528a9035)'
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &3107992496685620010
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 4296626487239860, guid: 058c6c6f7bee2fc45a91fbdb528a9035, type: 3}
-  m_PrefabInstance: {fileID: 3111579935706693534}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3111228923966496244}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1815089661323758428}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &8204135914849913130
 GameObject:
   m_ObjectHideFlags: 0
@@ -10226,3 +10195,13 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 058c6c6f7bee2fc45a91fbdb528a9035, type: 3}
+--- !u!4 &3107992496685620010 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4296626487239860, guid: 058c6c6f7bee2fc45a91fbdb528a9035, type: 3}
+  m_PrefabInstance: {fileID: 3111579935706693534}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &3111228923966496244 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1059172723860074, guid: 058c6c6f7bee2fc45a91fbdb528a9035, type: 3}
+  m_PrefabInstance: {fileID: 3111579935706693534}
+  m_PrefabAsset: {fileID: 0}
