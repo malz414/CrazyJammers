@@ -23,7 +23,7 @@ public class Enemy : Character
         if (dead)
             return;
 
-        TurnManager.Instance.SelectEnemyTotAttack(this);
+        TurnManager.Instance.SelectEnemyToAttack(this);
 
         //TargetingIndicator.SetActive(false);
         return;

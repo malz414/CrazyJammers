@@ -7,6 +7,7 @@ using Code.Utility.Events;
 using UnityEngine.EventSystems;
 using DamageNumbersPro;
 using System.Linq;
+using static System.Math;
 
 
 public class TurnManager : MonoBehaviour
@@ -185,12 +186,12 @@ public class TurnManager : MonoBehaviour
     }
     //VFX called with delay for some so attacks go off then theres a delay on the hit more time is given to the duration so with delay + duration it doesnt  cancel early 
 
-private void ApplyEffectWithDelay(GameObject effectPrefab, Transform target, float delay, float effectDuration, bool raiseEffect = false)
+private void ApplyEffectWithDelay(GameObject effectPrefab, Transform target, float delay, float effectDuration, bool? xRotationEffect = null, bool raiseEffect = false) 
 {
-    StartCoroutine(DelayedEffectCoroutine(effectPrefab, target, delay, effectDuration, raiseEffect));
+    StartCoroutine(DelayedEffectCoroutine(effectPrefab, target, delay, effectDuration, raiseEffect, xRotationEffect));
 }
 
-private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform target, float delay, float effectDuration, bool raiseEffect)
+private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform target, float delay, float effectDuration, bool raiseEffect, bool? xRotationEffect)
 {
     yield return new WaitForSeconds(delay);
 
@@ -203,9 +204,16 @@ private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform ta
         effectPosition += new Vector3(0f, 1.5f, 0f);
     }
 
-    // Instantiate the effect at the appropriate position
+      // Instantiate the effect at the appropriate position
     GameObject effect = Instantiate(effectPrefab, effectPosition, effectPrefab.transform.rotation);
     effect.transform.SetParent(target);
+
+    if (xRotationEffect.HasValue)
+    {
+        float xRotation = xRotationEffect.Value ? 90f : -90f;
+        effect.transform.Rotate(0f, xRotation, 0f);
+    }
+  
 
     Destroy(effect, effectDuration);
 }
@@ -497,7 +505,7 @@ private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform ta
                       usedMove1.text = $"The heroes healed and status cured.";
                     EventBus.Publish(blurbEvent);
                     popupPrefab = popupPrefabNeutral;
-                    yield return new WaitForSeconds(1.5f);
+                    yield return new WaitForSeconds(.2f);
 
                 }
 
@@ -558,7 +566,7 @@ private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform ta
             if (enemyAttack.attributes.Contains("Slash"))
             {
                 
-                ApplyEffectWithDelay(slashAttack, enemy.transform, 0f, 3.0f, true);
+                ApplyEffectWithDelay(slashAttack, enemy.transform, 0f, 3.0f, null, true);
                 ApplyEffectWithDelay(slashHit, hero.transform, .5f, 3.0f);
             }
 
@@ -601,7 +609,7 @@ private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform ta
                     Debug.Log($"Hero has been paralyzed by {enemyAttack.attackName}!");
                 }
                 ApplyEffectWithDelay(tripleAttack, enemy.transform, 0f, 3.0f);
-                ApplyEffectWithDelay(tripleHit, hero.transform, .5f, 3.0f, true);
+                ApplyEffectWithDelay(tripleHit, hero.transform, .5f, 3.0f, null, true);
             }
 
             
@@ -625,7 +633,7 @@ private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform ta
                        usedMove1.text =$"Boss has been burned by {enemyAttack.attackName}!";
                     Debug.Log($"Hero has been burned by {enemyAttack.attackName}!");
                 }
-                ApplyEffectWithDelay(fireAttack, enemy.transform, 0f, 3.0f, true);
+                ApplyEffectWithDelay(fireAttack, enemy.transform, 0f, 3.0f, false, true);
                 ApplyEffectWithDelay(fireHit, hero.transform, .5f, 3.0f);
             }
 
@@ -931,27 +939,25 @@ private void HideDescription()
     }
 
 
-    public void SelectEnemyTotAttack(Enemy enemy)
+    public void SelectEnemyToAttack(Enemy enemy)
 {
-    // Check for "Lunge" attribute to determine multi-target behavior
-    int lungeTargets = 4;
+    if (!targetingMode) return;
 
-    foreach (var body in enemies)
-            {
-                if (body.dead)
-                {
-                    lungeTargets--;
-                }
-                 
-            }
-       
+    // Determine the number of targets based on the highest-priority attribute
+    int maxTargets = GetMaxTargetsForAttack(combinedAttack.attributes);
 
-    if(!targetingMode) return;
-    if (!combinedAttack.attributes.Contains("Lunge") || lungeTargets == 1 && combinedAttack.attributes.Contains("Lunge") ) 
-    {   Debug.Log("ATTACKING NO lunge");
+    // Count alive enemies
+    int aliveEnemies = enemies.Count(e => !e.dead);
+
+    // Determine the actual number of targets based on alive enemies
+    int targets = System.Math.Min(maxTargets, aliveEnemies);
+
+    // Single-target attack if only 1 target is available or the attack is not multi-target
+    if (targets == 1 || !IsMultiTargetAttack(combinedAttack.attributes))
+    {
+        Debug.Log("ATTACKING SINGLE TARGET");
         blurbEvent.Set("Attacking");
         EventBus.Publish(blurbEvent);
-       
 
         // Stop any existing attack coroutine
         if (bossAttackCoroutine != null)
@@ -964,18 +970,19 @@ private void HideDescription()
         targetingHUDParent.SetActive(false);
         Debug.Log($"Single-target attack on {enemy.characterName}");
         bossAttackCoroutine = StartCoroutine(DoBossAttackRoutine(enemy));
-          usedMove1.text = ($"Boss Used {combinedAttack.attackName}");
+        usedMove1.text = ($"Boss Used {combinedAttack.attackName}");
     }
     else
     {
-        Debug.Log("ATTACKING WITH lunge");
+        Debug.Log("ATTACKING MULTI-TARGET");
         usedMove1.text = ($"Choose another target");
+
         if (!selectingEnemies)
         {
             // Start multi-selection mode
             selectedEnemies.Clear();
             selectingEnemies = true;
-            blurbEvent.Set("Select two different enemies to attack!");
+            blurbEvent.Set($"Select up to {targets} different enemies to attack!");
             EventBus.Publish(blurbEvent);
         }
 
@@ -994,12 +1001,12 @@ private void HideDescription()
         EventBus.Publish(blurbEvent);
         Debug.Log($"Enemy {enemy.characterName} selected. Total selected: {selectedEnemies.Count}");
 
-        // If two enemies are selected, start the attack coroutine
-        if (selectedEnemies.Count == 2)
+        // If the required number of enemies is selected, start the attack coroutine
+        if (selectedEnemies.Count == targets)
         {
-            Debug.Log("Two enemies selected. Starting multi-target attack.");
+            Debug.Log($"{targets} enemies selected. Starting multi-target attack.");
             usedMove1.text = ($"Boss Used {combinedAttack.attackName}");
-           
+
             StartCoroutine(DoBossAttackRoutine(selectedEnemies.ToArray()));
 
             // Reset multi-selection mode
@@ -1010,6 +1017,36 @@ private void HideDescription()
     }
 }
 
+// Helper method to determine the maximum number of targets based on attributes
+private int GetMaxTargetsForAttack(List<string> attributes)
+{
+    if (attributes.Contains("Field"))
+    {
+        Debug.Log("aattacks is 4" );
+        return 4;
+    }
+    else if (attributes.Contains("Ice"))
+    {
+            Debug.Log("taattacks is 3" );
+        return 3; 
+    }
+    else if (attributes.Contains("Lunge"))
+    {
+            Debug.Log("taattacks is 2" );
+        return 2;
+    }
+    else
+    {
+            Debug.Log("taattacks is 1" );
+        return 1; 
+    }
+}
+
+// Helper method to check if an attack is multi-target
+private bool IsMultiTargetAttack(List<string> attributes)
+{
+    return GetMaxTargetsForAttack(attributes) > 1;
+}
 
     public void OnBideButtonClicked()
     {
@@ -1151,7 +1188,7 @@ private void HideDescription()
                      usedMove1.text = $"{targetEnemy.characterName} was burned!";
                     
                 }
-                ApplyEffectWithDelay(fireAttack, hero.transform, 0f, 3.0f, true);
+                ApplyEffectWithDelay(fireAttack, hero.transform, 0f, 3.0f, true, true);
                 ApplyEffectWithDelay(fireHit, targetEnemy.transform, .5f, 3.0f);
             }
 
@@ -1278,7 +1315,7 @@ private void HideDescription()
                       usedMove1.text = $"{targetEnemy.characterName} was paralysed!";
                 }
                 ApplyEffectWithDelay(tripleAttack, hero.transform, 0f, 3.0f);
-                ApplyEffectWithDelay(tripleHit, targetEnemy.transform, .5f, 3.0f, true);
+                ApplyEffectWithDelay(tripleHit, targetEnemy.transform, .5f, 3.0f, null, true);
             }
              
         if (combinedAttack.attributes.Contains("Ice") && !hasIced)
@@ -1287,7 +1324,7 @@ private void HideDescription()
             targetEnemy.TakeDamage(damage);
             
             ApplyEffectWithDelay(iceAttack, hero.transform, 0f, 3.0f);
-            ApplyEffectWithDelay(iceHit, targetEnemy.transform, .5f, 3.0f, true);
+            ApplyEffectWithDelay(iceHit, targetEnemy.transform, .5f, 3.0f);
             // targetingHUDParent.SetActive(true);
             // targetingMode = true;
              blurbEvent.Set($"You strike again");
