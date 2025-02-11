@@ -2582,7 +2582,7 @@ MonoBehaviour:
   bideBuff: 0
   animator: {fileID: 5339149700375281621}
   possibleAttacks:
-  - {fileID: 11400000, guid: 2c8a7dc072941494b9b9e3f4d77d8b6d, type: 2}
+  - {fileID: 11400000, guid: 8d1fafe2eae2346468755b04daeaa076, type: 2}
   attacksUsed: []
   dead: 0
   TargetingIndicator: {fileID: 2718691299166947987}
