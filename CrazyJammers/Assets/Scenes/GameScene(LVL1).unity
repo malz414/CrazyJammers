@@ -4077,9 +4077,21 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 432397091422895480, guid: d5f334b931d89e34283aeea5fcfb47e0, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1786570752138649935, guid: d5f334b931d89e34283aeea5fcfb47e0, type: 3}
       propertyPath: m_Name
       value: LevelPrefab 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5842832993032211828, guid: d5f334b931d89e34283aeea5fcfb47e0, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7271479420882477432, guid: d5f334b931d89e34283aeea5fcfb47e0, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9110894989345499552, guid: d5f334b931d89e34283aeea5fcfb47e0, type: 3}
       propertyPath: m_Enabled
@@ -4847,11 +4859,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 70ef5b7c786648843a4a78f4e7210612, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!1 &1619947234 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 432397091422895480, guid: d5f334b931d89e34283aeea5fcfb47e0, type: 3}
-  m_PrefabInstance: {fileID: 1261390422}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1640497493 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7480061203258564365, guid: edc093f874874f64d9cfa15aa220a370, type: 3}
@@ -8501,7 +8508,7 @@ PrefabInstance:
     - target: {fileID: 8485419520516605267, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
       propertyPath: archerPrefab
       value: 
-      objectReference: {fileID: 344943568324299905, guid: d10562b8e5a98c647916ca374f9227be, type: 3}
+      objectReference: {fileID: 2289685435781549048, guid: 4d60d244a63473f4a89ffcaedae97891, type: 3}
     - target: {fileID: 8485419520516605267, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
       propertyPath: knightPrefab
       value: 
@@ -8685,7 +8692,7 @@ PrefabInstance:
     - target: {fileID: 8485419520516605267, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
       propertyPath: 'listOfObjectToDeactivateAtStartOfBattle.Array.data[0]'
       value: 
-      objectReference: {fileID: 1619947234}
+      objectReference: {fileID: 4879243938263046864, guid: 5b170e3854ef96f40b66167df373619d, type: 3}
     - target: {fileID: 8485419520516605267, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
       propertyPath: 'listOfObjectToDeactivateAtStartOfBattle.Array.data[1]'
       value: 

@@ -299,7 +299,7 @@ private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform ta
 
         yield return new WaitForSeconds(1f);
 
-        StartTurn();
+        StartCoroutine(StartTurn());
     }
 
     private GameObject SpawnPrefabAtPosition(GameObject prefab, Transform pos)
@@ -310,7 +310,7 @@ private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform ta
         return spawned;
     }
 
-    public void StartTurn()
+    public IEnumerator StartTurn()
     {
         drop1Opened = false;
         drop2Opened = false;
@@ -326,10 +326,11 @@ private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform ta
             usedMove1.text = $" You're Burning for {hero.burning} turns!";
             hero.burning--;
             EventBus.Publish(statusUpdateEvent);
+            yield return new WaitForSeconds(1f);
             if(hero.currentHealth <= 0) 
             {
                 EndGame(false);
-                return;
+                yield return null;
             }
 
         }
@@ -388,7 +389,7 @@ private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform ta
         if(hero.currentHealth <= 0) 
         {
             EndGame(false);
-            return;
+            yield return null;
         }
         StartCoroutine(DoTurnRoutine());
     }
@@ -437,8 +438,9 @@ private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform ta
 
                 
             AttackSO enemyAttack = enemy.PerformRandomAttack();
-            usedMoveGO.SetActive(true);
             usedMove1.text = $"{enemy.characterName} Used {enemyAttack.attackName}";
+            usedMoveGO.SetActive(true);
+          
             blurbEvent.Set($"{enemy.characterName} Used {enemyAttack.attackName}");
             EventBus.Publish(blurbEvent);
             enemyAttacksByIndexPerm[i] = enemyAttack;
@@ -669,12 +671,15 @@ private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform ta
 
         if (!hero.CanAct())
         {
-             blurbEvent.Set($"Boss is paralyzed and cannot act this turn!");
-             EventBus.Publish(blurbEvent);
-                    usedMove1.text = $"Boss is paralyzed and cannot act this turn!";
+            
+            blurbEvent.Set($"Boss is paralyzed and cannot act this turn!");
+            EventBus.Publish(blurbEvent);
+            usedMove1.text = $"Boss is paralyzed and cannot act this turn!";
             ApplyEffectWithDelay(para, hero.transform, 0f, 3.0f);
             Debug.Log("Hero is paralyzed and cannot act this turn!");
-            StartTurn(); // Skip the hero's turn
+            yield return new WaitForSeconds(1f);
+            usedMoveGO.SetActive(false);
+            StartCoroutine(StartTurn()); // Skip the hero's turn
         }
         else
         {
@@ -1060,7 +1065,7 @@ private bool IsMultiTargetAttack(List<string> attributes)
             potionOptions.SetActive(false);
             hero.bideBuff = true;
             bideBuff = true;
-            StartTurn();
+            StartCoroutine(StartTurn());
         }
     }
 
@@ -1083,7 +1088,7 @@ private bool IsMultiTargetAttack(List<string> attributes)
             itemOptions.SetActive(false);
             ApplyEffectWithDelay(potionAni, hero.transform, 0f, 2.0f);
             EventBus.Publish(statusUpdateEvent);
-            StartTurn();
+            StartCoroutine(StartTurn());
         }
         else
         {
@@ -1110,7 +1115,7 @@ private bool IsMultiTargetAttack(List<string> attributes)
             itemOptions.SetActive(false);
 
             ApplyEffectWithDelay(panaceaAni, hero.transform, 0f, 2.0f);
-            StartTurn();
+            StartCoroutine(StartTurn());
         }
         else
         {
@@ -1241,14 +1246,14 @@ private bool IsMultiTargetAttack(List<string> attributes)
                     hero.HealDamage(damage);
                     blurbEvent.Set($"{damage} Health Recovered!");
                     EventBus.Publish(blurbEvent);
-                         usedMove1.text = $"{damage} Health Recovered!";
+                    usedMove1.text = $"{damage} Health Recovered!";
                     hero.RemoveBurns();
                     hero.RemoveParalysis();
                     hero.RemoveHeroBurns();
                     hero.RemoveHeroParalysis();
                     blurbEvent.Set($"Status Healed");
                     EventBus.Publish(blurbEvent);
-                      usedMove1.text = $"Status Healed";
+                    usedMove1.text = $"Status Healed";
                     ApplyEffectWithDelay(heal, hero.transform, 0f, 3.0f);
                     ApplyEffectWithDelay(panaceaAni, hero.transform, 0f, 3.0f);
                     popupPrefab = popupPrefabNeutral;
@@ -1370,7 +1375,7 @@ private bool IsMultiTargetAttack(List<string> attributes)
         }
     
         heroAniPlayed = false;
-        StartTurn();
+        StartCoroutine(StartTurn());
     }
 
 

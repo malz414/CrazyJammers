@@ -1699,7 +1699,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &5259463492206182506
 Transform:
   m_ObjectHideFlags: 0
@@ -1736,7 +1736,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   characterName: Knight
   maxHealth: 115
-  currentHealth: 0
+  currentHealth: 115
   barrierCount: 0
   burning: 0
   bideBuff: 0
