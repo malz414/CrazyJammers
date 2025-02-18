@@ -315,26 +315,6 @@ private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform ta
         drop1Opened = false;
         drop2Opened = false;
 
-        hero.UpdateEffects();
-        if (hero.burning > 0)
-        {   popupPrefab = popupPrefabfire;
-            hero.TakeDamage((int)(hero.maxHealth*.1));
-            usedMoveGO.SetActive(true);
-            ApplyEffectWithDelay(burn, hero.transform, 0f, 3.0f);
-            blurbEvent.Set($" You're Burning for {hero.burning} turns!");
-            EventBus.Publish(blurbEvent);
-            usedMove1.text = $" You're Burning for {hero.burning} turns!";
-            hero.burning--;
-            EventBus.Publish(statusUpdateEvent);
-            yield return new WaitForSeconds(1f);
-            if(hero.currentHealth <= 0) 
-            {
-                EndGame(false);
-                yield return null;
-            }
-
-        }
-        
 
         foreach (var enemy in enemies)
         {
@@ -391,6 +371,8 @@ private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform ta
             EndGame(false);
             yield return null;
         }
+         
+    
         StartCoroutine(DoTurnRoutine());
     }
 
@@ -402,6 +384,8 @@ private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform ta
     private IEnumerator DoTurnRoutine()
     {
        
+      
+        
         yield return new WaitForSeconds(1f);
         enemyAttacksByIndex.Clear();
         
@@ -561,8 +545,8 @@ private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform ta
             if (enemyAttack.attributes.Contains("Lunge"))
             {
                 hero.TakeDamage(enemyAttack.GetDamage());
-                ApplyEffectWithDelay(lungeAttack, enemy.transform, 0f, 3.0f);
-                ApplyEffectWithDelay(lungeHit, hero.transform, 0f, 3.0f);
+                ApplyEffectWithDelay(lungeAttack, enemy.transform, 0f, 3.0f, false, false);
+                ApplyEffectWithDelay(lungeHit, hero.transform, .5f, 3.0f);
             }
 
             if (enemyAttack.attributes.Contains("Slash"))
@@ -627,7 +611,7 @@ private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform ta
             if (enemyAttack.attributes.Contains("Burn"))
             {
 
-                if (Random.value <= 0.3f && hero.GetParalysisTurnsRemaining() < 1 && hero.burning < 1)
+                if (Random.value <= 3f && hero.GetParalysisTurnsRemaining() < 1 && hero.burning < 1)
                 {
                     hero.ApplyBurn(10, 3);
                     blurbEvent.Set($"Boss has been burned by {enemyAttack.attackName}!");
@@ -668,6 +652,25 @@ private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform ta
 
         yield return new WaitForSeconds(.5f);
         hero.bideBuff = false;
+            hero.UpdateEffects();
+        if (hero.burning > 0)
+        {   popupPrefab = popupPrefabfire;
+            hero.TakeDamage((int)(hero.maxHealth*.1));
+            usedMoveGO.SetActive(true);
+            ApplyEffectWithDelay(burn, hero.transform, 0f, 3.0f);
+            blurbEvent.Set($" You're Burning for {hero.burning} turns!");
+            EventBus.Publish(blurbEvent);
+            usedMove1.text = $" You're Burning for {hero.burning} turns!";
+            hero.burning--;
+            EventBus.Publish(statusUpdateEvent);
+            yield return new WaitForSeconds(1f);
+            if(hero.currentHealth <= 0) 
+            {
+                EndGame(false);
+                yield return null;
+            }
+
+        }
 
         if (!hero.CanAct())
         {

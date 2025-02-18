@@ -8492,7 +8492,7 @@ PrefabInstance:
     - target: {fileID: 8485419520516605267, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
       propertyPath: lungeAttack
       value: 
-      objectReference: {fileID: 1328495139333439498, guid: 3ce09c40c1db244468aad5abd05c1943, type: 3}
+      objectReference: {fileID: 1873886433987638, guid: fb2df51e77abde1429eb83c0317784af, type: 3}
     - target: {fileID: 8485419520516605267, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
       propertyPath: slashAttack
       value: 
@@ -8512,7 +8512,7 @@ PrefabInstance:
     - target: {fileID: 8485419520516605267, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
       propertyPath: knightPrefab
       value: 
-      objectReference: {fileID: 4879243938263046864, guid: 5b170e3854ef96f40b66167df373619d, type: 3}
+      objectReference: {fileID: 2296936670753540720, guid: 7422563a709182e4d8226ef991cb2180, type: 3}
     - target: {fileID: 8485419520516605267, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
       propertyPath: potionButton
       value: 

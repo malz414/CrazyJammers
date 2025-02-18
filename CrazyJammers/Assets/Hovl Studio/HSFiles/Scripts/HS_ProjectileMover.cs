@@ -16,6 +16,7 @@ public class HS_ProjectileMover : MonoBehaviour
     [SerializeField] protected Light lightSourse;
     [SerializeField] protected GameObject[] Detached;
     [SerializeField] protected ParticleSystem projectilePS;
+     [SerializeField] protected bool forward = true;
     private bool startChecker = false;
     [SerializeField]protected bool notDestroy = false;
 
@@ -23,6 +24,7 @@ public class HS_ProjectileMover : MonoBehaviour
     {
         if (!startChecker)
         {
+            Debug.Log($"Projectile Speed: {speed}");
             /*lightSourse = GetComponent<Light>();
             rb = GetComponent<Rigidbody>();
             col = GetComponent<Collider>();
@@ -67,7 +69,15 @@ public class HS_ProjectileMover : MonoBehaviour
     {
         if (speed != 0)
         {
-            rb.linearVelocity = transform.forward * speed;      
+            if(forward)
+            {
+                 rb.linearVelocity = transform.forward * (speed / transform.lossyScale.magnitude);
+            }
+            else
+            {
+                 rb.linearVelocity = -transform.forward * (speed / transform.lossyScale.magnitude);
+            }
+           
         }
     }
 
