@@ -33,6 +33,7 @@ public class TurnManager : MonoBehaviour
     [SerializeField] private GameObject arrowHit;
 
     [SerializeField] private GameObject slashAttack;
+
     [SerializeField] private GameObject slashHit;
 
     [SerializeField] private GameObject iceAttack;
@@ -144,6 +145,7 @@ public class TurnManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI PotAmount; 
     [SerializeField] private TextMeshProUGUI PanAmount; 
     [SerializeField] private TextMeshProUGUI descriptionText;
+     [SerializeField] private TextMeshProUGUI descriptionTextPotion;
     [SerializeField] private TextMeshProUGUI usedMove;
     [SerializeField] private TextMeshProUGUI usedMove1;
     [SerializeField] private GameObject usedMoveGO;
@@ -207,6 +209,7 @@ private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform ta
       // Instantiate the effect at the appropriate position
     GameObject effect = Instantiate(effectPrefab, effectPosition, effectPrefab.transform.rotation);
     effect.transform.SetParent(target);
+    effect.transform.SetParent(null);
 
     if (xRotationEffect.HasValue)
     {
@@ -551,9 +554,15 @@ private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform ta
 
             if (enemyAttack.attributes.Contains("Slash"))
             {
-                
+                Vector3 newPosition = hero.transform.position;
+                newPosition.y += 3f;
+
+                // Create a temporary transform with the new position
+                Transform tempTransform = new GameObject().transform;
+                tempTransform.position = newPosition;
+                            
                 ApplyEffectWithDelay(slashAttack, enemy.transform, 0f, 3.0f, null, true);
-                ApplyEffectWithDelay(slashHit, hero.transform, .5f, 3.0f);
+                ApplyEffectWithDelay(slashHit, tempTransform , .5f, 3.0f);
             }
 
 
@@ -611,7 +620,7 @@ private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform ta
             if (enemyAttack.attributes.Contains("Burn"))
             {
 
-                if (Random.value <= 3f && hero.GetParalysisTurnsRemaining() < 1 && hero.burning < 1)
+                if (Random.value <= .3f && hero.GetParalysisTurnsRemaining() < 1 && hero.burning < 1)
                 {
                     hero.ApplyBurn(10, 3);
                     blurbEvent.Set($"Boss has been burned by {enemyAttack.attackName}!");
@@ -1095,9 +1104,9 @@ private bool IsMultiTargetAttack(List<string> attributes)
         }
         else
         {
-             blurbEvent.Set($"No Potion");
+            descriptionTextPotion.text = "No Potion Left.";
               usedMove1.text = "No Potion";
-             EventBus.Publish(blurbEvent);
+             
         }
 
     }
@@ -1122,9 +1131,9 @@ private bool IsMultiTargetAttack(List<string> attributes)
         }
         else
         {
-             blurbEvent.Set($"No Panacea");
+            descriptionTextPotion.text = "No Panacea left";
               usedMove1.text = "No Panacea";
-             EventBus.Publish(blurbEvent);
+            
         }
     }
 
@@ -1288,8 +1297,15 @@ private bool IsMultiTargetAttack(List<string> attributes)
         if (combinedAttack.attributes.Contains("Slash"))
             {
                
-                ApplyEffectWithDelay(slashAttack, hero.transform, 0f, 3.0f);
-                ApplyEffectWithDelay(slashHit, targetEnemy.transform, .5f, 3.0f);
+                Vector3 newPosition = targetEnemy.transform.position;
+                newPosition.y += 3f;
+
+                // Create a temporary transform with the new position
+                Transform tempTransform = new GameObject().transform;
+                tempTransform.position = newPosition;
+
+                ApplyEffectWithDelay(slashAttack, hero.transform, 0f, 3.0f, null, true);
+                ApplyEffectWithDelay(slashHit, tempTransform, .5f, 3.0f);
                 
             }
 
@@ -1346,8 +1362,8 @@ private bool IsMultiTargetAttack(List<string> attributes)
         {
             blurbEvent.Set($"You strike twice");
             EventBus.Publish(blurbEvent);
-                 
-            ApplyEffectWithDelay(lungeAttack, hero.transform, 0f, 3.0f);
+
+            ApplyEffectWithDelay(lungeAttack, hero.transform, 0f, 3.0f, true, false);
             ApplyEffectWithDelay(lungeHit, targetEnemy.transform, .5f, 3.0f);
           
             

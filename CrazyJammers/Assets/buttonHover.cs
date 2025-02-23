@@ -9,12 +9,18 @@ public class buttonHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
 {
     public TMP_Text descText;
     public string text = "";
+    public string textNo = "";
+    private Hero hero;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        
+        // Find the TurnManager instance in the scene
+        hero = FindObjectOfType<Hero>();
+        if (hero == null)
+        {
+            Debug.LogError("TurnManager not found in the scene.");
+        }
     }
-
     // Update is called once per frame
     void Update()
     {
@@ -23,7 +29,23 @@ public class buttonHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        descText.text = text;
+        if (this.name == "Bide Button")
+        { 
+            Debug.Log("Bide Button hovered!");
+            if(hero.bideLevel == 2.0f )
+            {
+                descText.text = textNo;
+            }
+            else
+            {
+                  descText.text = text;
+            }
+        }
+        else
+        {
+            descText.text = text;
+        }
+         
     }
     public void OnPointerExit(PointerEventData eventData)
     {
@@ -32,6 +54,10 @@ public class buttonHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
 
         public void OnPointerClick(PointerEventData eventData)
     {
-       descText.text = "Select a command.";
+         if(PotionData.Instance.Potion > 0)
+        {
+            descText.text = textNo;
+        }
+       
     }
 }
