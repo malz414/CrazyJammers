@@ -164,10 +164,10 @@ namespace DamageNumbersPro.Internal {
                 infoRect.width -= 3;
                 infoRect.y += 4;
                 infoRect.height -= 8;
-                GUI.Label(infoRect, "<color=FFFFFF><b><size=10>v</size>" + DamageNumberEditor.version + " </b></color>", bottomRightTextStyle);
+                GUI.Label(infoRect, "<color=#FFFFFF><b><size=10>v</size>" + DamageNumberEditor.version + " </b></color>", bottomRightTextStyle);
 
                 //Type Info:
-                GUI.Label(infoRect, "<color=FFFFFF><b>" + (isMesh ? "Mesh" : "GUI") + "<size=10> </size></b></color>", topRightTextStyle);
+                GUI.Label(infoRect, "<color=#FFFFFF><b>" + (isMesh ? "Mesh" : "GUI") + "<size=10> </size></b></color>", topRightTextStyle);
 
                 //Button:
                 Rect documentationRect = GUILayoutUtility.GetLastRect();
@@ -948,7 +948,7 @@ namespace DamageNumbersPro.Internal {
             tmp.verticalAlignment = VerticalAlignmentOptions.Middle;
             tmp.horizontalAlignment = HorizontalAlignmentOptions.Center;
             tmp.text = "1";
-            tmp.enableWordWrapping = false;
+            tmp.textWrappingMode = TextWrappingModes.NoWrap;
 
             //Size Delta:
             RectTransform rectTransform = tmp.GetComponent<RectTransform>();
@@ -978,7 +978,7 @@ namespace DamageNumbersPro.Internal {
             tmp.verticalAlignment = VerticalAlignmentOptions.Middle;
             tmp.horizontalAlignment = HorizontalAlignmentOptions.Center;
             tmp.text = "1";
-            tmp.enableWordWrapping = false;
+            tmp.textWrappingMode = TextWrappingModes.NoWrap;
             tmp.raycastTarget = false;
 
             //Size Delta:
@@ -1007,7 +1007,7 @@ namespace DamageNumbersPro.Internal {
                 tmp.gameObject.SetActive(true);
                 for (int n = 0; n < tmp.childCount; n++)
                 {
-                    Object.DestroyImmediate(tmp.GetChild(n).gameObject);
+                    DestroyOrDisable(tmp.GetChild(n).gameObject);
                     destroyedSomething = true;
                 }
                 tmp.gameObject.SetActive(false);
@@ -1021,7 +1021,7 @@ namespace DamageNumbersPro.Internal {
                     if(child.GetComponent<MeshRenderer>() != null)
                     {
                         destroyedSomething = true;
-                        Object.DestroyImmediate(child.gameObject);
+                        DestroyOrDisable(child.gameObject);
                     }
                 }
             }
@@ -1034,7 +1034,7 @@ namespace DamageNumbersPro.Internal {
                     if (child.GetComponent<MeshRenderer>() != null)
                     {
                         destroyedSomething = true;
-                        Object.DestroyImmediate(child.gameObject);
+                        DestroyOrDisable(child.gameObject);
                     }
                 }
             }
@@ -1047,6 +1047,19 @@ namespace DamageNumbersPro.Internal {
                 }
             }
         }
+
+        private static void DestroyOrDisable(GameObject go)
+        {
+            if (PrefabUtility.IsPartOfNonAssetPrefabInstance(go))
+            {
+                go.SetActive(false);
+            }
+            else
+            {
+                Object.DestroyImmediate(go);
+            }
+        }
+
         #endregion
 
         #region Miscellaneous

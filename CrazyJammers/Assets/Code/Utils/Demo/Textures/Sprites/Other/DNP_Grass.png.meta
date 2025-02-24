@@ -118,6 +118,6 @@ AssetOrigin:
   serializedVersion: 1
   productId: 186447
   packageName: Damage Numbers Pro
-  packageVersion: 4.39
-  assetPath: Assets/DamageNumbersPro/Demo/Textures/Sprites/Other/DNP_Grass.png
-  uploadId: 699234
+  packageVersion: 4.47
+  assetPath: Assets/Code/Utils/Demo/Textures/Sprites/Other/DNP_Grass.png
+  uploadId: 731065

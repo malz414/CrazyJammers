@@ -117,6 +117,6 @@ AssetOrigin:
   serializedVersion: 1
   productId: 186447
   packageName: Damage Numbers Pro
-  packageVersion: 4.39
-  assetPath: Assets/DamageNumbersPro/Demo/Textures/3D/DNP_Crosshair.png
-  uploadId: 699234
+  packageVersion: 4.47
+  assetPath: Assets/Code/Utils/Demo/Textures/3D/DNP_Crosshair.png
+  uploadId: 731065

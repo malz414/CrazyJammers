@@ -131,7 +131,7 @@ namespace DamageNumbersPro.Demo
                 DNP_Camera.instance.enabled = false;
             }
 
-            DNP_2DDemo demo2D = FindObjectOfType<DNP_2DDemo>();
+            DNP_2DDemo demo2D = FindAnyObjectByType<DNP_2DDemo>();
             if(demo2D) 
             {
                 demo2D.enabled = false;

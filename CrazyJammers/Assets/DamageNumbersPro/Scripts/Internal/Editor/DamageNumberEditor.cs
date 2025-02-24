@@ -13,7 +13,7 @@ namespace DamageNumbersPro
     [CustomEditor(typeof(DamageNumber), true), CanEditMultipleObjects]
     public class DamageNumberEditor : Editor
     {
-        public static string version = "4.39";
+        public static string version = "4.47";
 
         void OnEnable()
         {
@@ -122,8 +122,20 @@ namespace DamageNumbersPro
                             DNPEditorInternal.FixTextMeshPro();
                         }
 
-                        damageNumber.UpdateText();
-                        damageNumber.UpdateAlpha(1);
+                        try
+                        {
+                            damageNumber.UpdateText();
+                            damageNumber.UpdateAlpha(1);
+                        }
+                        catch
+                        {
+
+                        }
+
+                        if (isMesh)
+                        {
+                            damageNumber.GetTextMesh().gameObject.SetActive(true);
+                        }
                     }
                 }
             }
@@ -349,7 +361,7 @@ namespace DamageNumbersPro
             //Text Shader:
             TMP_FontAsset font = dn.GetFontMaterial();
             string is3D = dn.enable3DGame ? "3D" : "";
-            if(font != null && font.name + is3D != dn.editorLastFont)
+            if(dn.enable3DGame && dn.IsMesh() && font != null && font.name + is3D != dn.editorLastFont)
             {
                 dn.editorLastFont = font.name + is3D;
 
@@ -358,6 +370,7 @@ namespace DamageNumbersPro
                 objects[1] = font;
                 Undo.RecordObjects(objects, "Swiched shader to distance field overlay.");
 
+                //Fixing the text shader.
                 if(GraphicsSettings.currentRenderPipeline != null)
                 {
                     string pipeline = GraphicsSettings.currentRenderPipeline.GetType().ToString();
@@ -375,12 +388,9 @@ namespace DamageNumbersPro
                 {
                     ChangeShaderToOverlay(dn);
                 }
-            }
 
-            if(dn.enable3DGame && !dn.renderThroughWalls)
-            {
+                //Fixing the sprite shader.
                 TMP_Text tmp = dn.GetTextMesh();
-
                 if (tmp.spriteAsset != null && tmp.spriteAsset.material != null)
                 {
                     //Sprite Shader:

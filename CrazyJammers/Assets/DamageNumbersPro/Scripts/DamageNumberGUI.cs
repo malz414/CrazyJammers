@@ -191,6 +191,11 @@ namespace DamageNumbersPro
             GetReferencesIfNecessary();
             position = myRect.anchoredPosition3D = newPosition;
         }
+        protected override void SetFinalPosition(Vector3 newPosition)
+        {
+            GetReferencesIfNecessary();
+            myRect.anchoredPosition3D = newPosition;
+        }
         public override void SetAnchoredPosition(Transform rectParent, Vector2 anchoredPosition)
         {
             //Old Transform:
@@ -199,7 +204,7 @@ namespace DamageNumbersPro
             //Set Parent and Position:
             GetReferencesIfNecessary();
             myRect.SetParent(rectParent, false);
-            myRect.anchoredPosition = anchoredPosition;
+            myRect.anchoredPosition3D = anchoredPosition;
 
             //New Transform:
             transform.localScale = oldScale;
@@ -219,6 +224,11 @@ namespace DamageNumbersPro
             //New Transform:
             transform.localScale = oldScale;
             transform.eulerAngles = textMeshProA.canvas.transform.eulerAngles;
+        }
+        protected override Vector3 GetOtherPosition(Transform target)
+        {
+            RectTransform targetRectTransform = followedTarget.GetComponent<RectTransform>();
+            return targetRectTransform != null ? targetRectTransform.anchoredPosition3D : target.position;
         }
 
         protected override void SetLocalPositionA(Vector3 localPosition)

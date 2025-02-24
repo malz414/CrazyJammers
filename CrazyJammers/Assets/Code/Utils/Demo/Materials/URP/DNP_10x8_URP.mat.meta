@@ -10,6 +10,6 @@ AssetOrigin:
   serializedVersion: 1
   productId: 186447
   packageName: Damage Numbers Pro
-  packageVersion: 4.39
-  assetPath: Assets/DamageNumbersPro/Demo/Materials/URP/DNP_10x8_URP.mat
-  uploadId: 699234
+  packageVersion: 4.47
+  assetPath: Assets/Code/Utils/Demo/Materials/URP/DNP_10x8_URP.mat
+  uploadId: 731065

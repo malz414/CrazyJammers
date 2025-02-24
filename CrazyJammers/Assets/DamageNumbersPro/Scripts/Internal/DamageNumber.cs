@@ -425,7 +425,7 @@ namespace DamageNumbersPro
             }
 
             //Apply Transform:
-            SetPosition(finalPosition);
+            SetFinalPosition(finalPosition);
         }
 
         #region Spawn Functions
@@ -828,16 +828,19 @@ namespace DamageNumbersPro
         #region Public Functions
         /// <summary>
         /// Makes the damage number follow a transform.
-        /// Will also modify the spamGroup so that only damage numbers following this taget interact with each other.
+        /// Can also modify the spamGroup so that only damage numbers following this taget interact with each other.
         /// </summary>
-        public void SetFollowedTarget(Transform followedTransform)
+        public void SetFollowedTarget(Transform followedTransform, bool modifySpamGroup = true)
         {
             //Following:
             enableFollowing = true;
             followedTarget = followedTransform;
 
             //Spam Group:
-            spamGroup += followedTransform.GetInstanceID();
+            if (modifySpamGroup)
+            {
+                spamGroup += followedTransform.GetInstanceID();
+            }
         }
         public void SetColor(Color newColor)
         {
@@ -1336,14 +1339,17 @@ namespace DamageNumbersPro
                         DontDestroyOnLoad(fallbackAsset);
 
                         //Create base string containing a single character of the base font.
-                        string textString = "" + (char)fontAsset.characterTable[0].unicode;
+                        string textString = System.Char.ConvertFromUtf32((int) fontAsset.characterTable[0].unicode);
 
                         //Add all characters to support multi-atlas fonts.
                         if (fontAsset.isMultiAtlasTexturesEnabled)
                         {
                             foreach (TMP_Character character in fontAsset.characterTable)
                             {
-                                textString += (char)character.unicode;
+                                if(character != null && character.unicode > 0)
+                                {
+                                    textString += System.Char.ConvertFromUtf32((int)character.unicode);
+                                }
                             }
                         }
 
@@ -1356,26 +1362,27 @@ namespace DamageNumbersPro
 
                                 if (fallbackFont != null && fallbackFont.characterTable != null)
                                 {
-                                    if(fallbackFont.atlasPopulationMode == AtlasPopulationMode.Dynamic)
+                                    bool success = false;
+
+                                    foreach (TMP_Character fallbackCharacter in fallbackFont.characterTable)
+                                    {
+                                        if (fallbackCharacter != null)
+                                        {
+                                            if (AddFallbackCharacterToString(ref textString, fallbackCharacter.unicode, fontAsset, f))
+                                            {
+                                                success = true;
+                                                break;
+                                            }
+                                        }
+                                    }
+
+                                    if (!success && fallbackFont.atlasPopulationMode == AtlasPopulationMode.Dynamic)
                                     {
                                         for (int unicode = 0; unicode < 40959; unicode++)
                                         {
                                             if (fallbackFont.TryAddCharacters(new uint[] { (uint) unicode }))
                                             {
                                                 if (AddFallbackCharacterToString(ref textString, (uint)unicode, fontAsset, f))
-                                                {
-                                                    break;
-                                                }
-                                            }
-                                        }
-                                    }
-                                    else
-                                    {
-                                        foreach (TMP_Character fallbackCharacter in fallbackFont.characterTable)
-                                        {
-                                            if (fallbackCharacter != null)
-                                            {
-                                                if(AddFallbackCharacterToString(ref textString, fallbackCharacter.unicode, fontAsset, f))
                                                 {
                                                     break;
                                                 }
@@ -1403,13 +1410,7 @@ namespace DamageNumbersPro
             Initialize(time);
 
             //Spam Control:
-            if (spamGroup != "")
-            {
-                TryCombination(time);
-                TryDestruction(time);
-                TryCollision();
-                TryPush();
-            }
+            TriggerSpamControl();
 
             //Scale to Zero:
             firstFrameScale = true;
@@ -1422,6 +1423,12 @@ namespace DamageNumbersPro
 
         bool AddFallbackCharacterToString(ref string textString, uint unicode, TMP_FontAsset mainFontAsset, int fallbackIndex)
         {
+            //The unicode 0 can cause issues.
+            if(unicode < 1)
+            {
+                return false;
+            }
+
             if (mainFontAsset.characterLookupTable.ContainsKey(unicode) || (mainFontAsset.atlasPopulationMode == AtlasPopulationMode.Dynamic && mainFontAsset.TryAddCharacters(new uint[] { unicode })))
             {
                 //Character already in main font.
@@ -1446,7 +1453,7 @@ namespace DamageNumbersPro
 
                 if (addCharacter)
                 {
-                    textString += (char)unicode;
+                    textString += System.Char.ConvertFromUtf32((int) unicode);
                     return true;
                 }
             }
@@ -1678,12 +1685,12 @@ namespace DamageNumbersPro
 
                 if (digitSettings.decimals <= 0)
                 {
-                    numberString = ProcessIntegers(Mathf.RoundToInt(number).ToString(), out shortened);
+                    numberString = ProcessIntegers(Mathf.Round(number).ToString("F0"), out shortened);
                 }
                 else
                 {
                     //Digits:
-                    string allDigits = Mathf.RoundToInt(Mathf.Abs(number) * Mathf.Pow(10, digitSettings.decimals)).ToString();
+                    string allDigits = (Mathf.Abs(number) * Mathf.Pow(10, digitSettings.decimals)).ToString("F0");
 
                     bool hasMinus = number < 0;
 
@@ -1902,16 +1909,44 @@ namespace DamageNumbersPro
             if (digitSettings.suffixShorten)
             {
                 int currentSuffix = -1;
-
-                while (integers.Length > digitSettings.maxDigits && currentSuffix < digitSettings.suffixes.Count - 1 && integers.Length - digitSettings.suffixDigits[currentSuffix + 1] > 0)
+                int integerLength = integers.Length;
+                while (integerLength > digitSettings.maxDigits && currentSuffix < digitSettings.suffixes.Count - 1 && integerLength - digitSettings.suffixDigits[currentSuffix + 1] > 0)
                 {
                     currentSuffix++;
-                    integers = integers.Substring(0, integers.Length - digitSettings.suffixDigits[currentSuffix]);
+                    integerLength -= digitSettings.suffixDigits[currentSuffix];
                 }
 
                 if (currentSuffix >= 0)
                 {
-                    integers += digitSettings.suffixes[currentSuffix];
+                    //Get shortened integers.
+                    string shortenedIntegers = integers.Substring(0, integerLength);
+
+                    if (digitSettings.suffixDecimals > 0)
+                    {
+                        //Get decimals after the shortened integers.
+                        string decimals = integers.Substring(integerLength, digitSettings.suffixDecimals);
+
+                        //Hide zeros.
+                        while(digitSettings.suffixHideZeros && decimals.EndsWith("0"))
+                        {
+                            decimals = decimals.Substring(0, decimals.Length - 1);
+                        }
+
+                        //Combine.
+                        if(decimals.Length > 0)
+                        {
+                            integers = shortenedIntegers + digitSettings.suffixDecimalChar + decimals + digitSettings.suffixes[currentSuffix];
+                        }
+                        else
+                        {
+                            integers = shortenedIntegers + digitSettings.suffixes[currentSuffix];
+                        }
+                    }
+                    else
+                    {
+                        integers = shortenedIntegers + digitSettings.suffixes[currentSuffix];
+                    }
+
                     shortened = true;
                     return integers;
                 }
@@ -2154,12 +2189,15 @@ namespace DamageNumbersPro
                 return;
             }
 
+            //Get Position:
+            Vector3 targetPosition = GetOtherPosition(followedTarget);
+
             //Get Offset:
             if (lastTargetPosition != Vector3.zero)
             {
-                targetOffset += followedTarget.position - lastTargetPosition;
+                targetOffset += targetPosition - lastTargetPosition;
             }
-            lastTargetPosition = followedTarget.position;
+            lastTargetPosition = targetPosition;
 
             //Apply Drag:
             if (followSettings.drag > 0 && currentFollowSpeed > 0)
@@ -2244,6 +2282,20 @@ namespace DamageNumbersPro
             position = transform.position = newPosition;
         }
 
+        protected virtual Vector3 GetOtherPosition(Transform other)
+        {
+            return other.position;
+        }
+
+        /// <summary>
+        /// Updates position without changing the position variable.
+        /// Used for temporary position changes like shaking movement.
+        /// </summary>
+        protected virtual void SetFinalPosition(Vector3 newPosition)
+        {
+            transform.position = newPosition;
+        }
+
         /// <summary>
         /// This function is for the GUI version of damage numbers pro.
         /// It will position the damage number at your mouse position.
@@ -2317,6 +2369,22 @@ namespace DamageNumbersPro
             RemoveFromDictionary();
             spamGroup = newSpamGroup;
             AddToDictionary();
+        }
+
+        /// <summary>
+        /// Use this function to manually trigger spam control features like Combination, Destruction, Collision and Push.
+        /// </summary>
+        public void TriggerSpamControl()
+        {
+            if (spamGroup != "")
+            {
+                float time = unscaledTime ? Time.unscaledTime : Time.time;
+
+                TryCombination(time);
+                TryDestruction(time);
+                TryCollision();
+                TryPush();
+            }
         }
 
         void AddToDictionary()
@@ -2603,12 +2671,15 @@ namespace DamageNumbersPro
         #region Collision
         void TryCollision()
         {
-            foreach (DamageNumber otherNumber in spamGroupDictionary[spamGroup])
+            if (enableCollision)
             {
-                otherNumber.collided = false;
-            }
+                foreach (DamageNumber otherNumber in spamGroupDictionary[spamGroup])
+                {
+                    otherNumber.collided = false;
+                }
 
-            TryCollision(GetTargetPosition());
+                TryCollision(GetTargetPosition());
+            }
         }
         void TryCollision(Vector3 sourcePosition)
         {
@@ -2652,12 +2723,15 @@ namespace DamageNumbersPro
         #region Push
         void TryPush()
         {
-            foreach (DamageNumber otherNumber in spamGroupDictionary[spamGroup])
+            if (enablePush)
             {
-                otherNumber.pushed = false;
-            }
+                foreach (DamageNumber otherNumber in spamGroupDictionary[spamGroup])
+                {
+                    otherNumber.pushed = false;
+                }
 
-            TryPush(GetTargetPosition());
+                TryPush(GetTargetPosition());
+            }
         }
         void TryPush(Vector3 sourcePosition)
         {

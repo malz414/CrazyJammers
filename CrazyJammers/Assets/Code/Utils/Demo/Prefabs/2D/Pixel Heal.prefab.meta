@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: c68e42481c5fe83478576a5e28f7e8f8
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 186447
+  packageName: Damage Numbers Pro
+  packageVersion: 4.47
+  assetPath: Assets/Code/Utils/Demo/Prefabs/2D/Pixel Heal.prefab
+  uploadId: 731065

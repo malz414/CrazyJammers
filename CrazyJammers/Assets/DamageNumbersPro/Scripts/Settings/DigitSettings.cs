@@ -18,9 +18,12 @@ namespace DamageNumbersPro
             dotChar = ".";
 
             suffixShorten = false;
-            suffixes = new List<string>() { "K", "M", "B" };
-            suffixDigits = new List<int>() { 3, 3, 3 };
-            maxDigits = 4;
+            suffixes = new List<string>() { "K", "M", "B", "T" };
+            suffixDigits = new List<int>() { 3, 3, 3, 3 };
+            maxDigits = 3;
+            suffixDecimals = 1;
+            suffixDecimalChar = ".";
+            suffixHideZeros = false;
         }
 
         [Header("Decimals:")]
@@ -47,7 +50,14 @@ namespace DamageNumbersPro
         public List<string> suffixes;
         [Tooltip("Corresponding list of how many digits a suffix shortens.  Keep both lists at the same size.")]
         public List<int> suffixDigits;
-        [Tooltip("Maximum of visible digits.  If number has more digits than this it will be shortened.")]
+        [Tooltip("Maximum of visible digits. If number has more digits than this it will be shortened.")]
         public int maxDigits;
+        [Tooltip("Amount of decimals shown after shortening the number.")]
+        [Range(0, 3)]
+        public int suffixDecimals;
+        [Tooltip("The character used for the dot.")]
+        public string suffixDecimalChar;
+        [Tooltip("If true decimal zeros will be hidden.")]
+        public bool suffixHideZeros;
     }
 }
