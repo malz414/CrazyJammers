@@ -10,58 +10,58 @@
  * Or message me via discord or email.
  */
 
-using UnityEngine;
-using DamageNumbersPro; //Include DamageNumbersPro Namespace     <-----     [REQUIRED]
+// using UnityEngine;
+// using DamageNumbersPro; //Include DamageNumbersPro Namespace     <-----     [REQUIRED]
 
-namespace DamageNumbersPro.Demo
-{
-    public class DNP_ExampleMesh : MonoBehaviour
-    {
-        public DamageNumber popupPrefab; //Reference DamageNumber Prefab     <-----     [REQUIRED]
-
-
-        public Transform target;
-        void Update()
-        {
-            if(DNP_InputHandler.GetLeftClick())
-            {
-                SpawnPopup(Mathf.Round(Random.Range(1, 10)));
-            }
-        }
+// namespace DamageNumbersPro.Demo
+// {
+//     public class DNP_ExampleMesh : MonoBehaviour
+//     {
+//         public DamageNumber popupPrefab; //Reference DamageNumber Prefab     <-----     [REQUIRED]
 
 
-        public void SpawnPopup(float number)
-        {
-            DamageNumber newPopup = popupPrefab.Spawn(target.position + new Vector3(0, 0.25f, -1), number); //Spawn DamageNumber At Target     <-----     [REQUIRED]
+//         public Transform target;
+//         void Update()
+//         {
+//             if(DNP_InputHandler.GetLeftClick())
+//             {
+//                 SpawnPopup(Mathf.Round(Random.Range(1, 10)));
+//             }
+//         }
 
 
-            //You can do any change you want on the DamageNumber returned by the Spawn(...) function.
-            //The following code is [OPTIONAL] just to show you some examples.
+//         public void SpawnPopup(float number)
+//         {
+//             DamageNumber newPopup = popupPrefab.Spawn(target.position + new Vector3(0, 0.25f, -1), number); //Spawn DamageNumber At Target     <-----     [REQUIRED]
 
 
-            //Let's make the popup follow the target.
-            newPopup.SetFollowedTarget(target);
+//             //You can do any change you want on the DamageNumber returned by the Spawn(...) function.
+//             //The following code is [OPTIONAL] just to show you some examples.
 
-            //Let's check if the number is greater than 5.
-            if (number > 5)
-            {
-                //Let's increase the popup's scale.
-                newPopup.SetScale(1.5f);
 
-                //Let's change the color of the popup.
-                newPopup.SetColor(new Color(1, 0.2f, 0.2f));
-            }
-            else
-            {
-                //The following lines reset the changes above.
-                //This would only be neccesary for pooled popups.
-                newPopup.SetScale(1);
-                newPopup.SetColor(new Color(1, 0.7f, 0.5f));
-            }
+//             //Let's make the popup follow the target.
+//             newPopup.SetFollowedTarget(target);
 
-            //Flip the target.
-            target.GetComponent<DNP_Target>().Hit();
-        }
-    }
-}
+//             //Let's check if the number is greater than 5.
+//             if (number > 5)
+//             {
+//                 //Let's increase the popup's scale.
+//                 newPopup.SetScale(1.5f);
+
+//                 //Let's change the color of the popup.
+//                 newPopup.SetColor(new Color(1, 0.2f, 0.2f));
+//             }
+//             else
+//             {
+//                 //The following lines reset the changes above.
+//                 //This would only be neccesary for pooled popups.
+//                 newPopup.SetScale(1);
+//                 newPopup.SetColor(new Color(1, 0.7f, 0.5f));
+//             }
+
+//             //Flip the target.
+//             target.GetComponent<DNP_Target>().Hit();
+//         }
+//     }
+// }
 
