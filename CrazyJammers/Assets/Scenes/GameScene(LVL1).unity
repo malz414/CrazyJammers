@@ -571,6 +571,20 @@ MonoBehaviour:
   descText: {fileID: 1449458739}
   text: Power up your moves and gain some defence
   textNo: You have to wait a bit before you can use bide again
+--- !u!114 &203890460
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 203890452}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80ddce42e1467694f818f674f1a1027a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hero: {fileID: 5298093182537512027, guid: f8b0445d176b4fc4a93dfdba6b6ec6fa, type: 3}
+  buttonImage2: {fileID: 1891177813}
 --- !u!114 &257257768 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 3268862385935356961, guid: edc093f874874f64d9cfa15aa220a370, type: 3}
@@ -2085,6 +2099,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 1536062199592625358, guid: edc093f874874f64d9cfa15aa220a370, type: 3}
       insertIndex: -1
       addedObject: {fileID: 203890457}
+    - targetCorrespondingSourceObject: {fileID: 1536062199592625358, guid: edc093f874874f64d9cfa15aa220a370, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 203890460}
     - targetCorrespondingSourceObject: {fileID: 1730193485586582409, guid: edc093f874874f64d9cfa15aa220a370, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1834147277}
@@ -7687,6 +7704,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0b46395393ae26a4892c40dbba6be6a8, type: 3}
+--- !u!114 &1891177813 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1710402555746125745, guid: edc093f874874f64d9cfa15aa220a370, type: 3}
+  m_PrefabInstance: {fileID: 541571726}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1920406169
 GameObject:
   m_ObjectHideFlags: 0

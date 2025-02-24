@@ -35,6 +35,7 @@ public class TurnManager : MonoBehaviour
     [SerializeField] private GameObject slashAttack;
 
     [SerializeField] private GameObject slashHit;
+    [SerializeField] private GameObject slashCrater;
 
     [SerializeField] private GameObject iceAttack;
     [SerializeField] private GameObject iceHit;
@@ -402,6 +403,9 @@ private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform ta
             {
                 usedMoveGO.SetActive(true);
                 if(!enemyAttacksByIndex.Contains(enemyAttacksByIndexPerm[i]))
+                 {
+                     enemyAttacksByIndex.Add(enemyAttacksByIndexPerm[i]);
+                 }
            
                 blurbEvent.Set($"{enemy.characterName} is paralyzed and cannot act this turn!");
                 EventBus.Publish(blurbEvent);
@@ -562,7 +566,8 @@ private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform ta
                 tempTransform.position = newPosition;
                             
                 ApplyEffectWithDelay(slashAttack, enemy.transform, 0f, 3.0f, null, true);
-                ApplyEffectWithDelay(slashHit, tempTransform , .5f, 3.0f);
+                ApplyEffectWithDelay(slashHit, tempTransform , .2f, 3.0f);
+                 ApplyEffectWithDelay(slashCrater, hero.transform , .4f, 3.0f);
             }
 
 
@@ -1077,7 +1082,9 @@ private bool IsMultiTargetAttack(List<string> attributes)
             potionOptions.SetActive(false);
             hero.bideBuff = true;
             bideBuff = true;
+            usedMove1.text = "You bided for a turn";
             StartCoroutine(StartTurn());
+            
         }
     }
 
@@ -1190,8 +1197,8 @@ private bool IsMultiTargetAttack(List<string> attributes)
 
          blurbEvent.Set($"Boss attacked {targetEnemy.characterName}");
          EventBus.Publish(blurbEvent);
-         usedMove1.text = $"Boss attacked {targetEnemy.characterName}";
-        Debug.Log($"Boss attacked {targetEnemy.characterName}, dealing {damage} damage.");
+         usedMove1.text = $"Boss attacked {targetEnemy.characterName} with {combinedAttack.attackName}";
+ 
 
 
         if (combinedAttack.attributes.Contains("Burn"))
@@ -1276,7 +1283,7 @@ private bool IsMultiTargetAttack(List<string> attributes)
         {
              blurbEvent.Set($"{targetEnemy.characterName} has been defeated!");
              EventBus.Publish(blurbEvent);
-                  usedMove1.text = $"{targetEnemy.characterName} has been defeated!";
+                  usedMove1.text = $"{targetEnemy.characterName} has been defeated! with {combinedAttack.attackName}";
             RemoveEnemy(targetEnemy);
         }
 
@@ -1306,6 +1313,7 @@ private bool IsMultiTargetAttack(List<string> attributes)
 
                 ApplyEffectWithDelay(slashAttack, hero.transform, 0f, 3.0f, null, true);
                 ApplyEffectWithDelay(slashHit, tempTransform, .5f, 3.0f);
+                ApplyEffectWithDelay(slashCrater, targetEnemy.transform , .8f, 3.0f);
                 
             }
 
