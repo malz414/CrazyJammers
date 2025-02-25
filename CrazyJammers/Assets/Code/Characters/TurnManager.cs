@@ -291,7 +291,6 @@ private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform ta
         blurbEvent = new GameplayBlurbEvent();
 
         StartCoroutine(DoBattleStartRoutine());
-        popupPrefab = popupPrefabNeutral;
 
     }
 
@@ -319,13 +318,16 @@ private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform ta
         drop1Opened = false;
         drop2Opened = false;
 
-
+       yield return new WaitForSeconds(1.5f);
         foreach (var enemy in enemies)
         {
             usedMoveGO.SetActive(true);
             if (enemy.burning > 0)
             {
-                enemy.currentHealth -= (int)(enemy.maxHealth*.1);
+                enemy.Init(popupPrefabfire);
+                enemy.TakeDamage((int)(enemy.maxHealth*.1));
+          
+       
                 ApplyEffectWithDelay(burn, enemy.transform, 0f, 3.0f);
                 if (enemy.currentHealth <= 0)
                 {
@@ -343,7 +345,9 @@ private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform ta
 
                 }
                 
+          
             }
+         
         }
         bideAttribute--;
         if (bideAttribute == 0)
@@ -431,7 +435,7 @@ private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform ta
             AttackSO enemyAttack = enemy.PerformRandomAttack();
             usedMove1.text = $"{enemy.characterName} Used {enemyAttack.attackName}";
             usedMoveGO.SetActive(true);
-          
+            hero.Init(popupPrefab);
             blurbEvent.Set($"{enemy.characterName} Used {enemyAttack.attackName}");
             EventBus.Publish(blurbEvent);
             enemyAttacksByIndexPerm[i] = enemyAttack;
@@ -480,7 +484,9 @@ private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform ta
             {
                 foreach (var enemyHeal in enemies)
                 {
-                    popupPrefab = popupPrefabgreen;
+                    
+                    enemyHeal.Init(popupPrefabgreen);
+                    
                     if(enemyHeal.currentHealth <= 0) continue;
                     enemyHeal.currentHealth += (int)(enemy.maxHealth*0.2);
                     enemy.HealDamage((int)(enemy.maxHealth*0.2));
@@ -497,7 +503,7 @@ private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform ta
                      usedMove1.text = $"The heroes gained a barrier.";
                       usedMove1.text = $"The heroes healed and status cured.";
                     EventBus.Publish(blurbEvent);
-                    popupPrefab = popupPrefabNeutral;
+                  
                     yield return new WaitForSeconds(.2f);
 
                 }
@@ -514,8 +520,8 @@ private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform ta
 
         if (enemyHeal != null)
         {
-            popupPrefab = popupPrefabgreen;
            
+            enemyHeal.Init(popupPrefabgreen);
             //enemyHeal.currentHealth += (int)(enemy.maxHealth*0.2);
             enemyHeal.HealDamage((int)(enemy.maxHealth*0.2));
 
@@ -533,8 +539,10 @@ private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform ta
              usedMove1.text = $"{enemyHeal.characterName} was healed.";
             EventBus.Publish(blurbEvent);
             EventBus.Publish(statusUpdateEvent);
-            popupPrefab = popupPrefabNeutral;
+  
+         
             yield return new WaitForSeconds(1.5f);
+         
         }
         continue;
                 
@@ -668,8 +676,10 @@ private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform ta
         hero.bideBuff = false;
             hero.UpdateEffects();
         if (hero.burning > 0)
-        {   popupPrefab = popupPrefabfire;
+        { 
+            hero.Init(popupPrefabfire);
             hero.TakeDamage((int)(hero.maxHealth*.1));
+          
             usedMoveGO.SetActive(true);
             ApplyEffectWithDelay(burn, hero.transform, 0f, 3.0f);
             blurbEvent.Set($" You're Burning for {hero.burning} turns!");
@@ -685,7 +695,7 @@ private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform ta
             }
 
         }
-
+        hero.Init(popupPrefab);
         if (!hero.CanAct())
         {
             
@@ -1092,7 +1102,7 @@ private bool IsMultiTargetAttack(List<string> attributes)
     {
         if(  PotionData.Instance.Potion > 0)
         {
-
+            hero.Init(popupPrefabgreen);
             hero.HealDamage((int)(hero.maxHealth*.4));
             if(hero.currentHealth>hero.maxHealth)
             {
@@ -1234,7 +1244,9 @@ private bool IsMultiTargetAttack(List<string> attributes)
 
         if (combinedAttack.attributes.Contains("Heal"))
             {
-                    popupPrefab = popupPrefabgreen;
+                
+                    
+                    hero.Init(popupPrefabgreen);
                     hero.HealDamage(damage);
                     blurbEvent.Set($"{damage} Health Recovered!");
                     EventBus.Publish(blurbEvent);
@@ -1243,7 +1255,7 @@ private bool IsMultiTargetAttack(List<string> attributes)
                     
                     ApplyEffectWithDelay(heal, hero.transform, 0f, 3.0f);
                     EventBus.Publish(statusUpdateEvent);
-                    popupPrefab = popupPrefabNeutral;
+                    
                     
              }
 
@@ -1261,7 +1273,8 @@ private bool IsMultiTargetAttack(List<string> attributes)
             }
 
         if (combinedAttack.attributes.Contains("Field"))
-            {       popupPrefab = popupPrefabgreen;
+            {       
+                    hero.Init(popupPrefabgreen);
                     hero.HealDamage(damage);
                     blurbEvent.Set($"{damage} Health Recovered!");
                     EventBus.Publish(blurbEvent);
@@ -1275,7 +1288,7 @@ private bool IsMultiTargetAttack(List<string> attributes)
                     usedMove1.text = $"Status Healed";
                     ApplyEffectWithDelay(heal, hero.transform, 0f, 3.0f);
                     ApplyEffectWithDelay(panaceaAni, hero.transform, 0f, 3.0f);
-                    popupPrefab = popupPrefabNeutral;
+                    
             }
 
 
