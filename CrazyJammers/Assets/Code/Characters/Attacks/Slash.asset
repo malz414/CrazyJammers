@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   attackName: Slash
   attackDescription: This attaack deals a great amount of damage
-  baseDamage: 70
-  upgradeLevel: 1
+  baseDamage: 30
+  upgradeLevel: 0
   attributes:
   - Slash
