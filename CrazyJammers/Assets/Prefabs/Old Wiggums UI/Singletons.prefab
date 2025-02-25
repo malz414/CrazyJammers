@@ -96,6 +96,9 @@ MonoBehaviour:
     - B
     suffixDigits: 030000000300000003000000
     maxDigits: 4
+    suffixDecimals: 1
+    suffixDecimalChar: .
+    suffixHideZeros: 0
   enableLeftText: 0
   leftText: 
   leftTextSettings:
@@ -471,7 +474,7 @@ MonoBehaviour:
   enablePooling: 0
   poolSize: 50
   disableOnSceneLoad: 1
-  editorLastFont: Neon-Green3D
+  editorLastFont: Neon-Magenta3D
   position: {x: 0, y: 0, z: 0}
 --- !u!210 &3188177442638608528
 SortingGroup:
@@ -541,7 +544,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 949568296025708039, guid: 08ef533dfb5dea14ea4f9e6b0b0ec846, type: 2}
+  - {fileID: -3016009729354918782, guid: 6d070d3aaf6160f42b5e8124261b645e, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -620,6 +623,33 @@ MonoBehaviour:
   magePrefab: {fileID: 8752190016439242206, guid: 67348a45c8548214291b57659daa93c2, type: 3}
   swordsmanPrefab: {fileID: 5888089156087290115, guid: 80410d8b46e427a41adfb2738e980a86, type: 3}
   archerPrefab: {fileID: 2289685435781549048, guid: 4d60d244a63473f4a89ffcaedae97891, type: 3}
+  SteadyAttack: {fileID: 0}
+  SteadyHit: {fileID: 0}
+  lungeAttack: {fileID: 0}
+  lungeHit: {fileID: 0}
+  tripleHit: {fileID: 0}
+  tripleAttack: {fileID: 0}
+  arrowAttack: {fileID: 0}
+  arrowHit: {fileID: 0}
+  slashAttack: {fileID: 0}
+  slashHit: {fileID: 0}
+  slashCrater: {fileID: 0}
+  iceAttack: {fileID: 0}
+  iceHit: {fileID: 0}
+  fireAttack: {fileID: 0}
+  fireHit: {fileID: 0}
+  barrier1: {fileID: 0}
+  barrier2: {fileID: 0}
+  barrier3: {fileID: 0}
+  heal: {fileID: 0}
+  healfield: {fileID: 0}
+  zapAttack: {fileID: 0}
+  zapHit: {fileID: 0}
+  para: {fileID: 0}
+  burn: {fileID: 0}
+  bideani: {fileID: 0}
+  potionAni: {fileID: 0}
+  panaceaAni: {fileID: 0}
   combinedAttack: {fileID: 11400000, guid: 3687350894a4c0142b0993f34a1ae24d, type: 2}
   enemySpawns:
   - {fileID: 0}
@@ -630,6 +660,9 @@ MonoBehaviour:
   bossSpawn: {fileID: 0}
   MainUIParent: {fileID: 0}
   attackOptionsParent: {fileID: 0}
+  attackOptionsMenu: {fileID: 0}
+  attackDropdown: {fileID: 0}
+  attackDropdown2: {fileID: 0}
   potionOptions: {fileID: 0}
   targetingHUDParent: {fileID: 0}
   winScreen: {fileID: 0}
@@ -640,17 +673,39 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   bossHUD: {fileID: 0}
+  popupPrefabNeutral: {fileID: 0}
   popupPrefab: {fileID: 6942132032121805519}
-  attackButtons:
+  popupPrefabfire: {fileID: 0}
+  popupPrefabgreen: {fileID: 0}
+  enemyAttacksByIndex: []
+  enemyAttacksByIndexPerm:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
+  previousTurnMoves: []
+  attacksReset: []
   bideButton: {fileID: 0}
   potionButton: {fileID: 0}
   panaceaButton: {fileID: 0}
+  itemOptions: {fileID: 0}
   critMultiplier: 1.2
   heroCritRate: 0.05
+  bideAttribute: 0
+  enemiesDead: 0
+  PotAmount: {fileID: 0}
+  PanAmount: {fileID: 0}
+  descriptionText: {fileID: 0}
+  descriptionTextPotion: {fileID: 0}
+  usedMove: {fileID: 0}
+  usedMove1: {fileID: 0}
+  usedMoveGO: {fileID: 0}
+  Popop: {fileID: 0}
+  selectedAttack1: {fileID: 0}
+  selectedAttack2: {fileID: 0}
+  drop1Opened: 0
+  drop2Opened: 0
+  listOfObjectToDeactivateAtStartOfBattle: []
 --- !u!1 &6245697123426695433
 GameObject:
   m_ObjectHideFlags: 0
@@ -668,7 +723,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &653831433984536115
 RectTransform:
   m_ObjectHideFlags: 0
@@ -711,7 +766,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 949568296025708039, guid: 08ef533dfb5dea14ea4f9e6b0b0ec846, type: 2}
+  - {fileID: -3016009729354918782, guid: 6d070d3aaf6160f42b5e8124261b645e, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -755,8 +810,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: 1
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 08ef533dfb5dea14ea4f9e6b0b0ec846, type: 2}
-  m_sharedMaterial: {fileID: 949568296025708039, guid: 08ef533dfb5dea14ea4f9e6b0b0ec846, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 6d070d3aaf6160f42b5e8124261b645e, type: 2}
+  m_sharedMaterial: {fileID: -3016009729354918782, guid: 6d070d3aaf6160f42b5e8124261b645e, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -883,7 +938,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 949568296025708039, guid: 08ef533dfb5dea14ea4f9e6b0b0ec846, type: 2}
+  - {fileID: -3016009729354918782, guid: 6d070d3aaf6160f42b5e8124261b645e, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
