@@ -1274,11 +1274,22 @@ private bool IsMultiTargetAttack(List<string> attributes)
         
           if (combinedAttack.attributes.Contains("Barrier"))
             {
-                    hero.barrierCount += 1;
+                Vector3 newPosition = hero.transform.position;
+                Vector3 newScale = hero.transform.localScale;
+                newPosition.y += 2f;
+               // newScale += 2f;
+
+                // Create a temporary game object with the new position
+                GameObject tempGameObject = new GameObject();
+                tempGameObject.transform.position = newPosition;
+
+                // Destroy the temporary game object after 5 seconds
+                Destroy(tempGameObject, 5f);
+                hero.barrierCount += 1;
                      blurbEvent.Set("Barrier raised");
                      EventBus.Publish(blurbEvent);
                       usedMove1.text = $"Barrier Raised";
-                    ApplyEffectWithDelay(barrier1, hero.transform, 0f, 3.0f);
+                    ApplyEffectWithDelay(barrier1, tempGameObject.transform, 0f, 3.0f);
                     ApplyEffectWithDelay(barrier2, hero.transform, 0f, 3.0f);
                     ApplyEffectWithDelay(barrier3, hero.transform, 0f, 3.0f);
 
