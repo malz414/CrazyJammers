@@ -466,9 +466,18 @@ private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform ta
                 // List<Enemy> alive = enemies.FindAll(enemy => enemy.currentHealth >0);
                 // int randomRange = Random.Range(0, alive.Count);
                 // Enemy enemyBarrier = alive[randomRange];
-                
+                Vector3 newPosition = enm.transform.position;
+                newPosition.y += 3f;
+
+                // Create a temporary game object with the new position
+                GameObject tempGameObject = new GameObject();
+                tempGameObject.transform.position = newPosition;
+
+                // Destroy the temporary game object after 5 seconds
+                Destroy(tempGameObject, 5f);
+
                 enemy.barrierCount += 1;
-                ApplyEffectWithDelay(barrier1, enemy.transform, 0f, 2.0f);
+                ApplyEffectWithDelay(barrier1, newPosition.transform, 0f, 2.0f);
                 ApplyEffectWithDelay(barrier2, enemy.transform, 0f, 2.0f);
                 ApplyEffectWithDelay(barrier3, enemy.transform, 0f, 2.0f);
                 blurbEvent.Set($"The Cleric gained a barrier.");
@@ -569,13 +578,16 @@ private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform ta
                 Vector3 newPosition = hero.transform.position;
                 newPosition.y += 3f;
 
-                // Create a temporary transform with the new position
-                Transform tempTransform = new GameObject().transform;
-                tempTransform.position = newPosition;
-                            
+                // Create a temporary game object with the new position
+                GameObject tempGameObject = new GameObject();
+                tempGameObject.transform.position = newPosition;
+
+                // Destroy the temporary game object after 5 seconds
+                Destroy(tempGameObject, 5f);
+
                 ApplyEffectWithDelay(slashAttack, enemy.transform, 0f, 3.0f, null, true);
-                ApplyEffectWithDelay(slashHit, tempTransform , .2f, 3.0f);
-                 ApplyEffectWithDelay(slashCrater, hero.transform , .4f, 3.0f);
+                ApplyEffectWithDelay(slashHit, tempGameObject.transform, 0.2f, 3.0f);
+                ApplyEffectWithDelay(slashCrater, hero.transform, 0.4f, 3.0f);
             }
 
 
