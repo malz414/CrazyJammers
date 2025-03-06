@@ -466,8 +466,8 @@ private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform ta
                 // List<Enemy> alive = enemies.FindAll(enemy => enemy.currentHealth >0);
                 // int randomRange = Random.Range(0, alive.Count);
                 // Enemy enemyBarrier = alive[randomRange];
-                Vector3 newPosition = enm.transform.position;
-                newPosition.y += 3f;
+                Vector3 newPosition = enemy.transform.position;
+                newPosition.y += 1f;
 
                 // Create a temporary game object with the new position
                 GameObject tempGameObject = new GameObject();
@@ -477,7 +477,7 @@ private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform ta
                 Destroy(tempGameObject, 5f);
 
                 enemy.barrierCount += 1;
-                ApplyEffectWithDelay(barrier1, newPosition.transform, 0f, 2.0f);
+                ApplyEffectWithDelay(barrier1, tempGameObject.transform, 0f, 2.0f);
                 ApplyEffectWithDelay(barrier2, enemy.transform, 0f, 2.0f);
                 ApplyEffectWithDelay(barrier3, enemy.transform, 0f, 2.0f);
                 blurbEvent.Set($"The Cleric gained a barrier.");
