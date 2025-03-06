@@ -1276,12 +1276,16 @@ private bool IsMultiTargetAttack(List<string> attributes)
             {
                 Vector3 newPosition = hero.transform.position;
                 Vector3 newScale = hero.transform.localScale;
-                newPosition.y += 2f;
-               // newScale += 2f;
+                newPosition.y += 1f;
+                newScale.x += 10f;
+                newScale.y += 10f;
+                newScale.z += 10f;
+
 
                 // Create a temporary game object with the new position
                 GameObject tempGameObject = new GameObject();
                 tempGameObject.transform.position = newPosition;
+                tempGameObject.transform.localScale = newScale;
 
                 // Destroy the temporary game object after 5 seconds
                 Destroy(tempGameObject, 5f);
