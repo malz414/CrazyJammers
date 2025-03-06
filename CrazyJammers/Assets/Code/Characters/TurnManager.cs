@@ -1282,6 +1282,7 @@ private bool IsMultiTargetAttack(List<string> attributes)
                 newScale.z += 10f;
 
 
+
                 // Create a temporary game object with the new position
                 GameObject tempGameObject = new GameObject();
                 tempGameObject.transform.position = newPosition;
