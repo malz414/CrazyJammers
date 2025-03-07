@@ -8795,6 +8795,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1878987882032996, guid: 7fa473b70378b654a84307886f90d064, type: 3}
     - target: {fileID: 8485419520516605267, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
+      propertyPath: barrier1Big
+      value: 
+      objectReference: {fileID: 1749888386530418, guid: 059ad34efde5ed347b1882ea7c2e54d3, type: 3}
+    - target: {fileID: 8485419520516605267, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
       propertyPath: itemOptions
       value: 
       objectReference: {fileID: 535260367}

@@ -1487,6 +1487,7 @@ MonoBehaviour:
   fireAttack: {fileID: 1347034509603832, guid: 3c42b034bb8443e4fa9300af22f9fa12, type: 3}
   fireHit: {fileID: 1373873258365392, guid: cd5def2bb4f6b4e4ab15ba0b6f35b29d, type: 3}
   barrier1: {fileID: 1749888386530418, guid: 2f4c75fdc6fe0f84182f0304b5783bcf, type: 3}
+  barrier1Big: {fileID: 1749888386530418, guid: 059ad34efde5ed347b1882ea7c2e54d3, type: 3}
   barrier2: {fileID: 1966937190983394, guid: de6c0b0e816f5c641b189eebd2200e89, type: 3}
   barrier3: {fileID: 1149073990277440, guid: 018425a5e75e2094eb0ca95d72327204, type: 3}
   heal: {fileID: 1592372973558972, guid: 721cfe8018b2cd04abd0748143d2a312, type: 3}
@@ -1923,6 +1924,9 @@ MonoBehaviour:
     - B
     suffixDigits: 030000000300000003000000
     maxDigits: 4
+    suffixDecimals: 1
+    suffixDecimalChar: .
+    suffixHideZeros: 0
   enableLeftText: 0
   leftText: 
   leftTextSettings:
@@ -4909,6 +4913,9 @@ MonoBehaviour:
     - B
     suffixDigits: 030000000300000003000000
     maxDigits: 4
+    suffixDecimals: 1
+    suffixDecimalChar: .
+    suffixHideZeros: 0
   enableLeftText: 0
   leftText: 
   leftTextSettings:
@@ -5942,6 +5949,9 @@ MonoBehaviour:
     - B
     suffixDigits: 030000000300000003000000
     maxDigits: 4
+    suffixDecimals: 1
+    suffixDecimalChar: .
+    suffixHideZeros: 0
   enableLeftText: 0
   leftText: 
   leftTextSettings:
@@ -7908,6 +7918,9 @@ MonoBehaviour:
     - B
     suffixDigits: 030000000300000003000000
     maxDigits: 4
+    suffixDecimals: 1
+    suffixDecimalChar: .
+    suffixHideZeros: 0
   enableLeftText: 0
   leftText: 
   leftTextSettings:

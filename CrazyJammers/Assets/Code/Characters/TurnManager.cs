@@ -44,6 +44,7 @@ public class TurnManager : MonoBehaviour
     [SerializeField] private GameObject fireHit;
 
     [SerializeField] private GameObject barrier1;
+     [SerializeField] private GameObject barrier1Big;
     [SerializeField] private GameObject barrier2;
     [SerializeField] private GameObject barrier3;
 
@@ -1294,7 +1295,7 @@ private bool IsMultiTargetAttack(List<string> attributes)
                      blurbEvent.Set("Barrier raised");
                      EventBus.Publish(blurbEvent);
                       usedMove1.text = $"Barrier Raised";
-                    ApplyEffectWithDelay(barrier1, tempGameObject.transform, 0f, 3.0f);
+                    ApplyEffectWithDelay(barrier1Big, tempGameObject.transform, 0f, 3.0f);
                     ApplyEffectWithDelay(barrier2, hero.transform, 0f, 3.0f);
                     ApplyEffectWithDelay(barrier3, hero.transform, 0f, 3.0f);
 
