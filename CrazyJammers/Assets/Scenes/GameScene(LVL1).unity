@@ -8797,7 +8797,7 @@ PrefabInstance:
     - target: {fileID: 8485419520516605267, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
       propertyPath: barrier1Big
       value: 
-      objectReference: {fileID: 1749888386530418, guid: 059ad34efde5ed347b1882ea7c2e54d3, type: 3}
+      objectReference: {fileID: 1749888386530418, guid: 49f98646cc07a9f40b6b32bdbb12ecf2, type: 3}
     - target: {fileID: 8485419520516605267, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
       propertyPath: itemOptions
       value: 

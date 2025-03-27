@@ -1277,7 +1277,7 @@ private bool IsMultiTargetAttack(List<string> attributes)
             {
                 Vector3 newPosition = hero.transform.position;
                 Vector3 newScale = hero.transform.localScale;
-                newPosition.y += 1f;
+                newPosition.y += 2.5f;
                 newScale.x += 10f;
                 newScale.y += 10f;
                 newScale.z += 10f;
