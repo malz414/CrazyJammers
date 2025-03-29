@@ -1467,12 +1467,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4408cbd1e166ce1479793b2784c5bb22, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  knightPrefab: {fileID: 2296936670753540720, guid: 7422563a709182e4d8226ef991cb2180, type: 3}
-  magePrefab: {fileID: 8752190016439242206, guid: 67348a45c8548214291b57659daa93c2, type: 3}
+  knightPrefab: {fileID: 8752190016439242206, guid: 67348a45c8548214291b57659daa93c2, type: 3}
+  magePrefab: {fileID: 344943568324299905, guid: d10562b8e5a98c647916ca374f9227be, type: 3}
   swordsmanPrefab: {fileID: 286656958687433960, guid: 2921c7cfe4b33294facb78b8cbb2e7bf, type: 3}
   archerPrefab: {fileID: 2289685435781549048, guid: 4d60d244a63473f4a89ffcaedae97891, type: 3}
-  SteadyAttack: {fileID: 1443245140056534, guid: b5aa355e0f83821459544fc0f8753779, type: 3}
-  SteadyHit: {fileID: 1443245140056534, guid: 5f04f7856979a4546a6b1b3362e64a75, type: 3}
+  SteadyAttack: {fileID: 1106083537938030, guid: 68ad232820027fb46ab18b209499dc65, type: 3}
+  SteadyHit: {fileID: 1529907042512856, guid: ffef45a79ddad9c48a486d763f114750, type: 3}
   lungeAttack: {fileID: 1873886433987638, guid: fb2df51e77abde1429eb83c0317784af, type: 3}
   lungeHit: {fileID: 6400084191083594748, guid: ccc22a316744f104eb233bd6122a3ec3, type: 3}
   tripleHit: {fileID: 1105495686751570, guid: 1c3dac94110955943a4e5707f432c392, type: 3}
@@ -1487,7 +1487,7 @@ MonoBehaviour:
   fireAttack: {fileID: 1347034509603832, guid: 3c42b034bb8443e4fa9300af22f9fa12, type: 3}
   fireHit: {fileID: 1373873258365392, guid: cd5def2bb4f6b4e4ab15ba0b6f35b29d, type: 3}
   barrier1: {fileID: 1749888386530418, guid: 2f4c75fdc6fe0f84182f0304b5783bcf, type: 3}
-  barrier1Big: {fileID: 1749888386530418, guid: 059ad34efde5ed347b1882ea7c2e54d3, type: 3}
+  barrier1Big: {fileID: 1749888386530418, guid: 49f98646cc07a9f40b6b32bdbb12ecf2, type: 3}
   barrier2: {fileID: 1966937190983394, guid: de6c0b0e816f5c641b189eebd2200e89, type: 3}
   barrier3: {fileID: 1149073990277440, guid: 018425a5e75e2094eb0ca95d72327204, type: 3}
   heal: {fileID: 1592372973558972, guid: 721cfe8018b2cd04abd0748143d2a312, type: 3}
