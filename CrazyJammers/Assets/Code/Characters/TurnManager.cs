@@ -404,7 +404,7 @@ private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform ta
         for (int i = 0; i < enemies.Count; i++)
         {
             Enemy enemy = enemies[i];
-            if (!enemy.CanAct())
+            if (!enemy.CanAct() && !enemy.dead)
             {
                 usedMoveGO.SetActive(true);
                 if(!enemyAttacksByIndex.Contains(enemyAttacksByIndexPerm[i]))
@@ -669,6 +669,7 @@ private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform ta
                      usedMove1.text = $"Boss has been paralyzed by {enemyAttack.attackName}!";
                     Debug.Log($"Hero has been paralyzed by {enemyAttack.attackName}!");
                 }
+                
                 ApplyEffectWithDelay(arrowAttack, enemy.transform, 0f, 3.0f);
                 ApplyEffectWithDelay(arrowHit, hero.transform, .5f, 3.0f);
             }
@@ -783,7 +784,7 @@ private void ShowAttackSelectionUI()
         {
 
             int index = dropdownOptions.IndexOf(existingOption);
-        if (index < 3)
+        if (index <= 3)
             {
             var enemy = enemies[index]; 
             if (!enemy.dead && existingOption.text == attack.attackName && bideAttribute >= 1)
@@ -1251,7 +1252,18 @@ private bool IsMultiTargetAttack(List<string> attributes)
                      
                      usedMove1.text = $"{targetEnemy.characterName} was paralysed!";
                 }
-                ApplyEffectWithDelay(arrowAttack, hero.transform, 0f, 3.0f);
+
+                Vector3 newPosition = hero.transform.position;
+                newPosition.y += 3f;
+
+                // Create a temporary game object with the new position
+                GameObject tempGameObject = new GameObject();
+                tempGameObject.transform.position = newPosition;
+
+                // Destroy the temporary game object after 5 seconds
+                
+                Destroy(tempGameObject, 5f);
+                ApplyEffectWithDelay(arrowAttack, tempGameObject.transform, 0f, 3.0f);
                 ApplyEffectWithDelay(arrowHit, targetEnemy.transform, .5f, 3.0f);
             }
 
@@ -1395,7 +1407,7 @@ private bool IsMultiTargetAttack(List<string> attributes)
         if (combinedAttack.attributes.Contains("Ice") && !hasIced)
         {
             //hasIced = true;
-            targetEnemy.TakeDamage(damage);
+          
             
             ApplyEffectWithDelay(iceAttack, hero.transform, 0f, 3.0f);
             ApplyEffectWithDelay(iceHit, targetEnemy.transform, .5f, 3.0f);
@@ -1473,6 +1485,7 @@ private bool IsMultiTargetAttack(List<string> attributes)
             }
         enemiesDead = 0;
         }
+        
 
 
     private IEnumerator FadeOut(GameObject enemy)

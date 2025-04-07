@@ -73,7 +73,7 @@ public class FadeScreen : MonoBehaviour
         prologueTextUI.text = introText[0];
         yield return new WaitForSeconds(4f);
         LeanTween.alphaCanvas(fadeScreen, 0, FADE_OUT_TIME);
-        quoteBoxManager.SetQuoteBox(enemyQuote[1]);
+        SkipToGame();
     }
 
     private void OnFadeIn(FadeInEvent fadeEvent)

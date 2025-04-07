@@ -55,29 +55,29 @@ public class CombinedAttackSO : ScriptableObject
 { "Arrow Bolt, Heal", "Healing Bolt" },
 
 // New Combinations with Ice Bullet
-{ "Ice Bullet, Slash", "Frostsword" },
-{ "Slash, Ice Bullet", "Frostsword" },
+{ "Ice Bullets, Slash", "Frostsword" },
+{ "Slash, Ice Bullets", "Frostsword" },
 
-{ "Ice Bullet, Fireball", "Steam Bullets" },
-{ "Fireball, Ice Bullet", "Steam Bullets" },
+{ "Ice Bullets, Fireball", "Steam Bullets" },
+{ "Fireball, Ice Bullets", "Steam Bullets" },
 
-{ "Ice Bullet, Arrow Bolt", "Ice Arrow" },
-{ "Arrow Bolt, Ice Bullet", "Ice Arrow" },
+{ "Ice Bullets, Arrow Bolt", "Ice Arrow" },
+{ "Arrow Bolt, Ice Bullets", "Ice Arrow" },
 
-{ "Ice Bullet, Lunge", "Bulltet Jab" },
-{ "Lunge, Ice Bullet", "Bulltet Jab" },
+{ "Ice Bullets, Lunge", "Bulltet Jab" },
+{ "Lunge, Ice Bullets", "Bulltet Jab" },
 
-{ "Ice Bullet, Heal", "Frosty Heal" },
-{ "Heal, Ice Bullet", "Frosty Heal" },
+{ "Ice Bullets, Heal", "Frosty Heal" },
+{ "Heal, Ice Bullets", "Frosty Heal" },
 
-{ "Ice Bullet, Barrier", "Frost Field" },
-{ "Barrier, Ice Bullet", "Frost Field" },
+{ "Ice Bullets, Barrier", "Frost Field" },
+{ "Barrier, Ice Bullets", "Frost Field" },
 
-{ "Ice Bullet, Steady Blade", "Steady Bullets" },
-{ "Steady Blade, Ice Bullet", "Steady Bullets" },
+{ "Ice Bullets, Steady Blade", "Steady Bullets" },
+{ "Steady Blade, Ice Bullets", "Steady Bullets" },
 
-{ "Ice Bullet, Healing Field", "Pure Snow" },
-{ "Healing Field, Ice Bullet", "Pure Snow" },
+{ "Ice Bullets, Healing Field", "Pure Snow" },
+{ "Healing Field, Ice Bullets", "Pure Snow" },
 
 { "Heal, Barrier", "Holy Shield" },
 { "Barrier, Heal", "Holy Shield" },
@@ -142,8 +142,8 @@ public class CombinedAttackSO : ScriptableObject
 { "Triple Shot, Arrow Bolt", "Precision Volley" },
 { "Arrow Bolt, Triple Shot", "Precision Volley" },
 
-{ "Triple Shot, Ice Bullet", "Frost Volley" },
-{ "Ice Bullet, Triple Shot", "Frost Volley" },
+{ "Triple Shot, Ice Bullets", "Frost Volley" },
+{ "Ice Bullets, Triple Shot", "Frost Volley" },
 
 { "Triple Shot, Steady Blade", "Stable Shots" },
 { "Steady Blade, Triple Shot", "Stable Shots" },
