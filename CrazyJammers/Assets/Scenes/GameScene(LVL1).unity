@@ -6069,7 +6069,7 @@ PrefabInstance:
     - target: {fileID: 8485419520516605267, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
       propertyPath: burn
       value: 
-      objectReference: {fileID: 5652016574901158899, guid: de017453d31765d4bb44cf9b52af9820, type: 3}
+      objectReference: {fileID: 3255502394043691821, guid: fba611f687bb1ac49b3bdab4839225ec, type: 3}
     - target: {fileID: 8485419520516605267, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
       propertyPath: heal
       value: 
