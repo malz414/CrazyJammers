@@ -1113,7 +1113,6 @@ private bool IsMultiTargetAttack(List<string> attributes)
             hero.bideBuff = true;
             bideBuff = true;
             usedMove1.text = "You bided for a turn";
-             usedMoveGO.SetActive(true);
             StartCoroutine(StartTurn());
             
         }
@@ -1129,7 +1128,6 @@ private bool IsMultiTargetAttack(List<string> attributes)
             {
                 hero.currentHealth = hero.maxHealth;
             }
-             usedMoveGO.SetActive(true);
              blurbEvent.Set($"Potion Used");
              EventBus.Publish(blurbEvent);
              usedMove1.text = "Potion Used";
@@ -1157,7 +1155,6 @@ private bool IsMultiTargetAttack(List<string> attributes)
             hero.RemoveParalysis();
             hero.RemoveHeroBurns();
             hero.RemoveHeroParalysis();
-            usedMoveGO.SetActive(true);
             blurbEvent.Set($"Status Healed");
             EventBus.Publish(blurbEvent);
             usedMove1.text = "Status Healed";
