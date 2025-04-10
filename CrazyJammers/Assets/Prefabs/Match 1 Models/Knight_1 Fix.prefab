@@ -129,6 +129,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: dcbb1e9a510910c46aa27a738288b31e, type: 3}
       insertIndex: -1
       addedObject: {fileID: 3472894434665063071}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: dcbb1e9a510910c46aa27a738288b31e, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 3914065036323217804}
   m_SourcePrefab: {fileID: 100100000, guid: dcbb1e9a510910c46aa27a738288b31e, type: 3}
 --- !u!4 &1489437036458086602 stripped
 Transform:
@@ -177,7 +180,7 @@ Animator:
   m_Controller: {fileID: 9100000, guid: a6b00d0e052db4f41ba56f4294834691, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
-  m_ApplyRootMotion: 0
+  m_ApplyRootMotion: 1
   m_LinearVelocityBlending: 0
   m_StabilizeFeet: 0
   m_AnimatePhysics: 0
@@ -254,6 +257,21 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &3914065036323217804
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2296936670753540720}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c43dde00e48e47f4f8f921432db7b88d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  walkSpeed: 2
+  animator: {fileID: 0}
+  shouldMove: 0
 --- !u!4 &9070065861915785231 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7997947301047521070, guid: dcbb1e9a510910c46aa27a738288b31e, type: 3}
