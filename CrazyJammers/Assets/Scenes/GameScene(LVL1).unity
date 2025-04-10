@@ -6239,10 +6239,6 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 2289685435781549048, guid: 4d60d244a63473f4a89ffcaedae97891, type: 3}
     - target: {fileID: 8485419520516605267, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
-      propertyPath: arrowAttack1
-      value: 
-      objectReference: {fileID: 1878987882032996, guid: b6665d3c6949efa448214e87a443d23a, type: 3}
-    - target: {fileID: 8485419520516605267, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
       propertyPath: knightPrefab
       value: 
       objectReference: {fileID: 2296936670753540720, guid: 7422563a709182e4d8226ef991cb2180, type: 3}

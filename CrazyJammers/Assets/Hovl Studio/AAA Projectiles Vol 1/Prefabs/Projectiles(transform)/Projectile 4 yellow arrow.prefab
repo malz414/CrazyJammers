@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 114302265647128424}
   - component: {fileID: 54332171404887420}
   - component: {fileID: 135036271185326364}
-  - component: {fileID: 380248653304046087}
   m_Layer: 0
   m_Name: Projectile 4 yellow arrow
   m_TagString: Untagged
@@ -110,18 +109,6 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 0.2
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &380248653304046087
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1878987882032996}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3063c8278d81e9a4ba44d28ecfab0e3f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &843298340293988238
 GameObject:
   m_ObjectHideFlags: 0

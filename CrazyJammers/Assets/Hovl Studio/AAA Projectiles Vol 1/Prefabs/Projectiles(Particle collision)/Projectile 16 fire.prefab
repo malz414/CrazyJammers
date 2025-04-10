@@ -9770,7 +9770,6 @@ GameObject:
   - component: {fileID: 114901142685566374}
   - component: {fileID: 199413474041559024}
   - component: {fileID: 6009614445514399005}
-  - component: {fileID: 7060451035069262147}
   m_Layer: 0
   m_Name: Projectile 16 fire
   m_TagString: Untagged
@@ -14791,18 +14790,6 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!114 &7060451035069262147
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1347034509603832}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3063c8278d81e9a4ba44d28ecfab0e3f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1694412689053138
 GameObject:
   m_ObjectHideFlags: 0

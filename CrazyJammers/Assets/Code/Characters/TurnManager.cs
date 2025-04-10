@@ -30,7 +30,6 @@ public class TurnManager : MonoBehaviour
     [SerializeField] private GameObject tripleAttack;
     
     [SerializeField] private GameObject arrowAttack;
-    [SerializeField] private GameObject arrowAttack1;
     [SerializeField] private GameObject arrowHit;
 
     [SerializeField] private GameObject slashAttack;
@@ -405,8 +404,6 @@ private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform ta
         for (int i = 0; i < enemies.Count; i++)
         {
             Enemy enemy = enemies[i];
-            enemy.Init(popupPrefab);
-            hero.Init(popupPrefab);
             if (!enemy.CanAct() && !enemy.dead)
             {
                 usedMoveGO.SetActive(true);
@@ -419,7 +416,7 @@ private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform ta
                 EventBus.Publish(blurbEvent);
                 usedMove1.text = $"{enemy.characterName} is paralyzed and cannot act this turn!";
                 ApplyEffectWithDelay(para, enemy.transform, 0f, 3.0f);
-                  yield return new WaitForSeconds(1.5f);
+           
                 continue;
             }
             else if (enemy.dead)
@@ -439,7 +436,7 @@ private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform ta
             AttackSO enemyAttack = enemy.PerformRandomAttack();
             usedMove1.text = $"{enemy.characterName} Used {enemyAttack.attackName}";
             usedMoveGO.SetActive(true);
-            
+            hero.Init(popupPrefab);
             blurbEvent.Set($"{enemy.characterName} Used {enemyAttack.attackName}");
             EventBus.Publish(blurbEvent);
             enemyAttacksByIndexPerm[i] = enemyAttack;
@@ -501,15 +498,15 @@ private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform ta
                     enemyHeal.Init(popupPrefabgreen);
                     
                     if(enemyHeal.currentHealth <= 0) continue;
-                 
-                    enemyHeal.HealDamage((int)(enemy.maxHealth*0.2));
+                    enemyHeal.currentHealth += (int)(enemy.maxHealth*0.2);
+                    enemy.HealDamage((int)(enemy.maxHealth*0.2));
                     if(enemyHeal.currentHealth >= enemyHeal.maxHealth)
                     {
                         enemyHeal.currentHealth = enemyHeal.maxHealth;
                     }
                     enemyHeal.RemoveBurns();
                     enemyHeal.RemoveParalysis();
-                    ApplyEffectWithDelay(healfield, enemyHeal.transform, 0f, 2.0f);
+                    ApplyEffectWithDelay(heal, enemyHeal.transform, 0f, 2.0f);
                     ApplyEffectWithDelay(panaceaAni, enemyHeal.transform, 0f, 2.0f);
                     blurbEvent.Set($"The heroes healed and status cured.");
                     blurbEvent.Set($"The heroes gained a barrier.");
@@ -520,7 +517,6 @@ private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform ta
                     yield return new WaitForSeconds(.2f);
 
                 }
-                  yield return new WaitForSeconds(.5f);
 
             continue;
             }
@@ -674,8 +670,7 @@ private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform ta
                     Debug.Log($"Hero has been paralyzed by {enemyAttack.attackName}!");
                 }
                 
-                
-                ApplyEffectWithDelay(arrowAttack1, enemy.transform, 0f, 3.0f, null, true);
+                ApplyEffectWithDelay(arrowAttack, enemy.transform, 0f, 3.0f);
                 ApplyEffectWithDelay(arrowHit, hero.transform, .5f, 3.0f);
             }
 
@@ -714,7 +709,7 @@ private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform ta
             }
 
         }
-       
+        hero.Init(popupPrefab);
         if (!hero.CanAct())
         {
             
@@ -724,7 +719,6 @@ private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform ta
             ApplyEffectWithDelay(para, hero.transform, 0f, 3.0f);
             Debug.Log("Hero is paralyzed and cannot act this turn!");
             yield return new WaitForSeconds(1f);
-            usedMove1.text = "";
             usedMoveGO.SetActive(false);
             StartCoroutine(StartTurn()); // Skip the hero's turn
         }
@@ -1203,7 +1197,6 @@ private bool IsMultiTargetAttack(List<string> attributes)
         //Crit Damage
         if (combinedAttack.attributes.Contains("Steady"))
             {
-                 hero.Init(popupPrefab);
                 heroCritRate = 0.4f;
                 ApplyEffectWithDelay(SteadyAttack, hero.transform, 0f, 2.0f);
                 ApplyEffectWithDelay(SteadyHit, targetEnemy.transform, .5f, 3.0f);
@@ -1233,7 +1226,7 @@ private bool IsMultiTargetAttack(List<string> attributes)
 
 
         if (combinedAttack.attributes.Contains("Burn"))
-            {    hero.Init(popupPrefab);
+            {   
                 randomChance = (bideAttribute > 0) ? 0.2f : 0.2f;
                 if (Random.value <= randomChance  && targetEnemy.GetParalysisTurnsRemaining() < 1 && targetEnemy.burning < 1)
                 {
@@ -1249,7 +1242,6 @@ private bool IsMultiTargetAttack(List<string> attributes)
 
         if (combinedAttack.attributes.Contains("Paralysis"))
             {
-                 hero.Init(popupPrefab);
 
                 if (Random.value <= 1f && targetEnemy.GetParalysisTurnsRemaining() < 1 && targetEnemy.burning < 1)
                 {
@@ -1295,7 +1287,6 @@ private bool IsMultiTargetAttack(List<string> attributes)
         
           if (combinedAttack.attributes.Contains("Barrier"))
             {
-                 hero.Init(popupPrefab);
                 Vector3 newPosition = hero.transform.position;
                 Vector3 newScale = hero.transform.localScale;
                 newPosition.y += 2.5f;
@@ -1324,7 +1315,7 @@ private bool IsMultiTargetAttack(List<string> attributes)
 
         if (combinedAttack.attributes.Contains("Field"))
             {       
-                    hero.Init(popupPrefab);
+                    hero.Init(popupPrefabgreen);
                     hero.HealDamage(damage);
                     blurbEvent.Set($"{damage} Health Recovered!");
                     EventBus.Publish(blurbEvent);
@@ -1336,7 +1327,7 @@ private bool IsMultiTargetAttack(List<string> attributes)
                     blurbEvent.Set($"Status Healed");
                     EventBus.Publish(blurbEvent);
                     usedMove1.text = $"Status Healed";
-                    ApplyEffectWithDelay(healfield, hero.transform, 0f, 3.0f);
+                    ApplyEffectWithDelay(heal, hero.transform, 0f, 3.0f);
                     ApplyEffectWithDelay(panaceaAni, hero.transform, 0f, 3.0f);
                     
             }
@@ -1366,7 +1357,6 @@ private bool IsMultiTargetAttack(List<string> attributes)
 
         if (combinedAttack.attributes.Contains("Slash"))
             {
-                 hero.Init(popupPrefab);
                
                 Vector3 newPosition = targetEnemy.transform.position;
                 newPosition.y += 3f;
@@ -1383,7 +1373,6 @@ private bool IsMultiTargetAttack(List<string> attributes)
 
             if (combinedAttack.attributes.Contains("Triple"))
             {
-                 hero.Init(popupPrefab);
                 targetEnemy.TakeDamage(damage);
                 targetEnemy.TakeDamage(damage);
         
@@ -1419,7 +1408,7 @@ private bool IsMultiTargetAttack(List<string> attributes)
         {
             //hasIced = true;
           
-             hero.Init(popupPrefab);
+            
             ApplyEffectWithDelay(iceAttack, hero.transform, 0f, 3.0f);
             ApplyEffectWithDelay(iceHit, targetEnemy.transform, .5f, 3.0f);
             // targetingHUDParent.SetActive(true);
@@ -1433,7 +1422,6 @@ private bool IsMultiTargetAttack(List<string> attributes)
 
         if (combinedAttack.attributes.Contains("Lunge"))
         {
-             hero.Init(popupPrefab);
             blurbEvent.Set($"You strike twice");
             EventBus.Publish(blurbEvent);
 
