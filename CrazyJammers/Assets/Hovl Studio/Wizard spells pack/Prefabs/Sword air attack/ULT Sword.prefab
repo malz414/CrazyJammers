@@ -4929,6 +4929,8 @@ GameObject:
   - component: {fileID: 198219375169338652}
   - component: {fileID: 199377456503629532}
   - component: {fileID: 114536866494410124}
+  - component: {fileID: 5761299544406966535}
+  - component: {fileID: 7007456124033669898}
   m_Layer: 0
   m_Name: ULT Sword
   m_TagString: Untagged
@@ -9867,6 +9869,30 @@ MonoBehaviour:
   useOnlyRotationOffset: 0
   UseFirePointRotation: 0
   DestoyMainEffect: 0
+--- !u!114 &5761299544406966535
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1443245140056534}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3063c8278d81e9a4ba44d28ecfab0e3f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &7007456124033669898
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1443245140056534}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3063c8278d81e9a4ba44d28ecfab0e3f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1832806315845848
 GameObject:
   m_ObjectHideFlags: 0
