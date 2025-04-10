@@ -34342,6 +34342,7 @@ GameObject:
   - component: {fileID: 198380700938656722}
   - component: {fileID: 199168618000532714}
   - component: {fileID: 4257203718286885332}
+  - component: {fileID: 122010629518891342}
   m_Layer: 0
   m_Name: Magic shield loop yellow
   m_TagString: Untagged
@@ -39338,3 +39339,15 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &122010629518891342
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1749888386530418}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3063c8278d81e9a4ba44d28ecfab0e3f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
