@@ -5961,9 +5961,45 @@ PrefabInstance:
       propertyPath: skipButton
       value: 
       objectReference: {fileID: 1815146222}
+    - target: {fileID: 1171021709324416019, guid: fec496db80a07c640a9a640f4b6a9472, type: 3}
+      propertyPath: m_Color.a
+      value: 0.56078434
+      objectReference: {fileID: 0}
+    - target: {fileID: 1171021709324416019, guid: fec496db80a07c640a9a640f4b6a9472, type: 3}
+      propertyPath: m_Color.b
+      value: 0.2264151
+      objectReference: {fileID: 0}
+    - target: {fileID: 1171021709324416019, guid: fec496db80a07c640a9a640f4b6a9472, type: 3}
+      propertyPath: m_Color.g
+      value: 0.2264151
+      objectReference: {fileID: 0}
+    - target: {fileID: 1171021709324416019, guid: fec496db80a07c640a9a640f4b6a9472, type: 3}
+      propertyPath: m_Color.r
+      value: 0.2264151
+      objectReference: {fileID: 0}
     - target: {fileID: 2554171013639807235, guid: fec496db80a07c640a9a640f4b6a9472, type: 3}
       propertyPath: m_SortingOrder
       value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3753278839290528353, guid: fec496db80a07c640a9a640f4b6a9472, type: 3}
+      propertyPath: m_FillMethod
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3753278839290528353, guid: fec496db80a07c640a9a640f4b6a9472, type: 3}
+      propertyPath: m_FillClockwise
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3753278839290528353, guid: fec496db80a07c640a9a640f4b6a9472, type: 3}
+      propertyPath: m_RaycastTarget
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3753278839290528353, guid: fec496db80a07c640a9a640f4b6a9472, type: 3}
+      propertyPath: m_UseSpriteMesh
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3753278839290528353, guid: fec496db80a07c640a9a640f4b6a9472, type: 3}
+      propertyPath: m_PreserveAspect
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6129923606258279351, guid: fec496db80a07c640a9a640f4b6a9472, type: 3}
       propertyPath: m_Name
