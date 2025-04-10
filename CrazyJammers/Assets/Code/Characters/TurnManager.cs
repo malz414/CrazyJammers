@@ -187,57 +187,7 @@ public class TurnManager : MonoBehaviour
 
     public void StartBattle()
     {
-        SetUpBattle();
-    }
-    //VFX called with delay for some so attacks go off then theres a delay on the hit more time is given to the duration so with delay + duration it doesnt  cancel early 
-
-private void ApplyEffectWithDelay(GameObject effectPrefab, Transform target, float delay, float effectDuration, bool? xRotationEffect = null, bool raiseEffect = false) 
-{
-    StartCoroutine(DelayedEffectCoroutine(effectPrefab, target, delay, effectDuration, raiseEffect, xRotationEffect));
-}
-
-private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform target, float delay, float effectDuration, bool raiseEffect, bool? xRotationEffect)
-{
-    yield return new WaitForSeconds(delay);
-
-    // Default to the target's normal position
-    Vector3 effectPosition = target.position;
-
-    // If raiseEffect is true, modify the Y-axis
-    if (raiseEffect)
-    {
-        effectPosition += new Vector3(0f, 1.5f, 0f);
-    }
-
-      // Instantiate the effect at the appropriate position
-    GameObject effect = Instantiate(effectPrefab, effectPosition, effectPrefab.transform.rotation);
-    effect.transform.SetParent(target);
-    effect.transform.SetParent(null);
-
-    if (xRotationEffect.HasValue)
-    {
-        float xRotation = xRotationEffect.Value ? 90f : -90f;
-        effect.transform.Rotate(0f, xRotation, 0f);
-    }
-  
-
-    Destroy(effect, effectDuration);
-}
-
-
-private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform target, float delay, float effectDuration)
-{
-    yield return new WaitForSeconds(delay);
-    GameObject effect = Instantiate(effectPrefab, target.position, effectPrefab.transform.rotation); // Use Quaternion.identity to not modify the prefab's rotation
-    effect.transform.SetParent(target); 
-    Destroy(effect, delay + effectDuration); // Ensures the effect lasts for delay + effectDuration seconds
-    Debug.Log("Effect Rotation (Prefab's Inspector Value): " + effect.transform.rotation);
-}
-
-
-    private void SetUpBattle()
-    {
-        GameObject knightObj = SpawnPrefabAtPosition(knightPrefab, enemySpawns[0]);
+         GameObject knightObj = SpawnPrefabAtPosition(knightPrefab, enemySpawns[0]);
 
         GameObject swordsmanObj = SpawnPrefabAtPosition(swordsmanPrefab, enemySpawns[1]);
         GameObject mageObj = SpawnPrefabAtPosition(magePrefab, enemySpawns[2]);
@@ -291,6 +241,56 @@ private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform ta
         enemyAttacksUsed = new List<AttackSO>();
 
         blurbEvent = new GameplayBlurbEvent();
+    }
+    //VFX called with delay for some so attacks go off then theres a delay on the hit more time is given to the duration so with delay + duration it doesnt  cancel early 
+
+private void ApplyEffectWithDelay(GameObject effectPrefab, Transform target, float delay, float effectDuration, bool? xRotationEffect = null, bool raiseEffect = false) 
+{
+    StartCoroutine(DelayedEffectCoroutine(effectPrefab, target, delay, effectDuration, raiseEffect, xRotationEffect));
+}
+
+private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform target, float delay, float effectDuration, bool raiseEffect, bool? xRotationEffect)
+{
+    yield return new WaitForSeconds(delay);
+
+    // Default to the target's normal position
+    Vector3 effectPosition = target.position;
+
+    // If raiseEffect is true, modify the Y-axis
+    if (raiseEffect)
+    {
+        effectPosition += new Vector3(0f, 1.5f, 0f);
+    }
+
+      // Instantiate the effect at the appropriate position
+    GameObject effect = Instantiate(effectPrefab, effectPosition, effectPrefab.transform.rotation);
+    effect.transform.SetParent(target);
+    effect.transform.SetParent(null);
+
+    if (xRotationEffect.HasValue)
+    {
+        float xRotation = xRotationEffect.Value ? 90f : -90f;
+        effect.transform.Rotate(0f, xRotation, 0f);
+    }
+  
+
+    Destroy(effect, effectDuration);
+}
+
+
+private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform target, float delay, float effectDuration)
+{
+    yield return new WaitForSeconds(delay);
+    GameObject effect = Instantiate(effectPrefab, target.position, effectPrefab.transform.rotation); // Use Quaternion.identity to not modify the prefab's rotation
+    effect.transform.SetParent(target); 
+    Destroy(effect, delay + effectDuration); // Ensures the effect lasts for delay + effectDuration seconds
+    Debug.Log("Effect Rotation (Prefab's Inspector Value): " + effect.transform.rotation);
+}
+
+
+    public void SetUpBattle()
+    {
+       
 
         StartCoroutine(DoBattleStartRoutine());
 
