@@ -6,6 +6,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
+
 public class FadeOutEvent : IBusEvent
 {
     public UICategoryEnums category { get; private set; }
@@ -26,6 +27,7 @@ public class FadeInEvent : IBusEvent
 
 public class FadeScreen : MonoBehaviour
 {
+    private bool skipped;
     private const float FADE_OUT_TIME = 1f;
     private const float FADE_IN_TIME = 1f;
 
@@ -38,7 +40,9 @@ public class FadeScreen : MonoBehaviour
     [SerializeField] TextMeshProUGUI prologueTextUI;
     [SerializeField] GameObject skipButton;
     [SerializeField] QuoteBoxManager quoteBoxManager;
-    private bool skipped;
+    [SerializeField] int quoteNum;
+
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
     {
@@ -52,11 +56,11 @@ public class FadeScreen : MonoBehaviour
 
     public void SkipToGame()
     {
-        if(skipped) return;
-        skipped = true;
+        if (skipped) return;
+        skipped=true;
         StopAllCoroutines();
         LeanTween.alphaCanvas(fadeScreen, 0, FADE_OUT_TIME);
-        quoteBoxManager.SetQuoteBox(enemyQuote[0]);
+        quoteBoxManager.SetQuoteBox(enemyQuote[quoteNum]);
     }
 
     private void OnFadeOut(FadeOutEvent fadeEvent)

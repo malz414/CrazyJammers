@@ -334,7 +334,7 @@ private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform ta
 
         EventBus.Publish(new FadeInEvent(UICategoryEnums.GamePlayUI));
 
-        yield return new WaitForSeconds(1f);
+
 
         StartCoroutine(StartTurn());
     }
