@@ -81,7 +81,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 4d02b133d12e7c943838bec9edd05a22, type: 3}
       propertyPath: m_Name
-      value: Swordsman_M3
+      value: Swordsman_M4
       objectReference: {fileID: 0}
     - target: {fileID: 5866666021909216657, guid: 4d02b133d12e7c943838bec9edd05a22, type: 3}
       propertyPath: m_Controller
@@ -127,6 +127,7 @@ MonoBehaviour:
   animator: {fileID: 6796376608094082088}
   possibleAttacks:
   - {fileID: 11400000, guid: aec4e051ab40fff41ba32fcdccf8f765, type: 2}
+  - {fileID: 11400000, guid: 08102d5fa4fdad24cbec5cd4b2aff646, type: 2}
   attacksUsed: []
   dead: 0
   TargetingIndicator: {fileID: 4759082298626962176}

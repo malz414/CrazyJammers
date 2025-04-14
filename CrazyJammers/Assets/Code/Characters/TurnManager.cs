@@ -12,8 +12,24 @@ using static System.Math;
 
 public class TurnManager : MonoBehaviour
 {
+
+    public enum GameMode
+    {
+        Standard,
+        Endless
+    }
+    public GameMode currentGameMode = GameMode.Standard;
     public static TurnManager Instance { get; private set; }
 
+    [SerializeField] private List<GameObject> easyEnemies;
+    [SerializeField] private List<GameObject> mediumEnemies;
+    [SerializeField] private List<GameObject> hardEnemies;
+    private int easyIndex = 0;
+    private int mediumIndex = 0;
+    private int hardIndex = 0;
+    private enum Difficulty { Easy, Medium, Hard }
+    private Difficulty currentDifficulty = Difficulty.Easy;
+    private int totalEnemiesKilled = 0;
     [SerializeField] private GameObject knightPrefab;
     [SerializeField] private GameObject magePrefab;
     [SerializeField] private GameObject swordsmanPrefab;
@@ -86,7 +102,9 @@ public class TurnManager : MonoBehaviour
     [SerializeField] GameObject targetingHUDParent;
   
 
-
+        
+    private List<Enemy> aliveEnemies = new List<Enemy>();
+    private List<Enemy> deadEnemies = new List<Enemy>();
     [SerializeField] GameObject winScreen;
 
     [SerializeField] GameObject loseScreen;
@@ -184,64 +202,87 @@ public class TurnManager : MonoBehaviour
         SetupAttackDropdowns(); 
       
     }
+private GameObject GetNextEnemyFromCurrentDifficulty()
+{
+    List<GameObject> pool;
+    int index;
 
-    public void StartBattle()
+    switch (currentDifficulty)
     {
-         GameObject knightObj = SpawnPrefabAtPosition(knightPrefab, enemySpawns[0]);
+        case Difficulty.Medium:
+            pool = mediumEnemies;
+            index = mediumIndex;
+            if (index >= pool.Count) return GetNextEnemyFromCurrentDifficulty(Difficulty.Hard);
+            mediumIndex++;
+            return pool[index];
 
-        GameObject swordsmanObj = SpawnPrefabAtPosition(swordsmanPrefab, enemySpawns[1]);
-        GameObject mageObj = SpawnPrefabAtPosition(magePrefab, enemySpawns[2]);
-        GameObject archerObj = SpawnPrefabAtPosition(archerPrefab, enemySpawns[3]);
+        case Difficulty.Hard:
+            pool = hardEnemies;
+            index = hardIndex;
+            if (index >= pool.Count) index = Random.Range(0, hardEnemies.Count); // loop random from hard
+            return pool[index];
 
-        enemies = new List<Enemy>();
-
-        enemies.Add(knightObj.GetComponent<Enemy>());
-        enemies.Add(swordsmanObj.GetComponent<Enemy>());
-        enemies.Add(mageObj.GetComponent<Enemy>());
-        enemies.Add(archerObj.GetComponent<Enemy>());
-
-        enemies[0].Init(popupPrefab);
-        enemies[1].Init(popupPrefab);
-        enemies[2].Init(popupPrefab);
-        enemies[3].Init(popupPrefab);
-
-        enemyHUDs[0].Init(enemies[0]);
-        enemyHUDs[1].Init(enemies[1]);
-        enemyHUDs[2].Init(enemies[2]);
-        enemyHUDs[3].Init(enemies[3]);
-        
-        
-        foreach (var attack in attacksReset)
-        {
-            attack.upgradeLevel = 0;
-        
-            Debug.Log($"Attack: {attack.attackName}, Upgrade Level: {attack.upgradeLevel}");
-
-        }
-
-
-
-        targetingMode = false;
-        targetingHUDParent.SetActive(false);
-
-        GameObject bossObj = SpawnPrefabAtPosition(bossPrefab, bossSpawn);
-
-        hero = bossObj.GetComponent<Hero>();
-
-        foreach(var obj in listOfObjectToDeactivateAtStartOfBattle)
-        {
-            obj.SetActive(false);
-        }
-        hero.Init(popupPrefab);
-
-        bossHUD.Init(hero);
-
-        MainUIParent.SetActive(true);
-
-        enemyAttacksUsed = new List<AttackSO>();
-
-        blurbEvent = new GameplayBlurbEvent();
+        default:
+            pool = easyEnemies;
+            index = easyIndex;
+            if (index >= pool.Count) return GetNextEnemyFromCurrentDifficulty(Difficulty.Medium);
+            easyIndex++;
+            return pool[index];
     }
+}
+
+private GameObject GetNextEnemyFromCurrentDifficulty(Difficulty fallback)
+{
+    currentDifficulty = fallback;
+    return GetNextEnemyFromCurrentDifficulty();
+}
+
+
+
+
+public void StartBattle()
+{
+    // Get 4 unique random enemies from current difficulty pool (easy at start)
+    List<GameObject> initialEnemies = GetUniqueRandomEnemiesFromPool(easyEnemies, 4);
+
+    enemies = new List<Enemy>();
+
+    for (int i = 0; i < 4; i++)
+    {
+        GameObject enemyObj = SpawnPrefabAtPosition(initialEnemies[i], enemySpawns[i]);
+        Enemy enemy = enemyObj.GetComponent<Enemy>();
+        enemy.Init(popupPrefab);
+        enemies.Add(enemy);
+        aliveEnemies.Add(enemy);  // Add to alive enemies list
+        enemyHUDs[i].Init(enemy);
+    }
+
+    // Reset attack upgrades
+    foreach (var attack in attacksReset)
+    {
+        attack.upgradeLevel = 0;
+        Debug.Log($"Attack: {attack.attackName}, Upgrade Level: {attack.upgradeLevel}");
+    }
+
+    targetingMode = false;
+    targetingHUDParent.SetActive(false);
+
+    GameObject bossObj = SpawnPrefabAtPosition(bossPrefab, bossSpawn);
+    hero = bossObj.GetComponent<Hero>();
+    hero.Init(popupPrefab);
+
+    foreach (var obj in listOfObjectToDeactivateAtStartOfBattle)
+    {
+        obj.SetActive(false);
+    }
+
+    bossHUD.Init(hero);
+    MainUIParent.SetActive(true);
+
+    enemyAttacksUsed = new List<AttackSO>();
+    blurbEvent = new GameplayBlurbEvent();
+}
+
     //VFX called with delay for some so attacks go off then theres a delay on the hit more time is given to the duration so with delay + duration it doesnt  cancel early 
 
 private void ApplyEffectWithDelay(GameObject effectPrefab, Transform target, float delay, float effectDuration, bool? xRotationEffect = null, bool raiseEffect = false) 
@@ -277,15 +318,6 @@ private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform ta
     Destroy(effect, effectDuration);
 }
 
-
-private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform target, float delay, float effectDuration)
-{
-    yield return new WaitForSeconds(delay);
-    GameObject effect = Instantiate(effectPrefab, target.position, effectPrefab.transform.rotation); // Use Quaternion.identity to not modify the prefab's rotation
-    effect.transform.SetParent(target); 
-    Destroy(effect, delay + effectDuration); // Ensures the effect lasts for delay + effectDuration seconds
-    Debug.Log("Effect Rotation (Prefab's Inspector Value): " + effect.transform.rotation);
-}
 
 
     public void SetUpBattle()
@@ -399,7 +431,10 @@ private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform ta
         yield return new WaitForSeconds(1f);
         enemyAttacksByIndex.Clear();
         
-        
+        while (enemyAttacksByIndexPerm.Count < enemies.Count)
+        {
+            enemyAttacksByIndexPerm.Add(null);
+        }
 
         // Enemies attack hero
         for (int i = 0; i < enemies.Count; i++)
@@ -424,7 +459,7 @@ private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform ta
             }
             else if (enemy.dead)
             {
-                if(!enemyAttacksByIndex.Contains(enemyAttacksByIndexPerm[i]))
+               if (!enemyAttacksByIndex.Contains(enemyAttacksByIndexPerm[i]))
                 {
                     enemyAttacksByIndex.Add(enemyAttacksByIndexPerm[i]);
                 }
@@ -444,16 +479,16 @@ private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform ta
             EventBus.Publish(blurbEvent);
             enemyAttacksByIndexPerm[i] = enemyAttack;
 
-            if(!enemyAttacksByIndex.Contains(enemyAttacksByIndexPerm[i]))
+            if (!enemyAttacksByIndex.Contains(enemyAttack))
             {
-                enemyAttacksByIndex.Add(enemyAttacksByIndexPerm[i]);
+                enemyAttacksByIndex.Add(enemyAttack);
             }
 
-            if(!previousTurnMoves.Contains(enemyAttack))
+            if (!previousTurnMoves.Contains(enemyAttack))
             {
                 previousTurnMoves.Add(enemyAttack);
             }
-            
+                
             
 
             if (hero.bideUses == 2) 
@@ -1475,51 +1510,137 @@ private bool IsMultiTargetAttack(List<string> attributes)
     }
 
 
+public void RemoveEnemy(Enemy enemy)
+{
+    enemy.dead = true;
+    enemy.RemoveParalysis();
+    enemy.RemoveBurns();
 
-    public void RemoveEnemy(Enemy enemy)
+    if (currentGameMode == GameMode.Endless)
+    {
+        totalEnemiesKilled++;
+
+        if (totalEnemiesKilled % 4 == 0)
         {
-        enemy.dead = true;
-        enemy.RemoveParalysis();
-        enemy.RemoveBurns();
-        
-        Debug.Log("Enemies dead = " + enemiesDead);
-
-
-        //StartCoroutine(FadeOut(enemy.gameObject));  
-        foreach (var body in enemies)
-            {
-                if (body.dead)
-                {
-                    enemiesDead++;
-                    if(enemiesDead == 4)
-                    {
-                         EndGame(true); // Player wins
-
-                    }
-                }
-            }
-        enemiesDead = 0;
+            IncreaseDifficulty();
         }
-        
+
+        int spawnIndex = aliveEnemies.IndexOf(enemy); // Use aliveEnemies for safe indexing
+        if (spawnIndex >= 0)
+        {
+            aliveEnemies.RemoveAt(spawnIndex);
+            StartCoroutine(ReplaceEnemyAfterDelay(enemy, spawnIndex));
+        }
+    }
+    else // Standard mode
+    {
+        foreach (var body in enemies)
+        {
+            if (body.dead)
+            {
+                enemiesDead++;
+            }
+        }
+
+        if (enemiesDead == 4)
+        {
+            EndGame(true); // Player wins
+        }
+
+        enemiesDead = 0;
+    }
+}
+
+
+private IEnumerator ReplaceEnemyAfterDelay(Enemy deadEnemy, int spawnIndex)
+{
+    Transform spawnPos = enemySpawns[spawnIndex];
+
+    // Fade out or destroy the dead enemy
+    StartCoroutine(FadeOut(deadEnemy.gameObject)); // Optional fancy fade
+    Destroy(deadEnemy.gameObject, 2f); // Ensure it's removed after fade
+
+    yield return new WaitForSeconds(2f);
+
+    GameObject newEnemyPrefab = GetRandomEnemyPrefab(deadEnemy);
+    if (newEnemyPrefab == null)
+    {
+        Debug.LogWarning("No valid enemy prefab to spawn!");
+        yield break;
+    }
+
+    GameObject newEnemyObj = SpawnPrefabAtPosition(newEnemyPrefab, spawnPos);
+    Enemy newEnemy = newEnemyObj.GetComponent<Enemy>();
+    newEnemy.Init(popupPrefab);
+
+    if (spawnIndex >= 0 && spawnIndex < enemies.Count)
+    {
+        enemies[spawnIndex] = newEnemy;
+    }
+    else if (spawnIndex >= 0)
+    {
+        enemies.Add(newEnemy);
+    }
+
+    aliveEnemies.Insert(spawnIndex, newEnemy);
+    enemyHUDs[spawnIndex].Init(newEnemy);
+}
+private GameObject GetRandomEnemyPrefab(Enemy deadEnemy)
+{
+    return GetNextEnemyFromCurrentDifficulty();
+}
+
+private void IncreaseDifficulty()
+{
+    if (currentDifficulty == Difficulty.Easy)
+    {
+        currentDifficulty = Difficulty.Medium;
+        Debug.Log("Difficulty increased to Medium!");
+    }
+    else if (currentDifficulty == Difficulty.Medium)
+    {
+        currentDifficulty = Difficulty.Hard;
+        Debug.Log("Difficulty increased to Hard!");
+    }
+}
+private List<GameObject> GetUniqueRandomEnemiesFromPool(List<GameObject> pool, int count)
+{
+    List<GameObject> shuffled = new List<GameObject>(pool);
+    for (int i = 0; i < shuffled.Count; i++)
+    {
+        GameObject temp = shuffled[i];
+        int randomIndex = Random.Range(i, shuffled.Count);
+        shuffled[i] = shuffled[randomIndex];
+        shuffled[randomIndex] = temp;
+    }
+
+    return shuffled.Take(count).ToList();
+}
+
+
+private int GetDeadEnemySpawnIndex(Enemy deadEnemy)
+{
+    return enemies.IndexOf(deadEnemy);  // Find the index in the enemies list and spawn at that position
+}
+
 
 
     private IEnumerator FadeOut(GameObject enemy)
     {
-        Renderer enemyRenderer = enemy.GetComponent<Renderer>();
-        Material material = enemyRenderer.material;
-        Color startColor = material.color;
-        float fadeDuration = 2f; // Time in seconds for the fade out
-        float timeElapsed = 0f;
-
-        while (timeElapsed < fadeDuration)
+        float duration = 1.5f;
+        float time = 0f;
+        Vector3 startScale = enemy.transform.localScale;
+        
+        while (time < duration)
         {
-            timeElapsed += Time.deltaTime;
-            float lerpValue = timeElapsed / fadeDuration;
-            material.color = new Color(startColor.r, startColor.g, startColor.b, Mathf.Lerp(startColor.a, 0f, lerpValue));
+            float t = time / duration;
+            enemy.transform.localScale = Vector3.Lerp(startScale, Vector3.zero, t);
+            time += Time.deltaTime;
             yield return null;
         }
 
-        
+        Destroy(enemy);
+            
       
     }
 

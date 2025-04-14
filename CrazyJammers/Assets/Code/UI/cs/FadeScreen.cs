@@ -38,7 +38,7 @@ public class FadeScreen : MonoBehaviour
     [SerializeField] TextMeshProUGUI prologueTextUI;
     [SerializeField] GameObject skipButton;
     [SerializeField] QuoteBoxManager quoteBoxManager;
-
+    private bool skipped;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
     {
@@ -52,6 +52,8 @@ public class FadeScreen : MonoBehaviour
 
     public void SkipToGame()
     {
+        if(skipped) return;
+        skipped = true;
         StopAllCoroutines();
         LeanTween.alphaCanvas(fadeScreen, 0, FADE_OUT_TIME);
         quoteBoxManager.SetQuoteBox(enemyQuote[0]);
