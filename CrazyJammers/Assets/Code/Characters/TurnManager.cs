@@ -123,6 +123,7 @@ public class TurnManager : MonoBehaviour
     
     public List<AttackSO> previousTurnMoves;
     private List<Enemy> selectedEnemies = new List<Enemy>();
+    private int selectedEnemyNum = -1;
     private bool selectingEnemies = false;
 
     private Hero hero;
@@ -305,12 +306,12 @@ public void StartBattle()
 
     //VFX called with delay for some so attacks go off then theres a delay on the hit more time is given to the duration so with delay + duration it doesnt  cancel early 
 
-private void ApplyEffectWithDelay(GameObject effectPrefab, Transform target, float delay, float effectDuration, bool? xRotationEffect = null, bool raiseEffect = false) 
+private void ApplyEffectWithDelay(GameObject effectPrefab, Transform target, float delay, float effectDuration, bool? xRotationEffect = null, bool raiseEffect = false, float? yRotationOffset = null) 
 {
-    StartCoroutine(DelayedEffectCoroutine(effectPrefab, target, delay, effectDuration, raiseEffect, xRotationEffect));
+    StartCoroutine(DelayedEffectCoroutine(effectPrefab, target, delay, effectDuration, raiseEffect, xRotationEffect, yRotationOffset));
 }
 
-private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform target, float delay, float effectDuration, bool raiseEffect, bool? xRotationEffect)
+private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform target, float delay, float effectDuration, bool raiseEffect, bool? xRotationEffect, float? yRotationOffset = null)
 {
     yield return new WaitForSeconds(delay);
 
@@ -324,9 +325,16 @@ private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform ta
     }
 
       // Instantiate the effect at the appropriate position
-    GameObject effect = Instantiate(effectPrefab, effectPosition, effectPrefab.transform.rotation);
+    GameObject effect = Instantiate(effectPrefab, effectPosition, Quaternion.identity); // neutral rotation
+
     effect.transform.SetParent(target);
     effect.transform.SetParent(null);
+    
+    if (yRotationOffset.HasValue)
+    {
+        effect.transform.rotation = Quaternion.Euler(0f, yRotationOffset.Value, 0f);
+    }
+
 
     if (xRotationEffect.HasValue)
     {
@@ -1078,6 +1086,14 @@ private void HideDescription()
         Debug.Log($"Single-target attack on {enemy.characterName}");
         bossAttackCoroutine = StartCoroutine(DoBossAttackRoutine(enemy));
         usedMove1.text = ($"Boss Used {combinedAttack.attackName}");
+         for (int i = 0; i < enemies.Count; i++)
+            {
+                if (enemies[i] == enemy)
+                {
+                    selectedEnemyNum = i;
+                    break;
+                }
+            }
     }
     else
     {
@@ -1113,6 +1129,14 @@ private void HideDescription()
         {
             Debug.Log($"{targets} enemies selected. Starting multi-target attack.");
             usedMove1.text = ($"Boss Used {combinedAttack.attackName}");
+            for (int i = 0; i < enemies.Count; i++)
+            {
+                if (enemies[i] == selectedEnemies[0])
+                {
+                    selectedEnemyNum = i;
+                    break;
+                }
+            }
 
             StartCoroutine(DoBossAttackRoutine(selectedEnemies.ToArray()));
 
@@ -1292,19 +1316,42 @@ private bool IsMultiTargetAttack(List<string> attributes)
 
 
         if (combinedAttack.attributes.Contains("Burn"))
-            {    hero.Init(popupPrefab);
-                randomChance = (bideAttribute > 0) ? 0.2f : 0.2f;
-                if (Random.value <= randomChance  && targetEnemy.GetParalysisTurnsRemaining() < 1 && targetEnemy.burning < 1)
-                {
-                    targetEnemy.ApplyBurn(1000, 3);
-                     blurbEvent.Set($"{targetEnemy.characterName} was burned!");
-                     EventBus.Publish(blurbEvent);
-                     usedMove1.text = $"{targetEnemy.characterName} was burned!";
-                    
-                }
-                ApplyEffectWithDelay(fireAttack, hero.transform, 0f, 3.0f, true, true);
-                ApplyEffectWithDelay(fireHit, targetEnemy.transform, .5f, 3.0f);
+        {
+            hero.Init(popupPrefab);
+            randomChance = (bideAttribute > 0) ? 0.2f : 0.2f;
+
+            if (Random.value <= randomChance && targetEnemy.GetParalysisTurnsRemaining() < 1 && targetEnemy.burning < 1)
+            {
+                targetEnemy.ApplyBurn(1000, 3);
+                blurbEvent.Set($"{targetEnemy.characterName} was burned!");
+                EventBus.Publish(blurbEvent);
+                usedMove1.text = $"{targetEnemy.characterName} was burned!";
             }
+
+            // Determine rotation based on selected enemy position
+            float yRotationOffset = 0f;
+            Debug.Log("selectedEnemyNum is" + selectedEnemyNum);
+            switch (selectedEnemyNum)
+            {
+                case 0: yRotationOffset = 30f; break;
+                case 1: yRotationOffset = 5f; break;
+                case 2: yRotationOffset = 0f; break;
+                case 3: yRotationOffset = -25f; break;
+            }
+
+            // Create and position temporary GameObject
+            Vector3 newPosition = hero.transform.position;
+            GameObject tempGameObject = new GameObject();
+            tempGameObject.transform.position = newPosition;
+       
+            Debug.Log("Rotation set to: " + tempGameObject.transform.rotation.eulerAngles);
+
+            // Apply visual effects using the temp object's transform
+            Quaternion customRot = Quaternion.Euler(0, yRotationOffset, 0);
+            ApplyEffectWithDelay(fireAttack, tempGameObject.transform, 0f, 3.0f, true, true, yRotationOffset);
+            
+            ApplyEffectWithDelay(fireHit, targetEnemy.transform, 0.5f, 3.0f);
+        }
 
         if (combinedAttack.attributes.Contains("Paralysis"))
             {
