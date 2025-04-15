@@ -242,46 +242,66 @@ private GameObject GetNextEnemyFromCurrentDifficulty(Difficulty fallback)
 
 public void StartBattle()
 {
-    // Get 4 unique random enemies from current difficulty pool (easy at start)
-    List<GameObject> initialEnemies = GetUniqueRandomEnemiesFromPool(easyEnemies, 4);
-
     enemies = new List<Enemy>();
+    aliveEnemies = new List<Enemy>();
 
-    for (int i = 0; i < 4; i++)
+    if (currentGameMode == GameMode.Standard)
     {
-        GameObject enemyObj = SpawnPrefabAtPosition(initialEnemies[i], enemySpawns[i]);
-        Enemy enemy = enemyObj.GetComponent<Enemy>();
-        enemy.Init(popupPrefab);
-        enemies.Add(enemy);
-        aliveEnemies.Add(enemy);  // Add to alive enemies list
-        enemyHUDs[i].Init(enemy);
+        // Standard mode: fixed enemy spawns
+        GameObject knightObj = SpawnPrefabAtPosition(knightPrefab, enemySpawns[0]);
+        GameObject swordsmanObj = SpawnPrefabAtPosition(swordsmanPrefab, enemySpawns[1]);
+        GameObject mageObj = SpawnPrefabAtPosition(magePrefab, enemySpawns[2]);
+        GameObject archerObj = SpawnPrefabAtPosition(archerPrefab, enemySpawns[3]);
+
+        enemies.Add(knightObj.GetComponent<Enemy>());
+        enemies.Add(swordsmanObj.GetComponent<Enemy>());
+        enemies.Add(mageObj.GetComponent<Enemy>());
+        enemies.Add(archerObj.GetComponent<Enemy>());
+    }
+    else // Endless mode
+    {
+        List<GameObject> initialEnemies = GetUniqueRandomEnemiesFromPool(easyEnemies, 4);
+
+        for (int i = 0; i < 4; i++)
+        {
+            GameObject enemyObj = SpawnPrefabAtPosition(initialEnemies[i], enemySpawns[i]);
+            enemies.Add(enemyObj.GetComponent<Enemy>());
+        }
     }
 
-    // Reset attack upgrades
+    for (int i = 0; i < enemies.Count; i++)
+    {
+        enemies[i].Init(popupPrefab);
+        enemyHUDs[i].Init(enemies[i]);
+        aliveEnemies.Add(enemies[i]);
+    }
+
+    // Reset upgrades
     foreach (var attack in attacksReset)
     {
         attack.upgradeLevel = 0;
         Debug.Log($"Attack: {attack.attackName}, Upgrade Level: {attack.upgradeLevel}");
     }
 
+    // Boss setup
     targetingMode = false;
     targetingHUDParent.SetActive(false);
 
     GameObject bossObj = SpawnPrefabAtPosition(bossPrefab, bossSpawn);
     hero = bossObj.GetComponent<Hero>();
     hero.Init(popupPrefab);
+    bossHUD.Init(hero);
 
     foreach (var obj in listOfObjectToDeactivateAtStartOfBattle)
     {
         obj.SetActive(false);
     }
 
-    bossHUD.Init(hero);
     MainUIParent.SetActive(true);
-
     enemyAttacksUsed = new List<AttackSO>();
     blurbEvent = new GameplayBlurbEvent();
 }
+
 
     //VFX called with delay for some so attacks go off then theres a delay on the hit more time is given to the duration so with delay + duration it doesnt  cancel early 
 
@@ -1256,6 +1276,7 @@ private bool IsMultiTargetAttack(List<string> attributes)
              EventBus.Publish(blurbEvent);
               usedMove1.text = "Critical Hit";
             targetEnemy.TakeDamage(damage);
+            Debug.Log("CRITICAL HHIT");
         }
         else
         {

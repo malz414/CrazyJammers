@@ -15,6 +15,6 @@ MonoBehaviour:
   attackName: Lunge
   attackDescription: This move is weak but you hit twice.
   baseDamage: 10
-  upgradeLevel: 1
+  upgradeLevel: 0
   attributes:
   - Lunge

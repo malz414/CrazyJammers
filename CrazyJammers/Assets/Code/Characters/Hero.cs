@@ -7,6 +7,7 @@ public class Hero : Character
     public List<AttackSO> allAttacks;
     public float bideLevel = 1.0f;
     public int bideUses = 0; 
+    public bool dead = false;
   
 
     protected override void Start()
@@ -55,14 +56,16 @@ public class Hero : Character
     {
         if (currentAttack != null)
         {
-            int damage = (int)(currentAttack.GetDamage() * bideLevel) + (currentAttack.upgradeLevel/3);
+            int damage = (currentAttack.GetDamage());
               return damage;
+              
         }
         return 0;
     }
 
     protected override void Die()
     {
+        dead = true;
         Debug.Log($"{characterName} has been defeated!");
         TurnManager.Instance.EndGame(false);
     }

@@ -1632,6 +1632,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4408cbd1e166ce1479793b2784c5bb22, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  currentGameMode: 0
+  easyEnemies:
+  - {fileID: 8752190016439242206, guid: 67348a45c8548214291b57659daa93c2, type: 3}
+  - {fileID: 344943568324299905, guid: d10562b8e5a98c647916ca374f9227be, type: 3}
+  - {fileID: 2289685435781549048, guid: 4d60d244a63473f4a89ffcaedae97891, type: 3}
+  - {fileID: 286656958687433960, guid: 2921c7cfe4b33294facb78b8cbb2e7bf, type: 3}
+  mediumEnemies: []
+  hardEnemies: []
   knightPrefab: {fileID: 8752190016439242206, guid: 67348a45c8548214291b57659daa93c2, type: 3}
   magePrefab: {fileID: 344943568324299905, guid: d10562b8e5a98c647916ca374f9227be, type: 3}
   swordsmanPrefab: {fileID: 286656958687433960, guid: 2921c7cfe4b33294facb78b8cbb2e7bf, type: 3}

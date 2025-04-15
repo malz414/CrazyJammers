@@ -15,5 +15,6 @@ public class AttackSO : ScriptableObject
         // float multiplier = 1.0f + (upgradeLevel/10f);   
         // return Mathf.RoundToInt(baseDamage * multiplier);
         return baseDamage;
+        
     }
 }
