@@ -15,6 +15,6 @@ MonoBehaviour:
   attackName: Fireball
   attackDescription: This move deals damage and can cause burning
   baseDamage: 20
-  upgradeLevel: 1
+  upgradeLevel: 0
   attributes:
   - Burn

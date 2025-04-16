@@ -119,9 +119,10 @@ MonoBehaviour:
   animator: {fileID: 3169593014002260968}
   possibleAttacks:
   - {fileID: 11400000, guid: f2f783aa023e8a94396214733b6494c2, type: 2}
-  - {fileID: 11400000, guid: 6570b28e24f72f84896d8b32943fa1cd, type: 2}
+  - {fileID: 11400000, guid: fc29256b8d4add94b841e5196bc066d8, type: 2}
   attacksUsed: []
   dead: 0
+  walkSpeed: 2
   TargetingIndicator: {fileID: 5453468035821035363}
 --- !u!136 &873400750493228178
 CapsuleCollider:

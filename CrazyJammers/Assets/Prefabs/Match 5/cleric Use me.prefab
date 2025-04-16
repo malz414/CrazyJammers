@@ -81,7 +81,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: b52c6e1971c507e458554dc326be72cd, type: 3}
       propertyPath: m_Name
-      value: cleric 1
+      value: cleric Use me
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -129,17 +129,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   characterName: Cleric
-  maxHealth: 450
+  maxHealth: 197
   currentHealth: 0
   barrierCount: 0
   burning: 0
   bideBuff: 0
   animator: {fileID: -4220806399204691735}
   possibleAttacks:
-  - {fileID: 11400000, guid: 6570b28e24f72f84896d8b32943fa1cd, type: 2}
+  - {fileID: 11400000, guid: fc29256b8d4add94b841e5196bc066d8, type: 2}
   - {fileID: 11400000, guid: f2f783aa023e8a94396214733b6494c2, type: 2}
   attacksUsed: []
   dead: 0
+  walkSpeed: 2
   TargetingIndicator: {fileID: 5479745332783528699}
 --- !u!95 &-4220806399204691735
 Animator:
@@ -150,8 +151,8 @@ Animator:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 640957206009386813}
   m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: a6b00d0e052db4f41ba56f4294834691, type: 2}
+  m_Avatar: {fileID: 9000000, guid: b52c6e1971c507e458554dc326be72cd, type: 3}
+  m_Controller: {fileID: 9100000, guid: d1afab6382f0ace43a0ff7d05854df1f, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0

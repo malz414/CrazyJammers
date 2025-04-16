@@ -8,6 +8,9 @@ using UnityEngine.EventSystems;
 using DamageNumbersPro;
 using System.Linq;
 using static System.Math;
+using CrazyGames;
+using UnityEngine.SceneManagement;
+
 
 
 public class TurnManager : MonoBehaviour
@@ -34,6 +37,7 @@ public class TurnManager : MonoBehaviour
     [SerializeField] private GameObject magePrefab;
     [SerializeField] private GameObject swordsmanPrefab;
     [SerializeField] private GameObject archerPrefab;
+    
 
 
     [SerializeField] private GameObject SteadyAttack;
@@ -369,7 +373,12 @@ private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform ta
 
     private GameObject SpawnPrefabAtPosition(GameObject prefab, Transform pos)
     {
+      
         GameObject spawned = GameObject.Instantiate(prefab);
+        if (prefab.name.Contains("Boss"))
+        {
+            spawned.tag = "Boss";
+        }
         spawned.transform.position = pos.transform.position;
         spawned.transform.rotation = pos.transform.rotation;
         return spawned;
@@ -1719,6 +1728,39 @@ private int GetDeadEnemySpawnIndex(Enemy deadEnemy)
         Debug.Log(playerWon ? "You won!" : "Game Over.");
 
         StartCoroutine(DoEndGameRoutine(playerWon));
+        CrazySDK.Game.GameplayStop();
+    }
+        public void ReviveBoss()
+    {
+        //Todo Create a separate button for crazy games ad ALSO implement add check (if add is complete revive boss else ??)
+      CrazySDK.Ad.RequestAd(CrazyAdType.Rewarded, () => // or CrazyAdType.Rewarded
+        {
+            // ad started
+        }, (error) =>
+        {
+            // ad error
+        }, () =>
+        {
+                hero.currentHealth = hero.maxHealth;
+                hero.animator.SetTrigger("Revive");
+                //TODO check performance of this 
+                GameObject boss = GameObject.FindGameObjectWithTag("Boss");
+                if (boss != null)
+                {
+                    Vector3 pos = boss.transform.position;
+                    pos.y = 0;
+                    boss.transform.position = pos;
+                }
+
+                ApplyEffectWithDelay(bideani, hero.transform, 0f, 2.0f);
+                StartCoroutine(StartTurn());
+                loseScreen.SetActive(false);
+                MainUIParent.SetActive(true);
+                CrazySDK.Game.GameplayStart();
+            // ad finished, for rewarded ads give reward here
+        });
+    
+        
     }
 
     private IEnumerator DoEndGameRoutine(bool playerWon)
@@ -1728,6 +1770,13 @@ private int GetDeadEnemySpawnIndex(Enemy deadEnemy)
 
         if (playerWon)
         {
+            if (SceneManager.GetActiveScene().name == "LVL5")
+            {
+                //Todo Make a congrats you win scene?
+                //CrazySDK.Game.HappyTime();
+
+            }
+            else
             winScreen.SetActive(true);
             MainUIParent.SetActive(false);
         }

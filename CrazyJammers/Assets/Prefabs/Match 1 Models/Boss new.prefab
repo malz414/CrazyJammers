@@ -26,7 +26,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 9f86cde5891f43d4aafe5008e54d5aa1, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -266.059
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 9f86cde5891f43d4aafe5008e54d5aa1, type: 3}
       propertyPath: m_LocalPosition.z
@@ -107,6 +107,7 @@ MonoBehaviour:
   allAttacks: []
   bideLevel: 1
   bideUses: 0
+  dead: 0
 --- !u!210 &5653843745834978628
 SortingGroup:
   m_ObjectHideFlags: 0

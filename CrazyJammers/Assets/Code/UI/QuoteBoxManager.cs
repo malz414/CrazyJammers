@@ -1,6 +1,7 @@
 using TMPro;
 using UnityEngine;
 using System.Collections;
+using CrazyGames;
 
 public class QuoteBoxManager : MonoBehaviour
 {
@@ -31,7 +32,9 @@ public class QuoteBoxManager : MonoBehaviour
     public void Next()
     {
         TurnManager.Instance.SetUpBattle();
+        
         quoteBox.transform.parent.parent.gameObject.SetActive(false);
         quoteText.text = "";
+        CrazySDK.Game.GameplayStart();
     }
 }

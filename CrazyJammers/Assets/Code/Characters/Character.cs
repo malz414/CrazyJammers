@@ -21,7 +21,7 @@
         
          
 
-        [SerializeField] private Animator animator;
+        [SerializeField] public Animator animator;
 
         private const float DAMAGE_ANIM_DELAY_DURATION = .35f;
 
