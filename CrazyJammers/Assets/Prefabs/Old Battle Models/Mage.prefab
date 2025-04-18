@@ -215,6 +215,9 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 8d1fafe2eae2346468755b04daeaa076, type: 2}
   attacksUsed: []
   dead: 0
+  walkSpeed: 2
+  multiplier: 1
+  enemyType: Mage
   TargetingIndicator: {fileID: 6834894991224646977}
 --- !u!95 &1568177226905324059
 Animator:

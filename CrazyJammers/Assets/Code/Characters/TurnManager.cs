@@ -45,6 +45,9 @@ public class TurnManager : MonoBehaviour
 
     [SerializeField] private GameObject lungeAttack;
     [SerializeField] private GameObject lungeHit;
+    
+    private List<Enemy> upcomingEnemies = new List<Enemy>();
+
 
     [SerializeField] private GameObject tripleHit;
     [SerializeField] private GameObject tripleAttack;
@@ -107,7 +110,7 @@ public class TurnManager : MonoBehaviour
   
 
         
-    private List<Enemy> aliveEnemies = new List<Enemy>();
+    public List<Enemy> aliveEnemies = new List<Enemy>();
     private List<Enemy> deadEnemies = new List<Enemy>();
     [SerializeField] GameObject winScreen;
 
@@ -131,7 +134,7 @@ public class TurnManager : MonoBehaviour
     private bool selectingEnemies = false;
 
     private Hero hero;
-    private List<Enemy> enemies;
+    public List<Enemy> enemies;
 
     [SerializeField] private AttackSO[] attacksReset;
     public Button bideButton;
@@ -207,34 +210,38 @@ public class TurnManager : MonoBehaviour
         SetupAttackDropdowns(); 
       
     }
-private GameObject GetNextEnemyFromCurrentDifficulty()
-{
-    List<GameObject> pool;
-    int index;
-
-    switch (currentDifficulty)
+      private GameObject GetNextEnemyFromCurrentDifficulty(List<Enemy> upcoming = null)
     {
-        case Difficulty.Medium:
-            pool = mediumEnemies;
-            index = mediumIndex;
-            if (index >= pool.Count) return GetNextEnemyFromCurrentDifficulty(Difficulty.Hard);
-            mediumIndex++;
-            return pool[index];
+        List<GameObject> pool;
+        switch (currentDifficulty)
+        {
+            case Difficulty.Medium:
+                pool = mediumEnemies;
+                break;
+            case Difficulty.Hard:
+                pool = hardEnemies;
+                break;
+            default:
+                pool = easyEnemies;
+                break;
+        }
 
-        case Difficulty.Hard:
-            pool = hardEnemies;
-            index = hardIndex;
-            if (index >= pool.Count) index = Random.Range(0, hardEnemies.Count); // loop random from hard
-            return pool[index];
+        var existingNames = aliveEnemies.Select(e => e.characterName).ToList();
+        if (upcoming != null)
+            existingNames.AddRange(upcoming.Select(e => e.characterName));
 
-        default:
-            pool = easyEnemies;
-            index = easyIndex;
-            if (index >= pool.Count) return GetNextEnemyFromCurrentDifficulty(Difficulty.Medium);
-            easyIndex++;
-            return pool[index];
+        var available = pool.Where(prefab =>
+        {
+            var meta = prefab.GetComponent<Enemy>();
+            return meta != null && !existingNames.Contains(meta.characterName);
+        }).ToList();
+
+        if (available.Count == 0)
+            return pool[Random.Range(0, pool.Count)];
+
+        return available[Random.Range(0, available.Count)];
     }
-}
+
 
 private GameObject GetNextEnemyFromCurrentDifficulty(Difficulty fallback)
 {
@@ -242,8 +249,20 @@ private GameObject GetNextEnemyFromCurrentDifficulty(Difficulty fallback)
     return GetNextEnemyFromCurrentDifficulty();
 }
 
+public IEnumerator MoveBackToPosition(Transform target, Vector3 startPos, float duration)
+{
+    float elapsed = 0f;
+    Vector3 currentPos = target.position;
 
+    while (elapsed < duration)
+    {
+        elapsed += Time.deltaTime;
+        target.position = Vector3.Lerp(currentPos, startPos, elapsed / duration);
+        yield return null;
+    }
 
+    target.position = startPos;
+}
 
 public void StartBattle()
 {
@@ -671,9 +690,18 @@ private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform ta
 
             if (enemyAttack.attributes.Contains("Steady"))
             {
+                Vector3 originalPos = hero.transform.position;
                 ApplyEffectWithDelay(SteadyAttack, enemy.transform, 0f, 2.0f);
                 ApplyEffectWithDelay(SteadyHit, hero.transform, .5f, 3.0f);
-                yield return new WaitForSeconds(1.5f);
+                 for (int j = 0; j < 10; j++)
+                {
+                    hero.StartCoroutine(hero.CallDoHitRoutine(enemyAttack.GetDamage()/10, .1f, hero.gameObject));
+                   // cancels previous trigger if still active
+                   
+                    yield return new WaitForSeconds(.1f);
+                }
+                hero.StartCoroutine(MoveBackToPosition(hero.transform, originalPos, 0.2f));
+                yield return new WaitForSeconds(.5f);
                 
             }
               if (enemyAttack.attributes.Contains("Triple"))
@@ -713,7 +741,8 @@ private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform ta
 
 
 
-            hero.TakeDamage(enemyAttack.GetDamage());
+            hero.TakeDamage(Mathf.RoundToInt(enemyAttack.GetDamage() * enemy.multiplier));
+            
             blurbEvent.Set($"{enemy.characterName} used {enemyAttack.attackName}!");
             EventBus.Publish(blurbEvent);
 
@@ -1587,7 +1616,7 @@ private bool IsMultiTargetAttack(List<string> attributes)
     }
 
 
-public void RemoveEnemy(Enemy enemy)
+    public void RemoveEnemy(Enemy enemy)
 {
     enemy.dead = true;
     enemy.RemoveParalysis();
@@ -1596,18 +1625,17 @@ public void RemoveEnemy(Enemy enemy)
     if (currentGameMode == GameMode.Endless)
     {
         totalEnemiesKilled++;
-
         if (totalEnemiesKilled % 4 == 0)
-        {
             IncreaseDifficulty();
-        }
 
-        int spawnIndex = aliveEnemies.IndexOf(enemy); // Use aliveEnemies for safe indexing
-        if (spawnIndex >= 0)
-        {
-            aliveEnemies.RemoveAt(spawnIndex);
-            StartCoroutine(ReplaceEnemyAfterDelay(enemy, spawnIndex));
-        }
+        int spawnIndex = enemies.IndexOf(enemy);
+        if (spawnIndex < 0) return;
+
+        // Set the enemy slot to null instead of removing
+        enemies[spawnIndex] = null;
+        aliveEnemies.Remove(enemy);
+
+        StartCoroutine(ReplaceEnemyAfterDelay(enemy, spawnIndex));
     }
     else // Standard mode
     {
@@ -1628,40 +1656,33 @@ public void RemoveEnemy(Enemy enemy)
     }
 }
 
-
 private IEnumerator ReplaceEnemyAfterDelay(Enemy deadEnemy, int spawnIndex)
 {
-    Transform spawnPos = enemySpawns[spawnIndex];
+    var spawnPoint = enemySpawns[spawnIndex];
 
-    // Fade out or destroy the dead enemy
-    StartCoroutine(FadeOut(deadEnemy.gameObject)); // Optional fancy fade
-    Destroy(deadEnemy.gameObject, 2f); // Ensure it's removed after fade
+    StartCoroutine(FadeOut(deadEnemy.gameObject));
+    Destroy(deadEnemy.gameObject, 1f);
 
-    yield return new WaitForSeconds(2f);
+    yield return new WaitForSeconds(1f);
 
-    GameObject newEnemyPrefab = GetRandomEnemyPrefab(deadEnemy);
-    if (newEnemyPrefab == null)
-    {
-        Debug.LogWarning("No valid enemy prefab to spawn!");
+    var newPrefab = GetNextEnemyFromCurrentDifficulty(upcomingEnemies);
+    if (newPrefab == null)
         yield break;
-    }
 
-    GameObject newEnemyObj = SpawnPrefabAtPosition(newEnemyPrefab, spawnPos);
-    Enemy newEnemy = newEnemyObj.GetComponent<Enemy>();
+    // Use SpawnPrefabAtPosition to ensure any necessary setup
+    GameObject newObj = SpawnPrefabAtPosition(newPrefab, spawnPoint);
+    var newEnemy = newObj.GetComponent<Enemy>();
     newEnemy.Init(popupPrefab);
 
-    if (spawnIndex >= 0 && spawnIndex < enemies.Count)
-    {
-        enemies[spawnIndex] = newEnemy;
-    }
-    else if (spawnIndex >= 0)
-    {
-        enemies.Add(newEnemy);
-    }
+    // Assign new enemy to the correct index in enemies list
+    enemies[spawnIndex] = newEnemy;
+    aliveEnemies.Add(newEnemy);
 
-    aliveEnemies.Insert(spawnIndex, newEnemy);
+    // Update the corresponding HUD
     enemyHUDs[spawnIndex].Init(newEnemy);
 }
+
+
 private GameObject GetRandomEnemyPrefab(Enemy deadEnemy)
 {
     return GetNextEnemyFromCurrentDifficulty();
@@ -1672,14 +1693,22 @@ private void IncreaseDifficulty()
     if (currentDifficulty == Difficulty.Easy)
     {
         currentDifficulty = Difficulty.Medium;
+        ReplaceEasyEnemiesWith(mediumEnemies);
         Debug.Log("Difficulty increased to Medium!");
     }
     else if (currentDifficulty == Difficulty.Medium)
     {
         currentDifficulty = Difficulty.Hard;
+        ReplaceEasyEnemiesWith(hardEnemies);
         Debug.Log("Difficulty increased to Hard!");
     }
 }
+
+private void ReplaceEasyEnemiesWith(List<GameObject> newList)
+{
+    easyEnemies = new List<GameObject>(newList);
+}
+
 private List<GameObject> GetUniqueRandomEnemiesFromPool(List<GameObject> pool, int count)
 {
     List<GameObject> shuffled = new List<GameObject>(pool);
@@ -1704,6 +1733,7 @@ private int GetDeadEnemySpawnIndex(Enemy deadEnemy)
 
     private IEnumerator FadeOut(GameObject enemy)
     {
+        yield return new WaitForSeconds(.5f);
         float duration = 1.5f;
         float time = 0f;
         Vector3 startScale = enemy.transform.localScale;
@@ -1762,6 +1792,7 @@ private int GetDeadEnemySpawnIndex(Enemy deadEnemy)
     
         
     }
+    
 
     private IEnumerator DoEndGameRoutine(bool playerWon)
     {

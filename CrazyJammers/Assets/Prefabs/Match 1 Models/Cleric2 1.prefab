@@ -124,6 +124,9 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 6570b28e24f72f84896d8b32943fa1cd, type: 2}
   attacksUsed: []
   dead: 0
+  walkSpeed: 2
+  multiplier: 1
+  enemyType: Cleric
   TargetingIndicator: {fileID: 5453468035821035363}
 --- !u!136 &873400750493228178
 CapsuleCollider:

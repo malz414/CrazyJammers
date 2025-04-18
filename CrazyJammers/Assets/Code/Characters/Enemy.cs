@@ -10,6 +10,10 @@ public class Enemy : Character
     private bool shouldMove = false;
     private float moveThreshold = 0.65f;
     public float walkSpeed = 2f;
+    public float multiplier = 1f;
+    public string enemyType;
+    private AudioClip walkingClip;
+    private AudioSource walkingAudioSource;
     //public CharacterSO characterData;
 
     [SerializeField] public GameObject TargetingIndicator;
@@ -22,16 +26,42 @@ public class Enemy : Character
     }
     void Start()
     {
+        
+        
         animator = this.GetComponent<Animator>();
 
         // Get current animation clip name on spawn
         string currentClipName = animator.GetCurrentAnimatorClipInfo(0)[0].clip.name;
 
         // If the clip name contains "Walk", we want to start moving
-        if (currentClipName.Contains("Walk"))
+  
+        walkingAudioSource = this.GetComponent<AudioSource>();
+        if (walkingAudioSource == null)
+        {
+            walkingAudioSource = gameObject.AddComponent<AudioSource>();
+        }
+
+        if (walkingClip == null)
+        {
+            walkingClip = Resources.Load<AudioClip>("Audio/Walking");
+            Debug.Log("Loaded walking clip: " + walkingClip);
+        }
+
+        walkingAudioSource.clip = walkingClip;
+        walkingAudioSource.time = 2f; 
+        walkingAudioSource.loop = true;
+        walkingAudioSource.playOnAwake = false;
+        walkingAudioSource.spatialBlend = 0f;
+        walkingAudioSource.volume = 0.7f;
+
+        // Add pitch variation
+        walkingAudioSource.pitch = Random.Range(.95f, 1.05f);
+        if (currentClipName.Contains("Walking"))
         {
             shouldMove = true;
+            walkingAudioSource.Play(); 
         }
+
     }
 
 
@@ -62,6 +92,7 @@ public class Enemy : Character
             if (stateInfo.normalizedTime >= moveThreshold && !animator.IsInTransition(0))
             {
                 shouldMove = false;
+                walkingAudioSource.Stop();
             }
         }
     }
@@ -98,7 +129,7 @@ public class Enemy : Character
       
             int randomIndex = Random.Range(0, validAttacks.Count);
             AttackSO chosenAttack = validAttacks[randomIndex];
-            int damage = chosenAttack.GetDamage();
+            int damage = Mathf.RoundToInt(chosenAttack.GetDamage() * multiplier);
             attacksUsed.Add(chosenAttack);
             DoAttackAnimation();
             return chosenAttack; 

@@ -134,6 +134,8 @@ MonoBehaviour:
   attacksUsed: []
   dead: 0
   walkSpeed: 2
+  multiplier: 1
+  enemyType: Swordsman
   TargetingIndicator: {fileID: 4759082298626962176}
 --- !u!136 &3215543617162080316
 CapsuleCollider:

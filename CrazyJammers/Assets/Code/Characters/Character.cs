@@ -79,6 +79,32 @@
             StartCoroutine(DoHitRoutine(damage));
         }
 
+        public IEnumerator CallDoHitRoutine(int damage, float delay, GameObject gam)
+        {
+            yield return new WaitForSeconds(delay);
+
+            DamageNumber newPopup = popupPrefab.Spawn(gam.transform.position + new Vector3(0, 0.25f, -1), damage); //Spawn DamageNumber     <-----     [REQUIRED]
+            // newPopup.color = yellow;
+            //var newpreset = Resources.Load<DamageNumberSettings>("Blood Thick");
+            //newPopup.settings = newpreset; 
+            newPopup.permanent = false;
+            newPopup.lifetime = DAMAGE_POPUP_LIFETIME;
+            
+       
+
+            if (currentHealth <= 0)
+            {
+                DoDeathAnimation();
+            } 
+            else
+            {
+                DoHitAnimation();
+            }
+
+            EventBus.Publish(statusUpdateEvent);
+
+        }
+
     
 
         public virtual void HealDamage(int damage)
@@ -147,7 +173,7 @@
 
         public void DoHitAnimation()
         {
-            animator.SetTrigger("Hit");
+            animator.Play("Hit", 0, 0f);
         }
 
         public void DoDeathAnimation()

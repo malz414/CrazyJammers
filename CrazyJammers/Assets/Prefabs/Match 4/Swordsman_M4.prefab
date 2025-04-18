@@ -130,6 +130,9 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 08102d5fa4fdad24cbec5cd4b2aff646, type: 2}
   attacksUsed: []
   dead: 0
+  walkSpeed: 2
+  multiplier: 1
+  enemyType: Swordsman
   TargetingIndicator: {fileID: 4759082298626962176}
 --- !u!136 &3215543617162080316
 CapsuleCollider:

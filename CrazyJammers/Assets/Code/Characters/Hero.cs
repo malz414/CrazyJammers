@@ -62,6 +62,7 @@ public class Hero : Character
         }
         return 0;
     }
+    
 
     protected override void Die()
     {

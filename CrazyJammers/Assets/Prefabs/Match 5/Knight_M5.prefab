@@ -1745,6 +1745,9 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 49865fb9082415343b15e475cc656757, type: 2}
   attacksUsed: []
   dead: 0
+  walkSpeed: 2
+  multiplier: 1
+  enemyType: Knight
   TargetingIndicator: {fileID: 0}
 --- !u!95 &-8320443452221068422
 Animator:
