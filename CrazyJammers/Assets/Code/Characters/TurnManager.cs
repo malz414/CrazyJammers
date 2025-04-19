@@ -1441,10 +1441,10 @@ private bool IsMultiTargetAttack(List<string> attributes)
             Debug.Log("selectedEnemyNum is" + selectedEnemyNum);
             switch (selectedEnemyNum)
             {
-                case 0: yRotationOffset = 30f; break;
-                case 1: yRotationOffset = 5f; break;
-                case 2: yRotationOffset = 0f; break;
-                case 3: yRotationOffset = -25f; break;
+                   case 0: yRotationOffset = 115f; break;
+                    case 1: yRotationOffset = 95f; break;
+                    case 2: yRotationOffset = 75f; break;
+                    case 3: yRotationOffset = 55f; break;
             }
 
             Debug.Log("Rotation set to: " + tempGameObject.transform.rotation.eulerAngles);
