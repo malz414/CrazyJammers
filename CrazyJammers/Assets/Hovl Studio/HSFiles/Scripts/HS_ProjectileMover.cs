@@ -18,6 +18,7 @@ public class HS_ProjectileMover : MonoBehaviour
     [SerializeField] protected ParticleSystem projectilePS;
      [SerializeField] protected bool forward = true;
     private bool startChecker = false;
+    public Vector3 moveDirection = Vector3.forward;
     [SerializeField]protected bool notDestroy = false;
 
     protected virtual void Start()
@@ -68,17 +69,12 @@ public class HS_ProjectileMover : MonoBehaviour
     protected virtual void FixedUpdate()
     {
         if (speed != 0)
-        {
-            if(forward)
-            {
-                 rb.linearVelocity = transform.forward * (speed / transform.lossyScale.magnitude);
-            }
-            else
-            {
-                 rb.linearVelocity = -transform.forward * (speed / transform.lossyScale.magnitude);
-            }
-           
-        }
+{
+    if (forward)
+        rb.linearVelocity = moveDirection.normalized * (speed / transform.lossyScale.magnitude);
+    else
+        rb.linearVelocity = -moveDirection.normalized * (speed / transform.lossyScale.magnitude);
+}
     }
 
     //https ://docs.unity3d.com/ScriptReference/Rigidbody.OnCollisionEnter.html

@@ -354,8 +354,13 @@ private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform ta
     effect.transform.SetParent(null);
     
     if (yRotationOffset.HasValue)
-    {
-        effect.transform.rotation = Quaternion.Euler(0f, yRotationOffset.Value, 0f);
+    {       Vector3 direction = Quaternion.Euler(0f, yRotationOffset.Value, 0f) * Vector3.forward;
+          effect.transform.rotation = Quaternion.LookRotation(direction);
+            HS_ProjectileMover mover = effect.GetComponent<HS_ProjectileMover>();
+        if (mover != null)
+        {
+            mover.moveDirection = direction;
+        }
     }
 
 
@@ -765,7 +770,8 @@ private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform ta
 
             if (enemyAttack.attributes.Contains("Paralysis"))
             {
-
+                
+                Debug.Log("selectedEnemyNum is " + i + " PARA IS CALLED");
                 if (Random.value <= 1f && hero.GetParalysisTurnsRemaining() < 1 && hero.burning < 1)
                 {
                     hero.ApplyParalysis(5, false);
@@ -774,11 +780,30 @@ private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform ta
                      usedMove1.text = $"Boss has been paralyzed by {enemyAttack.attackName}!";
                     Debug.Log($"Hero has been paralyzed by {enemyAttack.attackName}!");
                 }
+                float yRotationOffset = -90f;
+                switch (i)
+                {
+                    case 0: yRotationOffset = -70f; break;
+                    case 1: yRotationOffset = -90f; break;
+                    case 2: yRotationOffset = -90f; break;
+                    case 3: yRotationOffset = -110f; break;
+                }
                 
-                
-                ApplyEffectWithDelay(arrowAttack1, enemy.transform, 0f, 3.0f, null, true);
-                ApplyEffectWithDelay(arrowHit, hero.transform, .5f, 3.0f);
-            }
+                 Debug.Log("selectedEnemyNum is" + i + "So rotation is " + yRotationOffset);
+                Vector3 newPosition = enemy.transform.position;
+                newPosition.y += 0f;
+
+                    // Create a temporary game object with the new position
+                GameObject tempGameObject = new GameObject();
+                tempGameObject.transform.position = newPosition;
+             
+                // Apply visual effects using the temp object's transform
+                Quaternion customRot = Quaternion.Euler(0, yRotationOffset, 0);
+                    
+                    
+                    ApplyEffectWithDelay(arrowAttack1, enemy.transform, 0f, 3.0f, null, true, yRotationOffset);
+                    ApplyEffectWithDelay(arrowHit, hero.transform, .5f, 3.0f);
+                }
 
 
 
