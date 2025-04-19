@@ -6899,7 +6899,7 @@ PrefabInstance:
     - target: {fileID: 8485419520516605267, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
       propertyPath: archerPrefab
       value: 
-      objectReference: {fileID: 8752190016439242206, guid: 67348a45c8548214291b57659daa93c2, type: 3}
+      objectReference: {fileID: 2289685435781549048, guid: 4d60d244a63473f4a89ffcaedae97891, type: 3}
     - target: {fileID: 8485419520516605267, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
       propertyPath: arrowAttack1
       value: 

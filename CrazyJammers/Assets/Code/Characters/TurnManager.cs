@@ -1405,18 +1405,36 @@ private bool IsMultiTargetAttack(List<string> attributes)
                      usedMove1.text = $"{targetEnemy.characterName} was paralysed!";
                 }
 
-                Vector3 newPosition = hero.transform.position;
-                newPosition.y += 3f;
+                    // Determine rotation based on selected enemy position
+            float yRotationOffset = 0f;
+            Vector3 newPosition = hero.transform.position;
+            newPosition.y += 0f;
 
                 // Create a temporary game object with the new position
-                GameObject tempGameObject = new GameObject();
-                tempGameObject.transform.position = newPosition;
+            GameObject tempGameObject = new GameObject();
+            tempGameObject.transform.position = newPosition;
+            Debug.Log("selectedEnemyNum is" + selectedEnemyNum);
+            switch (selectedEnemyNum)
+            {
+                case 0: yRotationOffset = 30f; break;
+                case 1: yRotationOffset = 5f; break;
+                case 2: yRotationOffset = 0f; break;
+                case 3: yRotationOffset = -25f; break;
+            }
+
+            Debug.Log("Rotation set to: " + tempGameObject.transform.rotation.eulerAngles);
+
+            // Apply visual effects using the temp object's transform
+            Quaternion customRot = Quaternion.Euler(0, yRotationOffset, 0);
+   
+
+            
 
                 // Destroy the temporary game object after 5 seconds
                 
-                Destroy(tempGameObject, 5f);
-                ApplyEffectWithDelay(arrowAttack, tempGameObject.transform, 0f, 3.0f);
-                ApplyEffectWithDelay(arrowHit, targetEnemy.transform, .5f, 3.0f);
+            Destroy(tempGameObject, 5f);
+            ApplyEffectWithDelay(arrowAttack, tempGameObject.transform, 0f, 3.0f,true, true, yRotationOffset);
+            ApplyEffectWithDelay(arrowHit, targetEnemy.transform, .5f, 3.0f);
             }
 
         if (combinedAttack.attributes.Contains("Heal"))
