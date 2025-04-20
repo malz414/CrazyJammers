@@ -1444,7 +1444,7 @@ private bool IsMultiTargetAttack(List<string> attributes)
                    case 0: yRotationOffset = 115f; break;
                     case 1: yRotationOffset = 95f; break;
                     case 2: yRotationOffset = 75f; break;
-                    case 3: yRotationOffset = 55f; break;
+                    case 3: yRotationOffset = 60f; break;
             }
 
             Debug.Log("Rotation set to: " + tempGameObject.transform.rotation.eulerAngles);
