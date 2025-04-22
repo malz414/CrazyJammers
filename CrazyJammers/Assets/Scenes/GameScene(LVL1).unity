@@ -6913,6 +6913,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 478166739}
     - target: {fileID: 8485419520516605267, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
+      propertyPath: reviveButton
+      value: 
+      objectReference: {fileID: 138235807}
+    - target: {fileID: 8485419520516605267, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
       propertyPath: tripleAttack
       value: 
       objectReference: {fileID: 1168529248583268, guid: 76d29242e44bd1d4481337c8f53681ac, type: 3}

@@ -166,6 +166,9 @@ public class TurnManager : MonoBehaviour
     private bool bideBuff = false;
     public int bideAttribute = 0;
     private float randomChance = 0f;
+    private bool revived = false;
+    public GameObject reviveButton;
+
 
 
     public int enemiesDead = 0;
@@ -329,12 +332,12 @@ public void StartBattle()
 
     //VFX called with delay for some so attacks go off then theres a delay on the hit more time is given to the duration so with delay + duration it doesnt  cancel early 
 
-private void ApplyEffectWithDelay(GameObject effectPrefab, Transform target, float delay, float effectDuration, bool? xRotationEffect = null, bool raiseEffect = false, float? yRotationOffset = null) 
+private void ApplyEffectWithDelay(GameObject effectPrefab, Transform target, float delay, float effectDuration, bool? xRotationEffect = null, bool raiseEffect = false, float? yRotationOffset = null, bool? standUpright = null) 
 {
-    StartCoroutine(DelayedEffectCoroutine(effectPrefab, target, delay, effectDuration, raiseEffect, xRotationEffect, yRotationOffset));
+    StartCoroutine(DelayedEffectCoroutine(effectPrefab, target, delay, effectDuration, raiseEffect, xRotationEffect, yRotationOffset, standUpright));
 }
 
-private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform target, float delay, float effectDuration, bool raiseEffect, bool? xRotationEffect, float? yRotationOffset = null)
+private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform target, float delay, float effectDuration, bool raiseEffect, bool? xRotationEffect, float? yRotationOffset = null, bool? standUpright = null)
 {
     yield return new WaitForSeconds(delay);
 
@@ -369,8 +372,14 @@ private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform ta
         float xRotation = xRotationEffect.Value ? 90f : -90f;
         effect.transform.Rotate(0f, xRotation, 0f);
     }
-  
-
+    
+    if (standUpright.HasValue)
+    {
+        float xRotation = standUpright.Value ? 90f : -90f;
+        Vector3 currentEuler = effect.transform.rotation.eulerAngles;
+        currentEuler.x = xRotation;
+        effect.transform.rotation = Quaternion.Euler(currentEuler);
+    }
     Destroy(effect, effectDuration);
 }
 
@@ -1248,7 +1257,7 @@ private bool IsMultiTargetAttack(List<string> attributes)
 
         if (bideSuccessful)
         {
-            ApplyEffectWithDelay(bideani, hero.transform, 0f, 2.0f);
+            ApplyEffectWithDelay(bideani, hero.transform, 0f, 2.0f,true, false, null, false);
             bideAttribute = 2;
             attackOptionsParent.SetActive(false);
             potionOptions.SetActive(false);
@@ -1817,15 +1826,19 @@ private int GetDeadEnemySpawnIndex(Enemy deadEnemy)
                 hero.currentHealth = hero.maxHealth;
                 hero.animator.SetTrigger("Revive");
                 //TODO check performance of this 
+                revived = true;
                 GameObject boss = GameObject.FindGameObjectWithTag("Boss");
-                if (boss != null)
-                {
-                    Vector3 pos = boss.transform.position;
-                    pos.y = 0;
-                    boss.transform.position = pos;
-                }
+          if (boss != null)
+        {
+            Hero hero = boss.GetComponent<Hero>();
+            if (hero != null)
+            {
+                if (hero.lerpCoroutine != null) StopCoroutine(hero.lerpCoroutine);
+                hero.lerpCoroutine = StartCoroutine(hero.LerpYPosition(boss.transform.position.y, hero.originalY, .21f, .5f));
+            }
+        }
 
-                ApplyEffectWithDelay(bideani, hero.transform, 0f, 2.0f);
+                ApplyEffectWithDelay(bideani, hero.transform, 0f, 2.0f,true,false, null, false);
                 StartCoroutine(StartTurn());
                 loseScreen.SetActive(false);
                 MainUIParent.SetActive(true);
@@ -1857,6 +1870,14 @@ private int GetDeadEnemySpawnIndex(Enemy deadEnemy)
         else
         {
             loseScreen.SetActive(true);
+            if(revived)
+            {
+                reviveButton.SetActive(false);
+            }
+            else
+            {
+
+            }
         }
     }
 }
