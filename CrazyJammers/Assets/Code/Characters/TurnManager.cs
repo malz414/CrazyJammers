@@ -1810,7 +1810,7 @@ private int GetDeadEnemySpawnIndex(Enemy deadEnemy)
         Debug.Log(playerWon ? "You won!" : "Game Over.");
 
         StartCoroutine(DoEndGameRoutine(playerWon));
-        CrazySDK.Game.GameplayStop();
+        //CrazySDK.Game.GameplayStop();
     }
         public void ReviveBoss()
     {
