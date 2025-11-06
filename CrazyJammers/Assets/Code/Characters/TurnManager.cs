@@ -773,7 +773,26 @@ private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform ta
                        usedMove1.text =$"Boss has been burned by {enemyAttack.attackName}!";
                     Debug.Log($"Hero has been burned by {enemyAttack.attackName}!");
                 }
-                ApplyEffectWithDelay(fireAttack, enemy.transform, 0f, 3.0f, false, true);
+                   float yRotationOffset = -90f;
+                switch (i)
+                {
+                    case 0: yRotationOffset = -70f; break;
+                    case 1: yRotationOffset = -90f; break;
+                    case 2: yRotationOffset = -90f; break;
+                    case 3: yRotationOffset = -110f; break;
+                }
+                
+                 Debug.Log("selectedEnemyNum is" + i + "So rotation is " + yRotationOffset);
+                Vector3 newPosition = enemy.transform.position;
+                newPosition.y += 0f;
+
+                    // Create a temporary game object with the new position
+                GameObject tempGameObject = new GameObject();
+                tempGameObject.transform.position = newPosition;
+             
+                // Apply visual effects using the temp object's transform
+                Quaternion customRot = Quaternion.Euler(0, yRotationOffset, 0);
+                ApplyEffectWithDelay(fireAttack, enemy.transform, 0f, 3.0f, null, true, yRotationOffset);
                 ApplyEffectWithDelay(fireHit, hero.transform, .5f, 3.0f);
             }
 
