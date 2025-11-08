@@ -612,9 +612,23 @@ private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform ta
                     {
                         enemyHeal.currentHealth = enemyHeal.maxHealth;
                     }
+
                     enemyHeal.RemoveBurns();
                     enemyHeal.RemoveParalysis();
-                    ApplyEffectWithDelay(healfield, enemyHeal.transform, 0f, 2.0f);
+
+                    //float xRotationOffset = -90f;
+
+                    //Vector3 newPosition = enemy.transform.position;
+                    //newPosition.x += 0f;
+
+                    //// Create a temporary game object with the new position
+                    //GameObject tempGameObject = new GameObject();
+                    //tempGameObject.transform.position = newPosition;
+
+                    //// Apply visual effects using the temp object's transform
+                    //Quaternion customRot = Quaternion.Euler(0, xRotationOffset, 0);
+                    ApplyEffectWithDelay(healfield, enemyHeal.transform, 0f, 2.0f, null, false, null, true);
+
                     ApplyEffectWithDelay(panaceaAni, enemyHeal.transform, 0f, 2.0f);
                     blurbEvent.Set($"The heroes healed and status cured.");
                     blurbEvent.Set($"The heroes gained a barrier.");

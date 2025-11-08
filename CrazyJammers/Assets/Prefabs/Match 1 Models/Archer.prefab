@@ -148,7 +148,7 @@ MonoBehaviour:
   bideBuff: 0
   animator: {fileID: 2209448704372366197}
   possibleAttacks:
-  - {fileID: 11400000, guid: 27cfda9b1a1637746985ceb311c3760c, type: 2}
+  - {fileID: 11400000, guid: 9db1e22d3b94de244aa2c5f86c4e78a0, type: 2}
   attacksUsed: []
   dead: 0
   walkSpeed: 2
@@ -257,4 +257,3 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c43dde00e48e47f4f8f921432db7b88d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  walkSpeed: 2

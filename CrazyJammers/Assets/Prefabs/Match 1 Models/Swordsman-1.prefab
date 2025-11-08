@@ -130,7 +130,7 @@ MonoBehaviour:
   bideBuff: 0
   animator: {fileID: 6796376608094082088}
   possibleAttacks:
-  - {fileID: 11400000, guid: 08102d5fa4fdad24cbec5cd4b2aff646, type: 2}
+  - {fileID: 11400000, guid: aec4e051ab40fff41ba32fcdccf8f765, type: 2}
   attacksUsed: []
   dead: 0
   walkSpeed: 2
