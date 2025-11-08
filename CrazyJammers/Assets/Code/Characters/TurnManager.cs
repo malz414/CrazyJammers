@@ -39,7 +39,6 @@ public class TurnManager : MonoBehaviour
     [SerializeField] private GameObject archerPrefab;
     
 
-
     [SerializeField] private GameObject SteadyAttack;
     [SerializeField] private GameObject SteadyHit;
 
@@ -107,7 +106,7 @@ public class TurnManager : MonoBehaviour
     [SerializeField] GameObject potionOptions;
 
     [SerializeField] GameObject targetingHUDParent;
-  
+    
 
         
     public List<Enemy> aliveEnemies = new List<Enemy>();
@@ -211,9 +210,9 @@ public class TurnManager : MonoBehaviour
     {
         statusUpdateEvent = new CharacterStatusUpdateEvent();
         SetupAttackDropdowns(); 
-      
+        
     }
-      private GameObject GetNextEnemyFromCurrentDifficulty(List<Enemy> upcoming = null)
+     private GameObject GetNextEnemyFromCurrentDifficulty(List<Enemy> upcoming = null)
     {
         List<GameObject> pool;
         switch (currentDifficulty)
@@ -331,35 +330,37 @@ public void StartBattle()
 
 
     //VFX called with delay for some so attacks go off then theres a delay on the hit more time is given to the duration so with delay + duration it doesnt  cancel early 
-
-private void ApplyEffectWithDelay(GameObject effectPrefab, Transform target, float delay, float effectDuration, bool? xRotationEffect = null, bool raiseEffect = false, float? yRotationOffset = null, bool? standUpright = null) 
+    
+// --- THIS IS THE MODIFIED METHOD ---
+private void ApplyEffectWithDelay(GameObject effectPrefab, Transform target, float delay, float effectDuration, bool? xRotationEffect = null, float raiseAmount = 0f, float? yRotationOffset = null, bool? standUpright = null) 
 {
-    StartCoroutine(DelayedEffectCoroutine(effectPrefab, target, delay, effectDuration, raiseEffect, xRotationEffect, yRotationOffset, standUpright));
+    StartCoroutine(DelayedEffectCoroutine(effectPrefab, target, delay, effectDuration, raiseAmount, xRotationEffect, yRotationOffset, standUpright));
 }
 
-private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform target, float delay, float effectDuration, bool raiseEffect, bool? xRotationEffect, float? yRotationOffset = null, bool? standUpright = null)
+// --- THIS IS THE MODIFIED COROUTINE ---
+private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform target, float delay, float effectDuration, float raiseAmount, bool? xRotationEffect, float? yRotationOffset = null, bool? standUpright = null)
 {
     yield return new WaitForSeconds(delay);
 
     // Default to the target's normal position
     Vector3 effectPosition = target.position;
 
-    // If raiseEffect is true, modify the Y-axis
-    if (raiseEffect)
+    // If raiseAmount is greater than 0, modify the Y-axis
+    if (raiseAmount > 0f)
     {
-        effectPosition += new Vector3(0f, 1.5f, 0f);
+        effectPosition += new Vector3(0f, raiseAmount, 0f);
     }
 
-      // Instantiate the effect at the appropriate position
+     // Instantiate the effect at the appropriate position
     GameObject effect = Instantiate(effectPrefab, effectPosition, Quaternion.identity); // neutral rotation
 
     effect.transform.SetParent(target);
     effect.transform.SetParent(null);
     
     if (yRotationOffset.HasValue)
-    {       Vector3 direction = Quaternion.Euler(0f, yRotationOffset.Value, 0f) * Vector3.forward;
-          effect.transform.rotation = Quaternion.LookRotation(direction);
-            HS_ProjectileMover mover = effect.GetComponent<HS_ProjectileMover>();
+    {     Vector3 direction = Quaternion.Euler(0f, yRotationOffset.Value, 0f) * Vector3.forward;
+         effect.transform.rotation = Quaternion.LookRotation(direction);
+         HS_ProjectileMover mover = effect.GetComponent<HS_ProjectileMover>();
         if (mover != null)
         {
             mover.moveDirection = direction;
@@ -387,7 +388,7 @@ private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform ta
 
     public void SetUpBattle()
     {
-       
+        
 
         StartCoroutine(DoBattleStartRoutine());
 
@@ -430,8 +431,8 @@ private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform ta
             {
                 enemy.Init(popupPrefabfire);
                 enemy.TakeDamage((int)(enemy.maxHealth*.1));
-          
-       
+            
+    
                 ApplyEffectWithDelay(burn, enemy.transform, 0f, 3.0f);
                 if (enemy.currentHealth <= 0)
                 {
@@ -449,9 +450,9 @@ private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform ta
 
                 }
                 
-          
+            
             }
-         
+        
         }
         bideAttribute--;
         if (bideAttribute == 0)
@@ -465,7 +466,7 @@ private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform ta
         }
 
     
-        //   if (hero.bideUses == 2) 
+        //    if (hero.bideUses == 2) 
         // {
         //     List<AttackSO> previousTurnMoves = new List<AttackSO>(enemyAttacksByIndex);
         //     enemyAttacksByIndex.Clear();
@@ -477,13 +478,13 @@ private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform ta
         //     enemyAttacksByIndex.Clear();
         // }
 
-   
+    
         if(hero.currentHealth <= 0) 
         {
             EndGame(false);
             yield return null;
         }
-         
+            
     
         StartCoroutine(DoTurnRoutine());
     }
@@ -495,8 +496,8 @@ private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform ta
 
     private IEnumerator DoTurnRoutine()
     {
-       
-      
+        
+        
         
         yield return new WaitForSeconds(1f);
         enemyAttacksByIndex.Clear();
@@ -517,14 +518,14 @@ private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform ta
                 usedMoveGO.SetActive(true);
                 if(!enemyAttacksByIndex.Contains(enemyAttacksByIndexPerm[i]))
                  {
-                     enemyAttacksByIndex.Add(enemyAttacksByIndexPerm[i]);
+                      enemyAttacksByIndex.Add(enemyAttacksByIndexPerm[i]);
                  }
-           
+            
                 blurbEvent.Set($"{enemy.characterName} is paralyzed and cannot act this turn!");
                 EventBus.Publish(blurbEvent);
                 usedMove1.text = $"{enemy.characterName} is paralyzed and cannot act this turn!";
                 ApplyEffectWithDelay(para, enemy.transform, 0f, 3.0f);
-                  yield return new WaitForSeconds(1.5f);
+                 yield return new WaitForSeconds(1.5f);
                 continue;
             }
             else if (enemy.dead)
@@ -558,9 +559,8 @@ private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform ta
             {
                 previousTurnMoves.Add(enemyAttack);
             }
+                    
                 
-            
-
             if (hero.bideUses == 2) 
             {
                 enemyAttacksByIndex.Clear();
@@ -592,12 +592,12 @@ private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform ta
                 blurbEvent.Set($"The Cleric gained a barrier.");
                 EventBus.Publish(blurbEvent);
                 usedMove1.text = $"The Cleric gained a barrier.";
-                     yield return new WaitForSeconds(1.5f);
+                       yield return new WaitForSeconds(1.5f);
                 continue;
 
             }
 
-          
+            
             if (enemyAttack.attributes.Contains("Field"))
             {
                 foreach (var enemyHeal in enemies)
@@ -606,7 +606,7 @@ private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform ta
                     enemyHeal.Init(popupPrefabgreen);
                     
                     if(enemyHeal.currentHealth <= 0) continue;
-                 
+                
                     enemyHeal.HealDamage((int)(enemy.maxHealth*0.2));
                     if(enemyHeal.currentHealth >= enemyHeal.maxHealth)
                     {
@@ -627,7 +627,7 @@ private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform ta
 
                     //// Apply visual effects using the temp object's transform
                     //Quaternion customRot = Quaternion.Euler(0, xRotationOffset, 0);
-                    ApplyEffectWithDelay(healfield, enemyHeal.transform, 0f, 2.0f, true, false, null, true);
+                    ApplyEffectWithDelay(healfield, enemyHeal.transform, 0f, .50f, true, 50f, null, true); // MODIFIED
 
                     ApplyEffectWithDelay(panaceaAni, enemyHeal.transform, 0f, 2.0f);
                     blurbEvent.Set($"The heroes healed and status cured.");
@@ -635,11 +635,11 @@ private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform ta
                      usedMove1.text = $"The heroes gained a barrier.";
                       usedMove1.text = $"The heroes healed and status cured.";
                     EventBus.Publish(blurbEvent);
-                  
+                
                     yield return new WaitForSeconds(.2f);
 
                 }
-                  yield return new WaitForSeconds(.5f);
+                 yield return new WaitForSeconds(.5f);
 
             continue;
             }
@@ -653,29 +653,29 @@ private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform ta
 
         if (enemyHeal != null)
         {
-           
+            
             enemyHeal.Init(popupPrefabgreen);
             //enemyHeal.currentHealth += (int)(enemy.maxHealth*0.2);
             enemyHeal.HealDamage((int)(enemy.maxHealth*0.2));
 
-           
+            
             if (enemyHeal.currentHealth > enemyHeal.maxHealth)
             {
                 enemyHeal.currentHealth = enemyHeal.maxHealth;
             }
 
-      
+    
             ApplyEffectWithDelay(heal, enemyHeal.transform, 0f, 2.0f);
 
-           
+            
             blurbEvent.Set($"{enemyHeal.characterName} was healed.");
              usedMove1.text = $"{enemyHeal.characterName} was healed.";
             EventBus.Publish(blurbEvent);
             EventBus.Publish(statusUpdateEvent);
-  
-         
+    
+        
             yield return new WaitForSeconds(1.5f);
-         
+        
         }
         continue;
                 
@@ -693,7 +693,7 @@ private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform ta
             if (enemyAttack.attributes.Contains("Lunge"))
             {
                 hero.TakeDamage(enemyAttack.GetDamage());
-                ApplyEffectWithDelay(lungeAttack, enemy.transform, 0f, 3.0f, false, false);
+                ApplyEffectWithDelay(lungeAttack, enemy.transform, 0f, 3.0f, false, 0f); // MODIFIED
                 ApplyEffectWithDelay(lungeHit, hero.transform, .5f, 3.0f);
             }
 
@@ -709,7 +709,7 @@ private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform ta
                 // Destroy the temporary game object after 5 seconds
                 Destroy(tempGameObject, 5f);
 
-                ApplyEffectWithDelay(slashAttack, enemy.transform, 0f, 3.0f, null, true);
+                ApplyEffectWithDelay(slashAttack, enemy.transform, 0f, 3.0f, null, 1.5f); // MODIFIED
                 ApplyEffectWithDelay(slashHit, tempGameObject.transform, 0.2f, 3.0f);
                 ApplyEffectWithDelay(slashCrater, hero.transform, 0.4f, 3.0f);
             }
@@ -725,31 +725,31 @@ private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform ta
                 {
                     hero.StartCoroutine(hero.CallDoHitRoutine(enemyAttack.GetDamage()/10, .1f, hero.gameObject));
                    // cancels previous trigger if still active
-                   
+                    
                     yield return new WaitForSeconds(.1f);
                 }
                 hero.StartCoroutine(MoveBackToPosition(hero.transform, originalPos, 0.2f));
                 yield return new WaitForSeconds(.5f);
                 
             }
-              if (enemyAttack.attributes.Contains("Triple"))
+             if (enemyAttack.attributes.Contains("Triple"))
             {
                 hero.TakeDamage(enemyAttack.GetDamage());
                 hero.TakeDamage(enemyAttack.GetDamage());
-           
+            
                 if (Random.value <= .1f && hero.GetParalysisTurnsRemaining() < 1 && hero.burning < 1)
                 {
                     hero.ApplyParalysis(5, false);
                     blurbEvent.Set($"Boss has been paralyzed by {enemyAttack.attackName}!");
                     EventBus.Publish(blurbEvent);
-                      usedMove1.text =$"Boss has been paralyzed by {enemyAttack.attackName}!";
+                     usedMove1.text =$"Boss has been paralyzed by {enemyAttack.attackName}!";
                     Debug.Log($"Hero has been paralyzed by {enemyAttack.attackName}!");
                 }
                 if (Random.value <= .1f && hero.GetParalysisTurnsRemaining() < 1 && hero.burning < 1)
                 {
                     hero.ApplyParalysis(5, false);
                     blurbEvent.Set($"Boss has been paralyzed by {enemyAttack.attackName}!");
-                      usedMove1.text =$"Boss has been paralyzed by {enemyAttack.attackName}!";
+                     usedMove1.text =$"Boss has been paralyzed by {enemyAttack.attackName}!";
                     EventBus.Publish(blurbEvent);
                     Debug.Log($"Hero has been paralyzed by {enemyAttack.attackName}!");
                 }
@@ -762,14 +762,14 @@ private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform ta
                     Debug.Log($"Hero has been paralyzed by {enemyAttack.attackName}!");
                 }
 
-                    float yRotationOffset = -90f;
-                switch (i)
-                    {
-                        case 0: yRotationOffset = -70f; break;
-                        case 1: yRotationOffset = -90f; break;
-                        case 2: yRotationOffset = -90f; break;
-                        case 3: yRotationOffset = -115f; break;
-                    }
+                 float yRotationOffset = -90f;
+                 switch (i)
+                   {
+                         case 0: yRotationOffset = -70f; break;
+                         case 1: yRotationOffset = -90f; break;
+                         case 2: yRotationOffset = -90f; break;
+                         case 3: yRotationOffset = -115f; break;
+                   }
 
                 Debug.Log("selectedEnemyNum is" + i + "So rotation is " + yRotationOffset);
                 Vector3 newPosition = enemy.transform.position;
@@ -781,8 +781,8 @@ private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform ta
 
                 // Apply visual effects using the temp object's transform
                 Quaternion customRot = Quaternion.Euler(0, yRotationOffset, 0);
-                ApplyEffectWithDelay(tripleAttack, enemy.transform, 0f, 3.0f, null, false, yRotationOffset);
-                ApplyEffectWithDelay(tripleHit, hero.transform, .5f, 3.0f, null, true);
+                ApplyEffectWithDelay(tripleAttack, enemy.transform, 0f, 3.0f, null, 0f, yRotationOffset); // MODIFIED
+                ApplyEffectWithDelay(tripleHit, hero.transform, .5f, 3.0f, null, 1.5f); // MODIFIED
             }
 
             
@@ -804,29 +804,29 @@ private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform ta
                     hero.ApplyBurn(10, 3);
                     blurbEvent.Set($"Boss has been burned by {enemyAttack.attackName}!");
                     EventBus.Publish(blurbEvent);
-                       usedMove1.text =$"Boss has been burned by {enemyAttack.attackName}!";
+                     usedMove1.text =$"Boss has been burned by {enemyAttack.attackName}!";
                     Debug.Log($"Hero has been burned by {enemyAttack.attackName}!");
                 }
-                   float yRotationOffset = -90f;
-                switch (i)
-                {
-                    case 0: yRotationOffset = -70f; break;
-                    case 1: yRotationOffset = -90f; break;
-                    case 2: yRotationOffset = -90f; break;
-                    case 3: yRotationOffset = -110f; break;
-                }
+                 float yRotationOffset = -90f;
+                 switch (i)
+                 {
+                     case 0: yRotationOffset = -70f; break;
+                     case 1: yRotationOffset = -90f; break;
+                     case 2: yRotationOffset = -90f; break;
+                     case 3: yRotationOffset = -110f; break;
+                 }
                 
                  Debug.Log("selectedEnemyNum is" + i + "So rotation is " + yRotationOffset);
                 Vector3 newPosition = enemy.transform.position;
                 newPosition.y += 0f;
 
-                    // Create a temporary game object with the new position
+                   // Create a temporary game object with the new position
                 GameObject tempGameObject = new GameObject();
                 tempGameObject.transform.position = newPosition;
              
                 // Apply visual effects using the temp object's transform
                 Quaternion customRot = Quaternion.Euler(0, yRotationOffset, 0);
-                ApplyEffectWithDelay(fireAttack, enemy.transform, 0f, 3.0f, null, true, yRotationOffset);
+                ApplyEffectWithDelay(fireAttack, enemy.transform, 0f, 3.0f, null, 1.5f, yRotationOffset); // MODIFIED
                 ApplyEffectWithDelay(fireHit, hero.transform, .5f, 3.0f);
             }
 
@@ -843,19 +843,19 @@ private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform ta
                     Debug.Log($"Hero has been paralyzed by {enemyAttack.attackName}!");
                 }
                 float yRotationOffset = -90f;
-                switch (i)
-                {
-                    case 0: yRotationOffset = -70f; break;
-                    case 1: yRotationOffset = -90f; break;
-                    case 2: yRotationOffset = -90f; break;
-                    case 3: yRotationOffset = -110f; break;
-                }
+                 switch (i)
+                 {
+                     case 0: yRotationOffset = -70f; break;
+                     case 1: yRotationOffset = -90f; break;
+                     case 2: yRotationOffset = -90f; break;
+                     case 3: yRotationOffset = -110f; break;
+                 }
                 
                  Debug.Log("selectedEnemyNum is" + i + "So rotation is " + yRotationOffset);
                 Vector3 newPosition = enemy.transform.position;
                 newPosition.y += 0f;
 
-                    // Create a temporary game object with the new position
+                   // Create a temporary game object with the new position
                 GameObject tempGameObject = new GameObject();
                 tempGameObject.transform.position = newPosition;
              
@@ -863,9 +863,9 @@ private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform ta
                 Quaternion customRot = Quaternion.Euler(0, yRotationOffset, 0);
                     
                     
-                    ApplyEffectWithDelay(arrowAttack1, enemy.transform, 0f, 3.0f, null, true, yRotationOffset);
-                    ApplyEffectWithDelay(arrowHit, hero.transform, .5f, 3.0f);
-                }
+                 ApplyEffectWithDelay(arrowAttack1, enemy.transform, 0f, 3.0f, null, 1.5f, yRotationOffset); // MODIFIED
+                 ApplyEffectWithDelay(arrowHit, hero.transform, .5f, 3.0f);
+             }
 
 
 
@@ -881,12 +881,12 @@ private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform ta
 
         yield return new WaitForSeconds(.5f);
         hero.bideBuff = false;
-            hero.UpdateEffects();
+             hero.UpdateEffects();
         if (hero.burning > 0)
         { 
             hero.Init(popupPrefabfire);
             hero.TakeDamage((int)(hero.maxHealth*.1));
-          
+            
             usedMoveGO.SetActive(true);
             ApplyEffectWithDelay(burn, hero.transform, 0f, 3.0f);
             blurbEvent.Set($" You're Burning for {hero.burning} turns!");
@@ -902,7 +902,7 @@ private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform ta
             }
 
         }
-       
+        
         if (!hero.CanAct())
         {
             
@@ -961,8 +961,8 @@ private void ShowAttackSelectionUI()
         var attack = enemyAttacksByIndex[i];
 
         bool found = false;
-           
-          // If not found, add it to the dropdown options
+            
+            // If not found, add it to the dropdown options
         if (!found)
         {
             TMP_Dropdown.OptionData newOption = new TMP_Dropdown.OptionData(attack.attackName);
@@ -974,12 +974,12 @@ private void ShowAttackSelectionUI()
         // Check if the attack is already in the dropdown
         foreach (var existingOption in dropdownOptions)
         
-         
+        
         {
 
             int index = dropdownOptions.IndexOf(existingOption);
         if (index <= 3)
-            {
+         {
             var enemy = enemies[index]; 
             if (!enemy.dead && existingOption.text == attack.attackName && bideAttribute >= 1)
             {
@@ -997,7 +997,7 @@ private void ShowAttackSelectionUI()
             }
         }
 
-      
+    
     }
     }
 
@@ -1041,7 +1041,7 @@ private void ShowAttackSelectionUI()
 
 
         // Set up the Bide button
-        /*        bideButton.gameObject.SetActive(true);
+        /* bideButton.gameObject.SetActive(true);
                 bideButton.onClick.RemoveAllListeners();
                 bideButton.onClick.AddListener(OnBideButtonClicked);
                 bideButton.GetComponentInChildren<TextMeshProUGUI>().text = "Bide";*/
@@ -1130,7 +1130,7 @@ private void HideDescription()
 
     public void OnConfirmButtonClicked()
 {
-     usedMoveGO.SetActive(true);
+   usedMoveGO.SetActive(true);
     // Ensure both attacks are selected
     if (selectedAttack1 == null || selectedAttack2 == null)
     {
@@ -1164,7 +1164,7 @@ private void HideDescription()
     attackOptionsMenu.SetActive(false);
     potionOptions.SetActive(false);
     targetingHUDParent.SetActive(true);
-  
+    
 
     targetingMode = true;
 }
@@ -1254,7 +1254,7 @@ private void HideDescription()
         {
             Debug.Log($"{targets} enemies selected. Starting multi-target attack.");
             usedMove1.text = ($"Boss Used {combinedAttack.attackName}");
-            for (int i = 0; i < enemies.Count; i++)
+             for (int i = 0; i < enemies.Count; i++)
             {
                 if (enemies[i] == selectedEnemies[0])
                 {
@@ -1283,17 +1283,17 @@ private int GetMaxTargetsForAttack(List<string> attributes)
     }
     else if (attributes.Contains("Ice"))
     {
-            Debug.Log("taattacks is 3" );
+         Debug.Log("taattacks is 3" );
         return 3; 
     }
     else if (attributes.Contains("Lunge"))
     {
-            Debug.Log("taattacks is 2" );
+         Debug.Log("taattacks is 2" );
         return 2;
     }
     else
     {
-            Debug.Log("taattacks is 1" );
+         Debug.Log("taattacks is 1" );
         return 1; 
     }
 }
@@ -1310,7 +1310,7 @@ private bool IsMultiTargetAttack(List<string> attributes)
 
         if (bideSuccessful)
         {
-            ApplyEffectWithDelay(bideani, hero.transform, 0f, 2.0f,true, false, null, false);
+            ApplyEffectWithDelay(bideani, hero.transform, 0f, 2.0f,true, 0f, null, false); // MODIFIED
             bideAttribute = 2;
             attackOptionsParent.SetActive(false);
             potionOptions.SetActive(false);
@@ -1337,7 +1337,7 @@ private bool IsMultiTargetAttack(List<string> attributes)
              blurbEvent.Set($"Potion Used");
              EventBus.Publish(blurbEvent);
              usedMove1.text = "Potion Used";
-                PotionData.Instance.Potion--;
+               PotionData.Instance.Potion--;
             attackOptionsParent.SetActive(false);
             potionOptions.SetActive(false);
             itemOptions.SetActive(false);
@@ -1403,19 +1403,19 @@ private bool IsMultiTargetAttack(List<string> attributes)
         }
         else
         {
-            float multiplier = 1.0f + (combinedAttack.upgradeLevel/30f);   
+            float multiplier = 1.0f + (combinedAttack.upgradeLevel/30f);    
             damage = Mathf.RoundToInt(hero.GetDamage() * multiplier);
         }
         
         //Crit Damage
         if (combinedAttack.attributes.Contains("Steady"))
-            {
+             {
                  hero.Init(popupPrefab);
-                heroCritRate = 0.4f;
-                ApplyEffectWithDelay(SteadyAttack, hero.transform, 0f, 2.0f);
-                ApplyEffectWithDelay(SteadyHit, targetEnemy.transform, .5f, 3.0f);
-                
-            }
+                 heroCritRate = 0.4f;
+                 ApplyEffectWithDelay(SteadyAttack, hero.transform, 0f, 2.0f);
+                 ApplyEffectWithDelay(SteadyHit, targetEnemy.transform, .5f, 3.0f);
+                 
+             }
         
         if(Random.value <= heroCritRate)
         {
@@ -1468,31 +1468,31 @@ private bool IsMultiTargetAttack(List<string> attributes)
             Vector3 newPosition = hero.transform.position;
             GameObject tempGameObject = new GameObject();
             tempGameObject.transform.position = newPosition;
-       
+        
             Debug.Log("Rotation set to: " + tempGameObject.transform.rotation.eulerAngles);
 
             // Apply visual effects using the temp object's transform
             Quaternion customRot = Quaternion.Euler(0, yRotationOffset, 0);
-            ApplyEffectWithDelay(fireAttack, tempGameObject.transform, 0f, 3.0f, true, true, yRotationOffset);
+            ApplyEffectWithDelay(fireAttack, tempGameObject.transform, 0f, 3.0f, true, 1.5f, yRotationOffset); // MODIFIED
             
             ApplyEffectWithDelay(fireHit, targetEnemy.transform, 0.5f, 3.0f);
         }
 
         if (combinedAttack.attributes.Contains("Paralysis"))
-            {
+             {
                  hero.Init(popupPrefab);
 
-                if (Random.value <= 1f && targetEnemy.GetParalysisTurnsRemaining() < 1 && targetEnemy.burning < 1)
-                {
-                   
-                    targetEnemy.ApplyParalysis(5, true);
-                     blurbEvent.Set($"{targetEnemy.characterName} was paralysed!");
-                     EventBus.Publish(blurbEvent);
-                     
-                     usedMove1.text = $"{targetEnemy.characterName} was paralysed!";
-                }
+                 if (Random.value <= 1f && targetEnemy.GetParalysisTurnsRemaining() < 1 && targetEnemy.burning < 1)
+                 {
+                    
+                     targetEnemy.ApplyParalysis(5, true);
+                      blurbEvent.Set($"{targetEnemy.characterName} was paralysed!");
+                       EventBus.Publish(blurbEvent);
+                       
+                       usedMove1.text = $"{targetEnemy.characterName} was paralysed!";
+                 }
 
-                    // Determine rotation based on selected enemy position
+                   // Determine rotation based on selected enemy position
             float yRotationOffset = 0f;
             Vector3 newPosition = hero.transform.position;
             newPosition.y += 0f;
@@ -1513,37 +1513,36 @@ private bool IsMultiTargetAttack(List<string> attributes)
 
             // Apply visual effects using the temp object's transform
             Quaternion customRot = Quaternion.Euler(0, yRotationOffset, 0);
-   
+    
 
             
-
-                // Destroy the temporary game object after 5 seconds
-                
+                 // Destroy the temporary game object after 5 seconds
+                 
             Destroy(tempGameObject, 5f);
-            ApplyEffectWithDelay(arrowAttack, tempGameObject.transform, 0f, 3.0f,true, true, yRotationOffset);
+            ApplyEffectWithDelay(arrowAttack, tempGameObject.transform, 0f, 3.0f,true, 1.5f, yRotationOffset); // MODIFIED
             ApplyEffectWithDelay(arrowHit, targetEnemy.transform, .5f, 3.0f);
-            }
-
-        if (combinedAttack.attributes.Contains("Heal"))
-            {
-                
-                    
-                    hero.Init(popupPrefabgreen);
-                    hero.HealDamage(damage);
-                    blurbEvent.Set($"{damage} Health Recovered!");
-                    EventBus.Publish(blurbEvent);
-                    
-                     usedMove1.text = $"{damage} Health Recovered!";
-                    
-                    ApplyEffectWithDelay(heal, hero.transform, 0f, 3.0f);
-                    EventBus.Publish(statusUpdateEvent);
-                    
-                    
              }
 
+        if (combinedAttack.attributes.Contains("Heal"))
+             {
+                 
+                 
+                     hero.Init(popupPrefabgreen);
+                     hero.HealDamage(damage);
+                     blurbEvent.Set($"{damage} Health Recovered!");
+                     EventBus.Publish(blurbEvent);
+                     
+                      usedMove1.text = $"{damage} Health Recovered!";
+                     
+                     ApplyEffectWithDelay(heal, hero.transform, 0f, 3.0f);
+                     EventBus.Publish(statusUpdateEvent);
+                     
+                     
+              }
+
         
-          if (combinedAttack.attributes.Contains("Barrier"))
-            {
+         if (combinedAttack.attributes.Contains("Barrier"))
+             {
                  hero.Init(popupPrefab);
                 Vector3 newPosition = hero.transform.position;
                 Vector3 newScale = hero.transform.localScale;
@@ -1562,40 +1561,40 @@ private bool IsMultiTargetAttack(List<string> attributes)
                 // Destroy the temporary game object after 5 seconds
                 Destroy(tempGameObject, 5f);
                 hero.barrierCount += 1;
-                     blurbEvent.Set("Barrier raised");
-                     EventBus.Publish(blurbEvent);
-                      usedMove1.text = $"Barrier Raised";
-                    ApplyEffectWithDelay(barrier1Big, tempGameObject.transform, 0f, 3.0f);
-                    ApplyEffectWithDelay(barrier2, hero.transform, 0f, 3.0f);
-                    ApplyEffectWithDelay(barrier3, hero.transform, 0f, 3.0f);
+                       blurbEvent.Set("Barrier raised");
+                       EventBus.Publish(blurbEvent);
+                        usedMove1.text = $"Barrier Raised";
+                     ApplyEffectWithDelay(barrier1Big, tempGameObject.transform, 0f, 3.0f);
+                     ApplyEffectWithDelay(barrier2, hero.transform, 0f, 3.0f);
+                     ApplyEffectWithDelay(barrier3, hero.transform, 0f, 3.0f);
 
-            }
+             }
 
         if (combinedAttack.attributes.Contains("Field"))
-            {       
-                    hero.Init(popupPrefab);
-                    hero.HealDamage(damage);
-                    blurbEvent.Set($"{damage} Health Recovered!");
-                    EventBus.Publish(blurbEvent);
-                    usedMove1.text = $"{damage} Health Recovered!";
-                    hero.RemoveBurns();
-                    hero.RemoveParalysis();
-                    hero.RemoveHeroBurns();
-                    hero.RemoveHeroParalysis();
-                    blurbEvent.Set($"Status Healed");
-                    EventBus.Publish(blurbEvent);
-                    usedMove1.text = $"Status Healed";
-                    ApplyEffectWithDelay(healfield, hero.transform, 0f, 3.0f, true, false, null, true);
-                    ApplyEffectWithDelay(panaceaAni, hero.transform, 0f, 3.0f);
-                    
-            }
+             {     
+                     hero.Init(popupPrefab);
+                     hero.HealDamage(damage);
+                     blurbEvent.Set($"{damage} Health Recovered!");
+                     EventBus.Publish(blurbEvent);
+                     usedMove1.text = $"{damage} Health Recovered!";
+                     hero.RemoveBurns();
+                     hero.RemoveParalysis();
+                     hero.RemoveHeroBurns();
+                     hero.RemoveHeroParalysis();
+                     blurbEvent.Set($"Status Healed");
+                     EventBus.Publish(blurbEvent);
+                     usedMove1.text = $"Status Healed";
+                     ApplyEffectWithDelay(healfield, hero.transform, 0f, 3.0f, true, .70f, null, true); // MODIFIED
+                     ApplyEffectWithDelay(panaceaAni, hero.transform, 0f, 3.0f);
+                     
+             }
 
 
         if (targetEnemy.currentHealth <= 0)
         {
              blurbEvent.Set($"{targetEnemy.characterName} has been defeated!");
              EventBus.Publish(blurbEvent);
-                  usedMove1.text = $"{targetEnemy.characterName} has been defeated! with {combinedAttack.attackName}";
+                 usedMove1.text = $"{targetEnemy.characterName} has been defeated! with {combinedAttack.attackName}";
             RemoveEnemy(targetEnemy);
         }
 
@@ -1614,83 +1613,83 @@ private bool IsMultiTargetAttack(List<string> attributes)
         // }
 
         if (combinedAttack.attributes.Contains("Slash"))
-            {
+             {
                  hero.Init(popupPrefab);
-               
-                Vector3 newPosition = targetEnemy.transform.position;
-                newPosition.y += 3f;
-
-                // Create a temporary transform with the new position
-                Transform tempTransform = new GameObject().transform;
-                tempTransform.position = newPosition;
-
-                ApplyEffectWithDelay(slashAttack, hero.transform, 0f, 3.0f, null, true);
-                ApplyEffectWithDelay(slashHit, tempTransform, .5f, 3.0f);
-                ApplyEffectWithDelay(slashCrater, targetEnemy.transform , .8f, 3.0f);
                 
-            }
+                 Vector3 newPosition = targetEnemy.transform.position;
+                 newPosition.y += 3f;
 
-            if (combinedAttack.attributes.Contains("Triple"))
-            {
+                 // Create a temporary transform with the new position
+                 Transform tempTransform = new GameObject().transform;
+                 tempTransform.position = newPosition;
+
+                 ApplyEffectWithDelay(slashAttack, hero.transform, 0f, 3.0f, null, 1.5f); // MODIFIED
+                 ApplyEffectWithDelay(slashHit, tempTransform, .5f, 3.0f);
+                 ApplyEffectWithDelay(slashCrater, targetEnemy.transform , .8f, 3.0f);
+                 
+             }
+
+             if (combinedAttack.attributes.Contains("Triple"))
+             {
                  hero.Init(popupPrefab);
-                targetEnemy.TakeDamage(damage);
-                targetEnemy.TakeDamage(damage);
+                 targetEnemy.TakeDamage(damage);
+                 targetEnemy.TakeDamage(damage);
         
-                if (Random.value <= .1f && hero.GetParalysisTurnsRemaining() < 1 && hero.burning < 1)
-                {
-                    targetEnemy.ApplyParalysis(5, true);
-                    blurbEvent.Set($"{targetEnemy.characterName} was paralysed!");
-                    EventBus.Publish(blurbEvent);
+                 if (Random.value <= .1f && hero.GetParalysisTurnsRemaining() < 1 && hero.burning < 1)
+                 {
+                     targetEnemy.ApplyParalysis(5, true);
+                     blurbEvent.Set($"{targetEnemy.characterName} was paralysed!");
+                     EventBus.Publish(blurbEvent);
+                     
+                   usedMove1.text = $"{targetEnemy.characterName} was paralysed!";
+                     
+                 }
+                 if (Random.value <= .1f && hero.GetParalysisTurnsRemaining() < 1 && hero.burning < 1)
+                 {
+                     targetEnemy.ApplyParalysis(5, true);
+                     blurbEvent.Set($"{targetEnemy.characterName} was paralysed!");
+                     EventBus.Publish(blurbEvent);
+                       usedMove1.text = $"{targetEnemy.characterName} was paralysed!";
+                 }
+                 if (Random.value <= .1f && hero.GetParalysisTurnsRemaining() < 1 && hero.burning < 1)
+                 {
                     
-                  usedMove1.text = $"{targetEnemy.characterName} was paralysed!";
-                    
-                }
-                if (Random.value <= .1f && hero.GetParalysisTurnsRemaining() < 1 && hero.burning < 1)
-                {
-                    targetEnemy.ApplyParalysis(5, true);
-                    blurbEvent.Set($"{targetEnemy.characterName} was paralysed!");
-                    EventBus.Publish(blurbEvent);
-                      usedMove1.text = $"{targetEnemy.characterName} was paralysed!";
-                }
-                if (Random.value <= .1f && hero.GetParalysisTurnsRemaining() < 1 && hero.burning < 1)
-                {
-                    
-                    targetEnemy.ApplyParalysis(5, true);
-                    blurbEvent.Set($"{targetEnemy.characterName} was paralysed!");
-                    EventBus.Publish(blurbEvent);
-                      usedMove1.text = $"{targetEnemy.characterName} was paralysed!";
-                }
+                     targetEnemy.ApplyParalysis(5, true);
+                     blurbEvent.Set($"{targetEnemy.characterName} was paralysed!");
+                     EventBus.Publish(blurbEvent);
+                       usedMove1.text = $"{targetEnemy.characterName} was paralysed!";
+                 }
 
 
-                // Determine rotation based on selected enemy position
-                float yRotationOffset = 0f;
-                Debug.Log("selectedEnemyNum is" + selectedEnemyNum);
-                switch (selectedEnemyNum)
-                {
-                    case 0: yRotationOffset = 115f; break;
-                    case 1: yRotationOffset = 110f; break;
-                    case 2: yRotationOffset = 90f; break;
-                    case 3: yRotationOffset = 70f; break;
-                }
+                 // Determine rotation based on selected enemy position
+                 float yRotationOffset = 0f;
+                 Debug.Log("selectedEnemyNum is" + selectedEnemyNum);
+                 switch (selectedEnemyNum)
+                 {
+                     case 0: yRotationOffset = 115f; break;
+                     case 1: yRotationOffset = 110f; break;
+                     case 2: yRotationOffset = 90f; break;
+                     case 3: yRotationOffset = 70f; break;
+                 }
 
-                // Create and position temporary GameObject
-                Vector3 newPosition = hero.transform.position;
-                GameObject tempGameObject = new GameObject();
-                tempGameObject.transform.position = newPosition;
+                 // Create and position temporary GameObject
+                 Vector3 newPosition = hero.transform.position;
+                 GameObject tempGameObject = new GameObject();
+                 tempGameObject.transform.position = newPosition;
 
-                Debug.Log("Rotation set to: " + tempGameObject.transform.rotation.eulerAngles);
+                 Debug.Log("Rotation set to: " + tempGameObject.transform.rotation.eulerAngles);
 
-                // Apply visual effects using the temp object's transform
-                Quaternion customRot = Quaternion.Euler(0, yRotationOffset, 0);
+                 // Apply visual effects using the temp object's transform
+                 Quaternion customRot = Quaternion.Euler(0, yRotationOffset, 0);
 
-                ApplyEffectWithDelay(tripleAttack, hero.transform, 0f, 3.0f, null, false, yRotationOffset, null);
-                ApplyEffectWithDelay(tripleHit, targetEnemy.transform, .5f, 3.0f, null, true);
-            }
+                 ApplyEffectWithDelay(tripleAttack, hero.transform, 0f, 3.0f, null, 0f, yRotationOffset, null); // MODIFIED
+                 ApplyEffectWithDelay(tripleHit, targetEnemy.transform, .5f, 3.0f, null, 1.5f); // MODIFIED
+             }
              
         if (combinedAttack.attributes.Contains("Ice") && !hasIced)
         {
             //hasIced = true;
-          
+            
              hero.Init(popupPrefab);
             ApplyEffectWithDelay(iceAttack, hero.transform, 0f, 3.0f);
             ApplyEffectWithDelay(iceHit, targetEnemy.transform, .5f, 3.0f);
@@ -1706,12 +1705,12 @@ private bool IsMultiTargetAttack(List<string> attributes)
         if (combinedAttack.attributes.Contains("Lunge"))
         {
              hero.Init(popupPrefab);
-            blurbEvent.Set($"You strike twice");
-            EventBus.Publish(blurbEvent);
+             blurbEvent.Set($"You strike twice");
+             EventBus.Publish(blurbEvent);
 
-            ApplyEffectWithDelay(lungeAttack, hero.transform, 0f, 3.0f, true, false);
+            ApplyEffectWithDelay(lungeAttack, hero.transform, 0f, 3.0f, true, 0f); // MODIFIED
             ApplyEffectWithDelay(lungeHit, targetEnemy.transform, .5f, 3.0f);
-          
+            
             
             
         }
@@ -1876,7 +1875,7 @@ private int GetDeadEnemySpawnIndex(Enemy deadEnemy)
 
         Destroy(enemy);
             
-      
+        
     }
 
 
@@ -1891,7 +1890,7 @@ private int GetDeadEnemySpawnIndex(Enemy deadEnemy)
         public void ReviveBoss()
     {
         //Todo Create a separate button for crazy games ad ALSO implement add check (if add is complete revive boss else ??)
-      CrazySDK.Ad.RequestAd(CrazyAdType.Rewarded, () => // or CrazyAdType.Rewarded
+     CrazySDK.Ad.RequestAd(CrazyAdType.Rewarded, () => // or CrazyAdType.Rewarded
         {
             // ad started
         }, (error) =>
@@ -1899,26 +1898,26 @@ private int GetDeadEnemySpawnIndex(Enemy deadEnemy)
             // ad error
         }, () =>
         {
-                hero.currentHealth = hero.maxHealth;
-                hero.animator.SetTrigger("Revive");
-                //TODO check performance of this 
-                revived = true;
-                GameObject boss = GameObject.FindGameObjectWithTag("Boss");
-          if (boss != null)
-        {
-            Hero hero = boss.GetComponent<Hero>();
-            if (hero != null)
-            {
-                if (hero.lerpCoroutine != null) StopCoroutine(hero.lerpCoroutine);
-                hero.lerpCoroutine = StartCoroutine(hero.LerpYPosition(boss.transform.position.y, hero.originalY, .21f, .5f));
-            }
-        }
+             hero.currentHealth = hero.maxHealth;
+             hero.animator.SetTrigger("Revive");
+             //TODO check performance of this 
+             revived = true;
+             GameObject boss = GameObject.FindGameObjectWithTag("Boss");
+        if (boss != null)
+       {
+           Hero hero = boss.GetComponent<Hero>();
+           if (hero != null)
+           {
+               if (hero.lerpCoroutine != null) StopCoroutine(hero.lerpCoroutine);
+               hero.lerpCoroutine = StartCoroutine(hero.LerpYPosition(boss.transform.position.y, hero.originalY, .21f, .5f));
+           }
+       }
 
-                ApplyEffectWithDelay(bideani, hero.transform, 0f, 2.0f,true,false, null, false);
-                StartCoroutine(StartTurn());
-                loseScreen.SetActive(false);
-                MainUIParent.SetActive(true);
-                CrazySDK.Game.GameplayStart();
+             ApplyEffectWithDelay(bideani, hero.transform, 0f, 2.0f,true,0f, null, false); // MODIFIED
+             StartCoroutine(StartTurn());
+             loseScreen.SetActive(false);
+             MainUIParent.SetActive(true);
+             CrazySDK.Game.GameplayStart();
             // ad finished, for rewarded ads give reward here
         });
     

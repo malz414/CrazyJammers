@@ -141,6 +141,8 @@ MonoBehaviour:
   attacksUsed: []
   dead: 0
   walkSpeed: 2
+  multiplier: 1
+  enemyType: 
   TargetingIndicator: {fileID: 5479745332783528699}
 --- !u!95 &-4220806399204691735
 Animator:
