@@ -627,7 +627,7 @@ private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform ta
 
                     //// Apply visual effects using the temp object's transform
                     //Quaternion customRot = Quaternion.Euler(0, xRotationOffset, 0);
-                    ApplyEffectWithDelay(healfield, enemyHeal.transform, 0f, 2.0f, null, false, null, true);
+                    ApplyEffectWithDelay(healfield, enemyHeal.transform, 0f, 2.0f, true, false, null, true);
 
                     ApplyEffectWithDelay(panaceaAni, enemyHeal.transform, 0f, 2.0f);
                     blurbEvent.Set($"The heroes healed and status cured.");
@@ -761,7 +761,27 @@ private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform ta
                     EventBus.Publish(blurbEvent);
                     Debug.Log($"Hero has been paralyzed by {enemyAttack.attackName}!");
                 }
-                ApplyEffectWithDelay(tripleAttack, enemy.transform, 0f, 3.0f);
+
+                    float yRotationOffset = -90f;
+                switch (i)
+                    {
+                        case 0: yRotationOffset = -70f; break;
+                        case 1: yRotationOffset = -90f; break;
+                        case 2: yRotationOffset = -90f; break;
+                        case 3: yRotationOffset = -115f; break;
+                    }
+
+                Debug.Log("selectedEnemyNum is" + i + "So rotation is " + yRotationOffset);
+                Vector3 newPosition = enemy.transform.position;
+                newPosition.y += 0f;
+
+                // Create a temporary game object with the new position
+                GameObject tempGameObject = new GameObject();
+                tempGameObject.transform.position = newPosition;
+
+                // Apply visual effects using the temp object's transform
+                Quaternion customRot = Quaternion.Euler(0, yRotationOffset, 0);
+                ApplyEffectWithDelay(tripleAttack, enemy.transform, 0f, 3.0f, null, false, yRotationOffset);
                 ApplyEffectWithDelay(tripleHit, hero.transform, .5f, 3.0f, null, true);
             }
 
@@ -1565,7 +1585,7 @@ private bool IsMultiTargetAttack(List<string> attributes)
                     blurbEvent.Set($"Status Healed");
                     EventBus.Publish(blurbEvent);
                     usedMove1.text = $"Status Healed";
-                    ApplyEffectWithDelay(healfield, hero.transform, 0f, 3.0f);
+                    ApplyEffectWithDelay(healfield, hero.transform, 0f, 3.0f, true, false, null, true);
                     ApplyEffectWithDelay(panaceaAni, hero.transform, 0f, 3.0f);
                     
             }
@@ -1640,7 +1660,30 @@ private bool IsMultiTargetAttack(List<string> attributes)
                     EventBus.Publish(blurbEvent);
                       usedMove1.text = $"{targetEnemy.characterName} was paralysed!";
                 }
-                ApplyEffectWithDelay(tripleAttack, hero.transform, 0f, 3.0f);
+
+
+                // Determine rotation based on selected enemy position
+                float yRotationOffset = 0f;
+                Debug.Log("selectedEnemyNum is" + selectedEnemyNum);
+                switch (selectedEnemyNum)
+                {
+                    case 0: yRotationOffset = 115f; break;
+                    case 1: yRotationOffset = 110f; break;
+                    case 2: yRotationOffset = 90f; break;
+                    case 3: yRotationOffset = 70f; break;
+                }
+
+                // Create and position temporary GameObject
+                Vector3 newPosition = hero.transform.position;
+                GameObject tempGameObject = new GameObject();
+                tempGameObject.transform.position = newPosition;
+
+                Debug.Log("Rotation set to: " + tempGameObject.transform.rotation.eulerAngles);
+
+                // Apply visual effects using the temp object's transform
+                Quaternion customRot = Quaternion.Euler(0, yRotationOffset, 0);
+
+                ApplyEffectWithDelay(tripleAttack, hero.transform, 0f, 3.0f, null, false, yRotationOffset, null);
                 ApplyEffectWithDelay(tripleHit, targetEnemy.transform, .5f, 3.0f, null, true);
             }
              
