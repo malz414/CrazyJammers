@@ -616,18 +616,7 @@ private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform ta
                     enemyHeal.RemoveBurns();
                     enemyHeal.RemoveParalysis();
 
-                    //float xRotationOffset = -90f;
-
-                    //Vector3 newPosition = enemy.transform.position;
-                    //newPosition.x += 0f;
-
-                    //// Create a temporary game object with the new position
-                    //GameObject tempGameObject = new GameObject();
-                    //tempGameObject.transform.position = newPosition;
-
-                    //// Apply visual effects using the temp object's transform
-                    //Quaternion customRot = Quaternion.Euler(0, xRotationOffset, 0);
-                    ApplyEffectWithDelay(healfield, enemyHeal.transform, 0f, .50f, true, 50f, null, true); // MODIFIED
+                    ApplyEffectWithDelay(healfield, enemyHeal.transform, 0f, .50f, true, 0.10f, null, true); // MODIFIED
 
                     ApplyEffectWithDelay(panaceaAni, enemyHeal.transform, 0f, 2.0f);
                     blurbEvent.Set($"The heroes healed and status cured.");
@@ -1584,7 +1573,7 @@ private bool IsMultiTargetAttack(List<string> attributes)
                      blurbEvent.Set($"Status Healed");
                      EventBus.Publish(blurbEvent);
                      usedMove1.text = $"Status Healed";
-                     ApplyEffectWithDelay(healfield, hero.transform, 0f, 3.0f, true, .70f, null, true); // MODIFIED
+                     ApplyEffectWithDelay(healfield, hero.transform, 0f, 3.0f, true, 0.10f, null, true); // MODIFIED
                      ApplyEffectWithDelay(panaceaAni, hero.transform, 0f, 3.0f);
                      
              }
