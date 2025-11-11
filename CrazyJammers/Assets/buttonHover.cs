@@ -5,7 +5,7 @@ using UnityEngine.EventSystems;
 using TMPro;
 
 
-public class buttonHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
+public class buttonHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     public TMP_Text descText;
     public string text = "";
@@ -52,12 +52,12 @@ public class buttonHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
         descText.text = "Select a command.";
     }
 
-        public void OnPointerClick(PointerEventData eventData)
-    {
-         if(PotionData.Instance.Potion > 0)
-        {
-            descText.text = textNo;
-        }
+    //     public void OnPointerClick(PointerEventData eventData)
+    // {
+    //      if(PotionData.Instance.Potion > 0)
+    //     {
+    //         descText.text = textNo;
+    //     }
        
-    }
+    // }
 }

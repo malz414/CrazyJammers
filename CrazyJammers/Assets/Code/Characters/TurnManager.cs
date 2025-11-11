@@ -132,7 +132,7 @@ public class TurnManager : MonoBehaviour
     private int selectedEnemyNum = -1;
     private bool selectingEnemies = false;
 
-    private Hero hero;
+    public Hero hero;
     public List<Enemy> enemies;
 
     [SerializeField] private AttackSO[] attacksReset;
@@ -454,12 +454,7 @@ private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform ta
             }
         
         }
-        bideAttribute--;
-        if (bideAttribute == 0)
-        {
-            hero.bideLevel = 1.0f;
-            hero.bideUses = 0;
-        }
+
         foreach (var enemy in enemies)
         {
             enemy.UpdateEffects();
@@ -515,10 +510,11 @@ private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform ta
             hero.Init(popupPrefab);
             if (!enemy.CanAct() && !enemy.dead)
             {
-                usedMoveGO.SetActive(true);
-                if(!enemyAttacksByIndex.Contains(enemyAttacksByIndexPerm[i]))
+                AttackSO skippedAttack = enemyAttacksByIndexPerm[i];
+                
+                if(skippedAttack != null && !enemyAttacksByIndex.Contains(skippedAttack))
                  {
-                      enemyAttacksByIndex.Add(enemyAttacksByIndexPerm[i]);
+                      enemyAttacksByIndex.Add(skippedAttack);
                  }
             
                 blurbEvent.Set($"{enemy.characterName} is paralyzed and cannot act this turn!");
@@ -530,9 +526,11 @@ private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform ta
             }
             else if (enemy.dead)
             {
-               if (!enemyAttacksByIndex.Contains(enemyAttacksByIndexPerm[i]))
+               AttackSO lastUsedAttack = enemyAttacksByIndexPerm[i]; 
+            
+                if (lastUsedAttack != null && !enemyAttacksByIndex.Contains(lastUsedAttack))
                 {
-                    enemyAttacksByIndex.Add(enemyAttacksByIndexPerm[i]);
+                    enemyAttacksByIndex.Add(lastUsedAttack);
                 }
                 continue;
             }
@@ -907,6 +905,16 @@ private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform ta
         }
         else
         {
+            if (bideAttribute > 0)
+            {
+                bideAttribute--;
+            }
+
+            if (bideAttribute == 0)
+            {
+                hero.bideLevel = 1.0f;
+                hero.bideUses = 0;
+            }
              usedMoveGO.SetActive(false);
             // Show attack selection UI for the hero
             ShowAttackSelectionUI();
@@ -1314,16 +1322,35 @@ private bool IsMultiTargetAttack(List<string> attributes)
 
     public void onPotionClicked()
     {
-        if(  PotionData.Instance.Potion > 0)
+        if(PotionData.Instance.Potion > 0)
         {
+            if (hero.currentHealth >= hero.maxHealth)
+            {
+                descriptionTextPotion.text = "Hero Health Full.";
+                // usedMove1.text = "Hero Health Full";
+                // usedMoveGO.SetActive(true);
+                // blurbEvent.Set("Hero Health Full, Potion not used.");
+                // EventBus.Publish(blurbEvent);
+                return; 
+            }
+
             hero.Init(popupPrefabgreen);
             hero.HealDamage((int)(hero.maxHealth*.4));
-            if(hero.currentHealth>hero.maxHealth)
+            if (hero.currentHealth > hero.maxHealth)
             {
                 hero.currentHealth = hero.maxHealth;
             }
+            if (bideAttribute > 0)
+            {
+                bideAttribute--;
+            }
+            if (bideAttribute == 0)
+            {
+                hero.bideLevel = 1.0f;
+                hero.bideUses = 0;
+            }
              usedMoveGO.SetActive(true);
-             blurbEvent.Set($"Potion Used");
+             blurbEvent.Set($"Potion Used: Health Restored!");
              EventBus.Publish(blurbEvent);
              usedMove1.text = "Potion Used";
                PotionData.Instance.Potion--;
@@ -1346,14 +1373,36 @@ private bool IsMultiTargetAttack(List<string> attributes)
     {
         if(PotionData.Instance.Panacea > 0)
         {
+            // Check if hero has any status effects to remove (burning or paralysis)
+            bool hasStatus = hero.burning > 0 || hero.paralysisEffect != null;
+
+            if (!hasStatus)
+            {
+                descriptionTextPotion.text = "No Status Effects to Cure.";
+                // usedMove1.text = "No Status to Cure";
+                // usedMoveGO.SetActive(true);
+                // blurbEvent.Set("Hero has no status effects, Panacea not used.");
+                // EventBus.Publish(blurbEvent);
+                return;
+            }
+            if (bideAttribute > 0)
+            {
+                bideAttribute--;
+            }
+            if (bideAttribute == 0)
+            {
+                hero.bideLevel = 1.0f;
+                hero.bideUses = 0;
+            }
+
             hero.RemoveBurns();
             hero.RemoveParalysis();
             hero.RemoveHeroBurns();
             hero.RemoveHeroParalysis();
             usedMoveGO.SetActive(true);
-            blurbEvent.Set($"Status Healed");
+            blurbEvent.Set($"Panacea Used: Status Cured!");
             EventBus.Publish(blurbEvent);
-            usedMove1.text = "Status Healed";
+            usedMove1.text = "Status Cured";
             PotionData.Instance.Panacea--;
             attackOptionsParent.SetActive(false);
             potionOptions.SetActive(false);
@@ -1365,7 +1414,7 @@ private bool IsMultiTargetAttack(List<string> attributes)
         else
         {
             descriptionTextPotion.text = "No Panacea left";
-              usedMove1.text = "No Panacea";
+            usedMove1.text = "No Panacea";
             
         }
     }
