@@ -1803,7 +1803,6 @@ MonoBehaviour:
   text2: {fileID: 1569385520}
   text1c: {fileID: 146323614}
   text2c: {fileID: 257257768}
-  valueToCheck: 0
   textColorWhenZero: {r: 0.5, g: 0.5, b: 0.5, a: 1}
   defaultTextColor: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &488790792
@@ -6904,6 +6903,10 @@ PrefabInstance:
       propertyPath: arrowAttack1
       value: 
       objectReference: {fileID: 1878987882032996, guid: b6665d3c6949efa448214e87a443d23a, type: 3}
+    - target: {fileID: 8485419520516605267, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
+      propertyPath: isFirstMatch
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8485419520516605267, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
       propertyPath: knightPrefab
       value: 

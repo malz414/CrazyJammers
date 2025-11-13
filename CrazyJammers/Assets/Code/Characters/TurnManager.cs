@@ -190,6 +190,8 @@ public class TurnManager : MonoBehaviour
 
     public bool drop1Opened;
     public bool drop2Opened;
+
+    public bool isFirstMatch = false;
     
 
 
@@ -890,35 +892,48 @@ private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform ta
 
         }
         
-        if (!hero.CanAct())
-        {
-            
-            blurbEvent.Set($"Boss is paralyzed and cannot act this turn!");
-            EventBus.Publish(blurbEvent);
-            usedMove1.text = $"Boss is paralyzed and cannot act this turn!";
-            ApplyEffectWithDelay(para, hero.transform, 0f, 3.0f);
-            Debug.Log("Hero is paralyzed and cannot act this turn!");
-            yield return new WaitForSeconds(1f);
-            usedMove1.text = "";
-            usedMoveGO.SetActive(false);
-            StartCoroutine(StartTurn()); // Skip the hero's turn
-        }
-        else
-        {
-            if (bideAttribute > 0)
-            {
-                bideAttribute--;
-            }
+    bool isParalyzedAndSkipping = !hero.CanAct(); 
 
-            if (bideAttribute == 0)
-            {
-                hero.bideLevel = 1.0f;
-                hero.bideUses = 0;
-            }
-             usedMoveGO.SetActive(false);
-            // Show attack selection UI for the hero
-            ShowAttackSelectionUI();
+    if (isParalyzedAndSkipping && hero.paralysisEffect != null && !hero.paralysisEffect.hasHadFirstTurnCheck)
+    {
+        hero.paralysisEffect.hasHadFirstTurnCheck = true; 
+
+        isParalyzedAndSkipping = false; 
+    }
+    else if (isParalyzedAndSkipping && hero.paralysisEffect != null)
+    {
+        hero.paralysisEffect.hasHadFirstTurnCheck = true;
+    }
+
+
+    if (isParalyzedAndSkipping) // This is a normal skip
+    {
+        blurbEvent.Set($"Boss is paralyzed and cannot act this turn!");
+        EventBus.Publish(blurbEvent);
+        usedMove1.text = $"Boss is paralyzed and cannot act this turn!";
+        ApplyEffectWithDelay(para, hero.transform, 0f, 3.0f);
+        Debug.Log("Hero is paralyzed and cannot act this turn!");
+        yield return new WaitForSeconds(1f);
+        usedMove1.text = "";
+        usedMoveGO.SetActive(false);
+        StartCoroutine(StartTurn()); // Skip the hero's turn
+    }
+    else 
+    {
+        if (bideAttribute > 0)
+        {
+            bideAttribute--;
         }
+
+        if (bideAttribute == 0)
+        {
+            hero.bideLevel = 1.0f;
+            hero.bideUses = 0;
+        }
+            usedMoveGO.SetActive(false);
+        // Show attack selection UI for the hero
+        ShowAttackSelectionUI();
+    }
 
     }
 

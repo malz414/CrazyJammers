@@ -4,6 +4,7 @@ public class ParalysisEffect
 {
     public int TurnsRemaining => turnsRemaining;
     public bool IsActivatedThisTurn => isActivatedThisTurn;
+    public bool hasHadFirstTurnCheck = false;
 
     private int turnsRemaining;
     private bool isActivatedThisTurn;
