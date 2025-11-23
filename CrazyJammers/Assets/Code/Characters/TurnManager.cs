@@ -894,7 +894,7 @@ private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform ta
         
     bool isParalyzedAndSkipping = !hero.CanAct(); 
 
-    if (isParalyzedAndSkipping && hero.paralysisEffect != null && !hero.paralysisEffect.hasHadFirstTurnCheck)
+    if (isParalyzedAndSkipping && hero.paralysisEffect != null && !hero.paralysisEffect.hasHadFirstTurnCheck && isFirstMatch)
     {
         hero.paralysisEffect.hasHadFirstTurnCheck = true; 
 
