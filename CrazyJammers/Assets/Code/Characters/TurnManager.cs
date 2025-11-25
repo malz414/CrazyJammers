@@ -1357,7 +1357,7 @@ private bool IsMultiTargetAttack(List<string> attributes)
             }
             if (bideAttribute > 0)
             {
-                bideAttribute--;
+                bideAttribute = 2;
             }
             if (bideAttribute == 0)
             {
@@ -1402,7 +1402,7 @@ private bool IsMultiTargetAttack(List<string> attributes)
             }
             if (bideAttribute > 0)
             {
-                bideAttribute--;
+                bideAttribute = 2;
             }
             if (bideAttribute == 0)
             {
