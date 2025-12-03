@@ -728,7 +728,7 @@ private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform ta
             
                 if (Random.value <= .1f && hero.GetParalysisTurnsRemaining() < 1 && hero.burning < 1)
                 {
-                    hero.ApplyParalysis(5, false);
+                    hero.ApplyParalysis(5, true);
                     blurbEvent.Set($"Boss has been paralyzed by {enemyAttack.attackName}!");
                     EventBus.Publish(blurbEvent);
                      usedMove1.text =$"Boss has been paralyzed by {enemyAttack.attackName}!";
@@ -736,7 +736,7 @@ private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform ta
                 }
                 if (Random.value <= .1f && hero.GetParalysisTurnsRemaining() < 1 && hero.burning < 1)
                 {
-                    hero.ApplyParalysis(5, false);
+                    hero.ApplyParalysis(5, true);
                     blurbEvent.Set($"Boss has been paralyzed by {enemyAttack.attackName}!");
                      usedMove1.text =$"Boss has been paralyzed by {enemyAttack.attackName}!";
                     EventBus.Publish(blurbEvent);
@@ -744,7 +744,7 @@ private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform ta
                 }
                 if (Random.value <= .1f && hero.GetParalysisTurnsRemaining() < 1 && hero.burning < 1)
                 {
-                    hero.ApplyParalysis(5, false);
+                    hero.ApplyParalysis(5, true);
                     blurbEvent.Set($"Boss has been paralyzed by {enemyAttack.attackName}!");
                        usedMove1.text =$"Boss has been paralyzed by {enemyAttack.attackName}!";
                     EventBus.Publish(blurbEvent);
