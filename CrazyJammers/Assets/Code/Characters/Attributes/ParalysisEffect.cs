@@ -10,7 +10,7 @@ public class ParalysisEffect
     private bool isActivatedThisTurn;
 
     private const float PARALYSIS_EFFECT_CHANCE = .15f;
-    private const float PARALYSIS_EFFECT_ENHANCED_CHANCE = .6f;
+    private const float PARALYSIS_EFFECT_ENHANCED_CHANCE = 0.6f;
 
     private bool isEnhancedParalysis = false;
 

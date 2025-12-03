@@ -1690,7 +1690,7 @@ private bool IsMultiTargetAttack(List<string> attributes)
         
                  if (Random.value <= .1f && hero.GetParalysisTurnsRemaining() < 1 && hero.burning < 1)
                  {
-                     targetEnemy.ApplyParalysis(5, true);
+                     targetEnemy.ApplyParalysis(5, false);
                      blurbEvent.Set($"{targetEnemy.characterName} was paralysed!");
                      EventBus.Publish(blurbEvent);
                      
@@ -1699,7 +1699,7 @@ private bool IsMultiTargetAttack(List<string> attributes)
                  }
                  if (Random.value <= .1f && hero.GetParalysisTurnsRemaining() < 1 && hero.burning < 1)
                  {
-                     targetEnemy.ApplyParalysis(5, true);
+                     targetEnemy.ApplyParalysis(5, false);
                      blurbEvent.Set($"{targetEnemy.characterName} was paralysed!");
                      EventBus.Publish(blurbEvent);
                        usedMove1.text = $"{targetEnemy.characterName} was paralysed!";
@@ -1707,7 +1707,7 @@ private bool IsMultiTargetAttack(List<string> attributes)
                  if (Random.value <= .1f && hero.GetParalysisTurnsRemaining() < 1 && hero.burning < 1)
                  {
                     
-                     targetEnemy.ApplyParalysis(5, true);
+                     targetEnemy.ApplyParalysis(5, false);
                      blurbEvent.Set($"{targetEnemy.characterName} was paralysed!");
                      EventBus.Publish(blurbEvent);
                        usedMove1.text = $"{targetEnemy.characterName} was paralysed!";
