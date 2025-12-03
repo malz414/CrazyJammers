@@ -9,7 +9,7 @@ public class ParalysisEffect
     private int turnsRemaining;
     private bool isActivatedThisTurn;
 
-    private const float PARALYSIS_EFFECT_CHANCE = 1f;
+    private const float PARALYSIS_EFFECT_CHANCE = 0.4f;
     private const float PARALYSIS_EFFECT_ENHANCED_CHANCE = 1f;
 
     private bool isEnhancedParalysis = false;
