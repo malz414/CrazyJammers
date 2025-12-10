@@ -60,6 +60,7 @@ public class FadeScreen : MonoBehaviour
         skipped=true;
         StopAllCoroutines();
         LeanTween.alphaCanvas(fadeScreen, 0, FADE_OUT_TIME);
+        MusicManager.Instance.ChangeSong(4);
         quoteBoxManager.SetQuoteBox(enemyQuote[quoteNum]);
     }
 
@@ -77,7 +78,7 @@ public class FadeScreen : MonoBehaviour
     {
         skipButton.SetActive(true);
         prologueTextUI.text = introText[0];
-        yield return new WaitForSeconds(4f);
+        yield return new WaitForSeconds(30f);
         LeanTween.alphaCanvas(fadeScreen, 0, FADE_OUT_TIME);
         SkipToGame();
     }

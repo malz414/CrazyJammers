@@ -32,7 +32,8 @@ public class QuoteBoxManager : MonoBehaviour
     public void Next()
     {
         TurnManager.Instance.SetUpBattle();
-        
+        MusicManager.Instance.ChangeSong(0);
+
         quoteBox.transform.parent.parent.gameObject.SetActive(false);
         quoteText.text = "";
         CrazySDK.Game.GameplayStart();
