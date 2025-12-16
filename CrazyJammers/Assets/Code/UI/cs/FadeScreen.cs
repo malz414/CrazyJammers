@@ -88,4 +88,9 @@ public class FadeScreen : MonoBehaviour
         if (fadeEvent.category != this.category) { return; }
         LeanTween.alphaCanvas(fadeScreen, 1, FADE_IN_TIME);
     }
+    void OnDestroy()
+    {
+        EventBus.Unsubscribe<FadeOutEvent>(OnFadeOut);
+        EventBus.Unsubscribe<FadeInEvent>(OnFadeIn);
+    }
 }

@@ -21,10 +21,14 @@ public class MusicManager : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject); 
+            DontDestroyOnLoad(gameObject);
         }
         else
         {
+            if (audioSource != null) audioSource.Stop(); 
+            
+            gameObject.SetActive(false); 
+            
             Destroy(gameObject); 
         }
     }

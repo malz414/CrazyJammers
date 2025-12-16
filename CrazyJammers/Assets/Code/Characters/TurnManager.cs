@@ -1830,7 +1830,7 @@ private bool IsMultiTargetAttack(List<string> attributes)
         if (enemiesDead == 4)
         {
             EndGame(true); // Player wins
-            MusicManager.Instance.ChangeSong(7);
+            MusicManager.Instance.ChangeSong(6);
 
         }
 
