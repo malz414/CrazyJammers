@@ -3510,6 +3510,10 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1583995244761813236, guid: d5f334b931d89e34283aeea5fcfb47e0, type: 3}
+      propertyPath: m_Constraints
+      value: 36
+      objectReference: {fileID: 0}
     - target: {fileID: 1786570752138649935, guid: d5f334b931d89e34283aeea5fcfb47e0, type: 3}
       propertyPath: m_Name
       value: LevelPrefab 1
@@ -4654,7 +4658,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: -323.3328, y: -2.1020813, z: -157.30286, w: 0}
+  m_margin: {x: -314.5627, y: -2.1020813, z: -256.79465, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0

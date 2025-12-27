@@ -41,6 +41,10 @@ public class FadeScreen : MonoBehaviour
     [SerializeField] GameObject skipButton;
     [SerializeField] QuoteBoxManager quoteBoxManager;
     [SerializeField] int quoteNum;
+    public bool startInstantly;
+    public GameObject enemyHp = null;
+    public GameObject HeroHp = null;
+
 
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -52,6 +56,30 @@ public class FadeScreen : MonoBehaviour
         {
             skipButton.SetActive(false);
         }
+        
+    }
+    void Start()
+    {
+        if(startInstantly)
+        {
+
+            if (skipped) return;
+            skipped=true;
+            LeanTween.alphaCanvas(fadeScreen, 0, 0);
+            MusicManager.Instance.ChangeSong(4);
+            quoteBoxManager.SetQuoteBox(enemyQuote[quoteNum]);
+            if(enemyHp != null)
+            {
+                enemyHp.SetActive(true);
+            }
+            if(HeroHp != null)
+            {
+                HeroHp.SetActive(true);
+            }
+            
+
+        }
+        
     }
 
     public void SkipToGame()

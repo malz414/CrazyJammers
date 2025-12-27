@@ -2574,7 +2574,7 @@ MonoBehaviour:
   selectedAttack2: {fileID: 0}
   drop1Opened: 0
   drop2Opened: 0
-  isFirstMatch: 0
+  isFirstMatch: 1
   listOfObjectToDeactivateAtStartOfBattle:
   - {fileID: 4879243938263046864, guid: 5b170e3854ef96f40b66167df373619d, type: 3}
 --- !u!4 &743896527
@@ -10288,6 +10288,14 @@ PrefabInstance:
       value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     - target: {fileID: 1143346409140994859, guid: fec496db80a07c640a9a640f4b6a9472, type: 3}
+      propertyPath: HeroHp
+      value: 
+      objectReference: {fileID: 1980103223}
+    - target: {fileID: 1143346409140994859, guid: fec496db80a07c640a9a640f4b6a9472, type: 3}
+      propertyPath: enemyHp
+      value: 
+      objectReference: {fileID: 633807504}
+    - target: {fileID: 1143346409140994859, guid: fec496db80a07c640a9a640f4b6a9472, type: 3}
       propertyPath: quoteNum
       value: 1
       objectReference: {fileID: 0}
@@ -10295,6 +10303,10 @@ PrefabInstance:
       propertyPath: skipButton
       value: 
       objectReference: {fileID: 1815146222}
+    - target: {fileID: 1143346409140994859, guid: fec496db80a07c640a9a640f4b6a9472, type: 3}
+      propertyPath: startInstantly
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6129923606258279351, guid: fec496db80a07c640a9a640f4b6a9472, type: 3}
       propertyPath: m_Name
       value: FadeCanvas
