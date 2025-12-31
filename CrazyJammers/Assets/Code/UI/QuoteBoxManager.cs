@@ -7,6 +7,8 @@ public class QuoteBoxManager : MonoBehaviour
 {
     [SerializeField] GameObject quoteBox;
     [SerializeField] TextMeshProUGUI quoteText;
+    public GameObject enemyHp = null;
+    public GameObject HeroHp = null;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {   
@@ -34,6 +36,14 @@ public class QuoteBoxManager : MonoBehaviour
         TurnManager.Instance.SetUpBattle();
         MusicManager.Instance.ChangeSong(0);
 
+        if(enemyHp != null)
+            {
+                enemyHp.SetActive(true);
+            }
+            if(HeroHp != null)
+            {
+                HeroHp.SetActive(true);
+            }
         quoteBox.transform.parent.parent.gameObject.SetActive(false);
         quoteText.text = "";
         CrazySDK.Game.GameplayStart();

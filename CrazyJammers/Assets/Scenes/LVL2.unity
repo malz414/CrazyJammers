@@ -2264,7 +2264,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6142692188569864200, guid: edc093f874874f64d9cfa15aa220a370, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6260348329281228830, guid: edc093f874874f64d9cfa15aa220a370, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
@@ -2428,7 +2428,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9001465596760960799, guid: edc093f874874f64d9cfa15aa220a370, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9020955973937712614, guid: edc093f874874f64d9cfa15aa220a370, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
@@ -6793,6 +6793,14 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[3].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
+    - target: {fileID: 777251875402700812, guid: fec496db80a07c640a9a640f4b6a9472, type: 3}
+      propertyPath: HeroHp
+      value: 
+      objectReference: {fileID: 1947342513}
+    - target: {fileID: 777251875402700812, guid: fec496db80a07c640a9a640f4b6a9472, type: 3}
+      propertyPath: enemyHp
+      value: 
+      objectReference: {fileID: 146537183}
     - target: {fileID: 1143346409140994859, guid: fec496db80a07c640a9a640f4b6a9472, type: 3}
       propertyPath: skipButton
       value: 

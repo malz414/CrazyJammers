@@ -42,8 +42,7 @@ public class FadeScreen : MonoBehaviour
     [SerializeField] QuoteBoxManager quoteBoxManager;
     [SerializeField] int quoteNum;
     public bool startInstantly;
-    public GameObject enemyHp = null;
-    public GameObject HeroHp = null;
+
 
 
 
@@ -68,14 +67,7 @@ public class FadeScreen : MonoBehaviour
             LeanTween.alphaCanvas(fadeScreen, 0, 0);
             MusicManager.Instance.ChangeSong(4);
             quoteBoxManager.SetQuoteBox(enemyQuote[quoteNum]);
-            if(enemyHp != null)
-            {
-                enemyHp.SetActive(true);
-            }
-            if(HeroHp != null)
-            {
-                HeroHp.SetActive(true);
-            }
+            
             
 
         }
