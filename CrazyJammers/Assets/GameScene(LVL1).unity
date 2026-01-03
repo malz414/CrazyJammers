@@ -1602,8 +1602,8 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 0401639d2c9cb034db9d5e7737827b98, type: 3}
   - {fileID: 8300000, guid: 36315d3c6bfadad488ce34ac4e3bd714, type: 3}
   - {fileID: 8300000, guid: 92db0d63c94487a4a9a571b04d24eb6f, type: 3}
-  - {fileID: 8300000, guid: 8715b2c56e4c553499d1e1059aaee693, type: 3}
-  - {fileID: 8300000, guid: 3c9d1ebbe59dfeb468e34d5775cf770c, type: 3}
+  - {fileID: 8300000, guid: 938fe1ca469db8449925a0ed1ba47845, type: 3}
+  - {fileID: 8300000, guid: b0e96103385875d44a1f3f81091d1e4b, type: 3}
   fadeDuration: 0.1
   maxVolume: 1
 --- !u!4 &359049607
@@ -1631,8 +1631,8 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: 8715b2c56e4c553499d1e1059aaee693, type: 3}
-  m_Resource: {fileID: 8300000, guid: 8715b2c56e4c553499d1e1059aaee693, type: 3}
+  m_audioClip: {fileID: 8300000, guid: 938fe1ca469db8449925a0ed1ba47845, type: 3}
+  m_Resource: {fileID: 8300000, guid: 938fe1ca469db8449925a0ed1ba47845, type: 3}
   m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1
