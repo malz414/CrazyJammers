@@ -29,6 +29,7 @@ public class TurnManager : MonoBehaviour
     
     private List<Enemy> enemies;
     public Hero hero;
+    private string attackNamesText;
 
     private enum Difficulty { Easy, Medium, Hard }
     private Difficulty currentDifficulty = Difficulty.Easy;
@@ -413,37 +414,6 @@ public class TurnManager : MonoBehaviour
             enemyAttacksByIndexPerm.Add(null);
         }
 
-        // --- GROUP PARALYZED TEXT ---
-        List<string> paralyzedNames = new List<string>();
-        foreach (var e in enemies)
-        {
-            if (e != null && !e.dead && !e.CanAct())
-            {
-                paralyzedNames.Add(e.characterName);
-            }
-        }
-
-        if (paralyzedNames.Count > 0)
-        {
-            string combinedText = "";
-
-            if (paralyzedNames.Count == 1)
-            {
-                combinedText = $"{paralyzedNames[0]} has been paralyzed and cannot act!";
-            }
-            else
-            {
-                string names = string.Join(", ", paralyzedNames.Take(paralyzedNames.Count - 1));
-                names += " and " + paralyzedNames.Last();
-                combinedText = $"{names} have been paralyzed and cannot act!";
-            }
-
-            blurbEvent.Set(combinedText);
-            EventBus.Publish(blurbEvent);
-            usedMove1.text = combinedText;
-            usedMoveGO.SetActive(true);
-            yield return new WaitForSeconds(2.0f);
-        }
         
         if (!isBattleActive) yield break;
 
@@ -463,7 +433,12 @@ public class TurnManager : MonoBehaviour
                 {
                      enemyAttacksByIndex.Add(skippedAttack);
                 }
-                
+
+                 // --- ADDED: Individual paralysis text and delay ---
+                blurbEvent.Set($"{enemy.characterName} is paralyzed and cannot act this turn!");
+                EventBus.Publish(blurbEvent);
+                usedMove1.text = $"{enemy.characterName} is paralyzed and cannot act this turn!";
+                usedMoveGO.SetActive(true);              
                 ApplyEffectWithDelay(paralysisVFX, enemy.transform, 0f, 3.0f);
                 yield return new WaitForSeconds(0.5f);
                 continue;
@@ -1127,7 +1102,7 @@ public class TurnManager : MonoBehaviour
 
         if (allTargetNames.Count > 0)
         {
-            string attackNamesText = "";
+            attackNamesText = "";
             if (allTargetNames.Count == 1)
             {
                 attackNamesText = allTargetNames[0];
@@ -1258,7 +1233,7 @@ public class TurnManager : MonoBehaviour
                 hero.HealDamage(damage);
                 blurbEvent.Set($"{damage} Health Recovered!");
                 EventBus.Publish(blurbEvent);
-                usedMove1.text = $"{damage} Health Recovered!";
+                usedMove1.text = $"Boss attacked {attackNamesText} with {combinedAttack.attackName} and recovered {damage} Health!";
                 ApplyEffectWithDelay(heal, hero.transform, 0f, 3.0f);
                 EventBus.Publish(statusUpdateEvent);
             }
@@ -1293,7 +1268,7 @@ public class TurnManager : MonoBehaviour
                 hero.HealDamage(damage);
                 blurbEvent.Set($"{damage} Health Recovered!");
                 EventBus.Publish(blurbEvent);
-                usedMove1.text = $"{damage} Health Recovered!";
+                usedMove1.text = $"Boss attacked {attackNamesText} with {combinedAttack.attackName} and recovered {damage} Health!";
                 hero.RemoveBurns();
                 hero.RemoveParalysis();
                 hero.RemoveHeroBurns();
@@ -1392,11 +1367,11 @@ public class TurnManager : MonoBehaviour
         if (paralyzedNames.Count > 0)
         {
             string combinedText = "";
-            if (paralyzedNames.Count == 1) combinedText = $"{paralyzedNames[0]} was paralyzed!";
+            if (paralyzedNames.Count == 1) combinedText = $"{paralyzedNames[0]} was paralyzed by {combinedAttack.attackName}!";
             else
             {
                 string names = string.Join(", ", paralyzedNames.Take(paralyzedNames.Count - 1)) + " and " + paralyzedNames.Last();
-                combinedText = $"{names} were paralyzed!";
+                combinedText = $"{names} were paralyzed by {combinedAttack.attackName}!";
             }
             blurbEvent.Set(combinedText);
             EventBus.Publish(blurbEvent);
