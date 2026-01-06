@@ -21,6 +21,8 @@ public class CharacterHUD : MonoBehaviour
     private float HPUIlerpCurve = .5f;
 
     private float targetHPFill = 1f;
+    public GameObject burnIcon;
+    public GameObject paraIcon;
 
     public void Init(Enemy character)
     {
@@ -31,6 +33,8 @@ public class CharacterHUD : MonoBehaviour
 
         hpFill.fillAmount = 1;
         hpText.text = character.maxHealth + " / " + character.maxHealth;
+        character.burnIcon = burnIcon;
+        character.paraIcon = paraIcon;
 
         EventBus.Subscribe<CharacterStatusUpdateEvent>(OnStatusUpdate);
 
@@ -44,6 +48,8 @@ public class CharacterHUD : MonoBehaviour
 
         hpFill.fillAmount = 1;
         hpText.text = character.maxHealth + " / " + character.maxHealth;
+        character.burnIcon = burnIcon;
+        character.paraIcon = paraIcon;
 
         EventBus.Subscribe<CharacterStatusUpdateEvent>(OnStatusUpdate);
 

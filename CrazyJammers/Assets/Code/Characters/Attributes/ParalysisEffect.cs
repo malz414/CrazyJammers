@@ -32,6 +32,7 @@ public class ParalysisEffect
         else
         {
             isActivatedThisTurn = false; 
+            
         }
     }
 

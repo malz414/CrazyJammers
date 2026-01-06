@@ -369,19 +369,30 @@ public class TurnManager : MonoBehaviour
             {
                 enemy.Init(popupPrefabfire);
                 enemy.TakeDamage((int)(enemy.maxHealth*.1));
+                
             
                 ApplyEffectWithDelay(burn, enemy.transform, 0f, 3.0f);
                 if (enemy.currentHealth <= 0)
                 {
                     enemy.currentHealth = 0; 
+                    blurbEvent.Set($" {enemy.characterName} has been burnt to death!");
+                    EventBus.Publish(blurbEvent);
+                    usedMove1.text = $"{enemy.characterName} has been burnt to death!";    
+                    enemy.RemoveBurns();              
                     RemoveEnemy(enemy); 
+                    yield return new WaitForSeconds(1f);
                 }
                 else
                 {
                     blurbEvent.Set($" {enemy.characterName} is burning for {enemy.burning} turns!");
                     EventBus.Publish(blurbEvent);
                     usedMove1.text = $"{enemy.characterName} is burning for {enemy.burning} turns!";
+                    enemy.burning--;
+                    if(enemy.burning<=0) enemy.burnIcon.SetActive(true);
+                    yield return new WaitForSeconds(1f);
+                    
                 }
+                
             }
         }
 
@@ -440,7 +451,7 @@ public class TurnManager : MonoBehaviour
                 usedMove1.text = $"{enemy.characterName} is paralyzed and cannot act this turn!";
                 usedMoveGO.SetActive(true);              
                 ApplyEffectWithDelay(paralysisVFX, enemy.transform, 0f, 3.0f);
-                yield return new WaitForSeconds(0.5f);
+                yield return new WaitForSeconds(1f);
                 continue;
             }
             else if (enemy.dead)
@@ -677,12 +688,19 @@ public class TurnManager : MonoBehaviour
             hero.Init(popupPrefabfire);
             hero.TakeDamage((int)(hero.maxHealth*.1));
             
+            
             ApplyEffectWithDelay(burn, hero.transform, 0f, 3.0f);
+                blurbEvent.Set($" Boss is burning for {hero.burning} turns!");
+                EventBus.Publish(blurbEvent);
+                usedMove1.text = $" Boss is burning for {hero.burning} turns!";
+                hero.burning--;
+                yield return new WaitForSeconds(1f);
             if (hero.currentHealth <= 0)
             {
                 EndGame(false);
                 yield return null;
             }
+            yield return new WaitForSeconds(1f);
         }
         
         bool isParalyzedAndSkipping = !hero.CanAct(); 
@@ -1377,7 +1395,7 @@ public class TurnManager : MonoBehaviour
             EventBus.Publish(blurbEvent);
             usedMove1.text = combinedText;
             usedMoveGO.SetActive(true);
-            yield return new WaitForSeconds(1.5f); 
+            yield return new WaitForSeconds(1f); 
         }
 
         if (defeatedNames.Count > 0)

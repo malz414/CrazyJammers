@@ -12,11 +12,14 @@
         public int barrierCount;
         public int burning;
         public bool bideBuff = false;
+         public GameObject burnIcon;
+        public GameObject paraIcon;
 
         //Dont need activeburns
         public List<BurnEffect> activeBurns = new List<BurnEffect>();
         public ParalysisEffect paralysisEffect;
         private GameplayBlurbEvent blurbEvent;
+
 
         
          
@@ -120,10 +123,12 @@
         public void RemoveBurns()
         {
             this.burning = 0;
+            burnIcon.SetActive(false);
         }
         public void RemoveParalysis()
         {
             paralysisEffect = null;  
+            paraIcon.SetActive(false);
         }
         public void DoAttackAnimation()
         {
@@ -196,11 +201,13 @@
             // BurnEffect burnEffect = new BurnEffect(damagePerTurn, duration);
             // activeBurns.Add(burnEffect);
             burning = 4;
+            burnIcon.SetActive(true);
         }
 
         public void ApplyParalysis(int duration, bool enhanced)
         {
             paralysisEffect = new ParalysisEffect(duration, enhanced);
+            paraIcon.SetActive(true);
         }
 
         public bool CanAct()
@@ -211,17 +218,28 @@
 
         public void UpdateEffects()
         {
-
-            paralysisEffect?.CheckForActivation();
-
             foreach (var burn in activeBurns.ToArray())
             {
                 burn.ApplyBurn(this);
                 if (burn.turnsRemaining <= 0)
                 {
                     activeBurns.Remove(burn);
+                    burnIcon.SetActive(false);
                 }
             }
+
+            paralysisEffect?.CheckForActivation();
+            if(paralysisEffect!=null) 
+            {
+                if(!paralysisEffect.IsEffectActive())
+                {
+                    RemoveParalysis();
+                }
+                
+                
+            }
+
+            
         }
 
     }
