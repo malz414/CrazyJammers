@@ -1,7 +1,7 @@
 using TMPro;
 using UnityEngine;
 using System.Collections;
-using CrazyGames;
+//using CrazyGames;
 
 public class QuoteBoxManager : MonoBehaviour
 {
@@ -46,6 +46,6 @@ public class QuoteBoxManager : MonoBehaviour
             }
         quoteBox.transform.parent.parent.gameObject.SetActive(false);
         quoteText.text = "";
-        CrazySDK.Game.GameplayStart();
+        //CrazySDK.Game.GameplayStart();
     }
 }

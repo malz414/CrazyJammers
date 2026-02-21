@@ -72,7 +72,14 @@ public class MusicManager : MonoBehaviour
         }
 
         audioSource.clip = nextClip;
+
+        nextClip.LoadAudioData(); 
+        while (nextClip.loadState != AudioDataLoadState.Loaded)
+        {
+            yield return null; 
+        }
         audioSource.Play();
+
         for (float t = 0; t < fadeDuration; t += Time.deltaTime)
         {
             audioSource.volume = Mathf.Lerp(0, maxVolume, t / fadeDuration);

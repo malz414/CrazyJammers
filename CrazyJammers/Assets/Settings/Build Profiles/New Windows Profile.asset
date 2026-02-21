@@ -20,8 +20,6 @@ MonoBehaviour:
     rid: 113342208833224704
   m_OverrideGlobalSceneList: 0
   m_Scenes:
-  - m_enabled: 0
-    m_path: Assets/CrazySDK/Demo/LoadingScene.unity
   - m_enabled: 1
     m_path: Assets/GameScene(LVL1).unity
   - m_enabled: 1

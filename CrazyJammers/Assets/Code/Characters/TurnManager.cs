@@ -8,7 +8,7 @@ using UnityEngine.EventSystems;
 using DamageNumbersPro;
 using System.Linq;
 using static System.Math;
-using CrazyGames;
+//using CrazyGames;
 using UnityEngine.SceneManagement;
 
 public class TurnManager : MonoBehaviour
@@ -127,6 +127,7 @@ public class TurnManager : MonoBehaviour
     private bool heroAniPlayed = false;
 
     public int bideAttribute = 0;
+    public float heroBideLevelBase = 1.0f;
     private float randomChance;
     private bool attackExtra = false;
 
@@ -270,7 +271,10 @@ public class TurnManager : MonoBehaviour
 
         GameObject bossObj = SpawnPrefabAtPosition(bossPrefab, bossSpawn);
         hero = bossObj.GetComponent<Hero>();
+        hero.bideLevel = heroBideLevelBase;
+        hero.bideLevelBase = heroBideLevelBase;
         hero.Init(popupPrefab);
+        
         bossHUD.Init(hero);
 
         foreach (var obj in listOfObjectToDeactivateAtStartOfBattle)
@@ -731,7 +735,7 @@ public class TurnManager : MonoBehaviour
             if (bideAttribute > 0) bideAttribute--;
             if (bideAttribute == 0)
             {
-                hero.bideLevel = 1.0f;
+                hero.bideLevel = hero.bideLevelBase;
                 hero.bideUses = 0;
             }
             usedMoveGO.SetActive(false);
@@ -947,7 +951,7 @@ public class TurnManager : MonoBehaviour
             }
             if (bideAttribute == 0)
             {
-                hero.bideLevel = 1.0f;
+                hero.bideLevel = hero.bideLevelBase;
                 hero.bideUses = 0;
             }
             usedMoveGO.SetActive(true);
@@ -991,7 +995,7 @@ public class TurnManager : MonoBehaviour
             }
             if (bideAttribute == 0)
             {
-                hero.bideLevel = 1.0f;
+                hero.bideLevel = hero.bideLevelBase;
                 hero.bideUses = 0;
             }
 
@@ -1544,36 +1548,36 @@ public class TurnManager : MonoBehaviour
 
     public void ReviveBoss()
     {
-        CrazySDK.Ad.RequestAd(CrazyAdType.Rewarded, () => 
-        {
-            // ad started
-        }, (error) =>
-        {
-            // ad error
-        }, () =>
-        {
-             hero.currentHealth = hero.maxHealth;
-             hero.animator.SetTrigger("Revive");
-             revived = true;
-             GameObject boss = GameObject.FindGameObjectWithTag("Boss");
-             if (boss != null)
-             {
-                 Hero hero = boss.GetComponent<Hero>();
-                 if (hero != null)
-                 {
-                     if (hero.lerpCoroutine != null) StopCoroutine(hero.lerpCoroutine);
-                     hero.lerpCoroutine = StartCoroutine(hero.LerpYPosition(boss.transform.position.y, hero.originalY, .21f, .5f));
-                 }
-             }
+        // CrazySDK.Ad.RequestAd(CrazyAdType.Rewarded, () => 
+        // {
+        //     // ad started
+        // }, (error) =>
+        // {
+        //     // ad error
+        // }, () =>
+        // {
+        //      hero.currentHealth = hero.maxHealth;
+        //      hero.animator.SetTrigger("Revive");
+        //      revived = true;
+        //      GameObject boss = GameObject.FindGameObjectWithTag("Boss");
+        //      if (boss != null)
+        //      {
+        //          Hero hero = boss.GetComponent<Hero>();
+        //          if (hero != null)
+        //          {
+        //              if (hero.lerpCoroutine != null) StopCoroutine(hero.lerpCoroutine);
+        //              hero.lerpCoroutine = StartCoroutine(hero.LerpYPosition(boss.transform.position.y, hero.originalY, .21f, .5f));
+        //          }
+        //      }
 
-             isBattleActive = true; // Restart logic
+        //      isBattleActive = true; // Restart logic
 
-             ApplyEffectWithDelay(bideVFX, hero.transform, 0f, 2.0f,true,0f, null, false);
-             StartCoroutine(StartTurn());
-             loseScreen.SetActive(false);
-             MainUIParent.SetActive(true);
-             CrazySDK.Game.GameplayStart();
-        });
+        //      ApplyEffectWithDelay(bideVFX, hero.transform, 0f, 2.0f,true,0f, null, false);
+        //      StartCoroutine(StartTurn());
+        //      loseScreen.SetActive(false);
+        //      MainUIParent.SetActive(true);
+        //      CrazySDK.Game.GameplayStart();
+        // });
     }
     
 
