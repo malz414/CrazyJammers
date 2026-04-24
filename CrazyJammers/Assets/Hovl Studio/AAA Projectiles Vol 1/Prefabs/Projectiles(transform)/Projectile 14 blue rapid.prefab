@@ -50,7 +50,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 605a456cfc02f6b499a64717539a27e8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fix90DegreeRotation: 0
+  fix90DegreeRotation: 1
   useNegative90: 1
   speed: 10
   hitOffset: 0.1
@@ -5163,7 +5163,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &676232957845551377
 Transform:
   m_ObjectHideFlags: 0
