@@ -146,6 +146,8 @@ MonoBehaviour:
   barrierCount: 0
   burning: 0
   bideBuff: 0
+  burnIcon: {fileID: 0}
+  paraIcon: {fileID: 0}
   animator: {fileID: 2209448704372366197}
   possibleAttacks:
   - {fileID: 11400000, guid: 27cfda9b1a1637746985ceb311c3760c, type: 2}

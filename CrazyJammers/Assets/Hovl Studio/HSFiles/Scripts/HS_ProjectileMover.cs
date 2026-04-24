@@ -4,6 +4,13 @@ using UnityEngine;
 
 public class HS_ProjectileMover : MonoBehaviour
 {
+    [Header("Orientation Fix")]
+    [Tooltip("Tick this if the projectile flies sideways")]
+    [SerializeField] protected bool fix90DegreeRotation = false;
+    [Tooltip("Tick this if the fix makes it fly backward instead of forward")]
+    [SerializeField] protected bool useNegative90 = false;
+
+    [Header("Standard Settings")]
     [SerializeField] protected float speed = 15f;
     [SerializeField] protected float hitOffset = 0f;
     [SerializeField] protected bool UseFirePointRotation;
@@ -16,13 +23,21 @@ public class HS_ProjectileMover : MonoBehaviour
     [SerializeField] protected Light lightSourse;
     [SerializeField] protected GameObject[] Detached;
     [SerializeField] protected ParticleSystem projectilePS;
-     [SerializeField] protected bool forward = true;
+    [SerializeField] protected bool forward = true;
     private bool startChecker = false;
     public Vector3 moveDirection = Vector3.forward;
-    [SerializeField]protected bool notDestroy = false;
+    [SerializeField] protected bool notDestroy = false;
 
     protected virtual void Start()
     {
+        // --- ADDED FIX: Rotate the visual orientation immediately upon spawning ---
+        if (fix90DegreeRotation)
+        {
+            float angle = useNegative90 ? -90f : 90f;
+            transform.Rotate(0, angle, 0, Space.Self);
+        }
+        // ------------------------------------------------------------------------
+
         if (!startChecker)
         {
             Debug.Log($"Projectile Speed: {speed}");
@@ -69,12 +84,12 @@ public class HS_ProjectileMover : MonoBehaviour
     protected virtual void FixedUpdate()
     {
         if (speed != 0)
-{
-    if (forward)
-        rb.linearVelocity = moveDirection.normalized * (speed / transform.lossyScale.magnitude);
-    else
-        rb.linearVelocity = -moveDirection.normalized * (speed / transform.lossyScale.magnitude);
-}
+        {
+            if (forward)
+                rb.linearVelocity = moveDirection.normalized * (speed / transform.lossyScale.magnitude);
+            else
+                rb.linearVelocity = -moveDirection.normalized * (speed / transform.lossyScale.magnitude);
+        }
     }
 
     //https ://docs.unity3d.com/ScriptReference/Rigidbody.OnCollisionEnter.html

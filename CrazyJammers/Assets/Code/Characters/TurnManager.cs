@@ -552,7 +552,7 @@ public class TurnManager : MonoBehaviour
                 {
                     hero.TakeDamage(enemyAttack.GetDamage());
                     hero.TakeDamage(enemyAttack.GetDamage());
-                    ApplyEffectWithDelay(iceAttack, enemy.transform, 0f, 3.0f);
+                    ApplyEffectWithDelay(iceAttack, enemy.transform, 0f, 3.0f, null ,2f);
                     ApplyEffectWithDelay(iceHit, hero.transform, .5f, 3.0f);
                 }
 
@@ -1146,11 +1146,12 @@ public class TurnManager : MonoBehaviour
         foreach (var targetEnemy in targetEnemies)
         {
             if (!isBattleActive) yield break;
+            int currentTargetIndex = enemies.IndexOf(targetEnemy);
 
             // Reset Popup Color
             targetEnemy.Init(popupPrefab); 
 
-            yield return new WaitForSeconds(0f);
+            yield return new WaitForSeconds(0.2f);
 
             if (!heroAniPlayed)
             {
@@ -1204,7 +1205,7 @@ public class TurnManager : MonoBehaviour
                 }
 
                 float yRotationOffset = 0f;
-                switch (selectedEnemyNum)
+                switch (currentTargetIndex)
                 {
                     case 0: yRotationOffset = 30f; break;
                     case 1: yRotationOffset = 5f; break;
@@ -1237,7 +1238,7 @@ public class TurnManager : MonoBehaviour
                 Vector3 newPosition = hero.transform.position;
                 GameObject tempGameObject = new GameObject();
                 tempGameObject.transform.position = newPosition;
-                switch (selectedEnemyNum)
+                switch (currentTargetIndex)
                 {
                     case 0: yRotationOffset = 115f; break;
                     case 1: yRotationOffset = 95f; break;
@@ -1347,7 +1348,7 @@ public class TurnManager : MonoBehaviour
                 }
 
                 float yRotationOffset = 0f;
-                switch (selectedEnemyNum)
+                switch (currentTargetIndex)
                 {
                     case 0: yRotationOffset = 115f; break;
                     case 1: yRotationOffset = 110f; break;
