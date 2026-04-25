@@ -2374,6 +2374,10 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 7017319775245405735, guid: edc093f874874f64d9cfa15aa220a370, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -0.428833
+      objectReference: {fileID: 0}
     - target: {fileID: 7522244422731442467, guid: edc093f874874f64d9cfa15aa220a370, type: 3}
       propertyPath: m_Pivot.x
       value: 0
@@ -7133,7 +7137,7 @@ PrefabInstance:
     - target: {fileID: 8485419520516605267, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
       propertyPath: iceAttack
       value: 
-      objectReference: {fileID: 1580133494715678, guid: 30a2224334c85244595f52a7a83227d1, type: 3}
+      objectReference: {fileID: 1580133494715678, guid: a0bb51d4674a3dd409b38a312c2c4218, type: 3}
     - target: {fileID: 8485419520516605267, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
       propertyPath: potionAni
       value: 
