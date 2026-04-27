@@ -287,20 +287,21 @@ public class TurnManager : MonoBehaviour
         blurbEvent = new GameplayBlurbEvent();
     }
 
-    private void ApplyEffectWithDelay(GameObject effectPrefab, Transform target, float delay, float effectDuration, bool? xRotationEffect = null, float raiseAmount = 0f, float? yRotationOffset = null, bool? standUpright = null) 
+    // UPDATED: Added xOffset and zOffset to the parameters so you don't need empty GameObjects or weird vector math!
+    private void ApplyEffectWithDelay(GameObject effectPrefab, Transform target, float delay, float effectDuration, bool? xRotationEffect = null, float raiseAmount = 0f, float? yRotationOffset = null, bool? standUpright = null, float xOffset = 0f, float zOffset = 0f) 
     {
-        StartCoroutine(DelayedEffectCoroutine(effectPrefab, target, delay, effectDuration, raiseAmount, xRotationEffect, yRotationOffset, standUpright));
+        StartCoroutine(DelayedEffectCoroutine(effectPrefab, target, delay, effectDuration, raiseAmount, xRotationEffect, yRotationOffset, standUpright, xOffset, zOffset));
     }
 
-    private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform target, float delay, float effectDuration, float raiseAmount, bool? xRotationEffect, float? yRotationOffset = null, bool? standUpright = null)
+    private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform target, float delay, float effectDuration, float raiseAmount, bool? xRotationEffect, float? yRotationOffset = null, bool? standUpright = null, float xOffset = 0f, float zOffset = 0f)
     {
         yield return new WaitForSeconds(delay);
         
         // Stop visuals if game is over
         if (!isBattleActive) yield break;
 
-        Vector3 effectPosition = target.position;
-        if (raiseAmount > 0f) effectPosition += new Vector3(0f, raiseAmount, 0f);
+        // Apply all the offsets (X, Y/raiseAmount, Z) in one clean line!
+        Vector3 effectPosition = target.position + new Vector3(xOffset, raiseAmount, zOffset);
 
         GameObject effect = Instantiate(effectPrefab, effectPosition, Quaternion.identity); 
 
@@ -549,12 +550,11 @@ public class TurnManager : MonoBehaviour
                 }
 
                 if (enemyAttack.attributes.Contains("Ice"))
-                {
+                {   
                     hero.TakeDamage(enemyAttack.GetDamage());
                     hero.TakeDamage(enemyAttack.GetDamage());
                     ApplyEffectWithDelay(iceAttack, enemy.transform, 0f, 3.0f, null, 2f, -90f);
-                    ApplyEffectWithDelay(iceHit, hero.transform, .5f, 3.0f);
-
+                    ApplyEffectWithDelay(iceHit, hero.transform, 0.5f, 3.0f, null, 1f, null, null, 1f, 0f);
                 }
 
                 if (enemyAttack.attributes.Contains("Lunge"))
