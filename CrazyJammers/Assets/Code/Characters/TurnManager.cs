@@ -552,7 +552,16 @@ public class TurnManager : MonoBehaviour
                 {
                     hero.TakeDamage(enemyAttack.GetDamage());
                     hero.TakeDamage(enemyAttack.GetDamage());
-                    ApplyEffectWithDelay(iceAttack, enemy.transform, 0f, 3.0f, null, 2f, -90f);
+
+                    float yRotationOffset = -90f;
+                    switch (i)
+                    {
+                        case 0: yRotationOffset = -70f; break;
+                        case 1: yRotationOffset = -90f; break;
+                        case 2: yRotationOffset = -90f; break;
+                        case 3: yRotationOffset = -110f; break;
+                    }
+                    ApplyEffectWithDelay(iceAttack, enemy.transform, 0f, 3.0f, null, 2f, yRotationOffset);
                     ApplyEffectWithDelay(iceHit, hero.transform, .5f, 3.0f);
 
                 }

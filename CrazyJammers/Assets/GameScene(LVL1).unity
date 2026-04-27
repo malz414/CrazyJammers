@@ -7137,7 +7137,7 @@ PrefabInstance:
     - target: {fileID: 8485419520516605267, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
       propertyPath: iceAttack
       value: 
-      objectReference: {fileID: 1580133494715678, guid: a0bb51d4674a3dd409b38a312c2c4218, type: 3}
+      objectReference: {fileID: 1216662749087568, guid: 93554ed234c6755409dc2338cd008cfb, type: 3}
     - target: {fileID: 8485419520516605267, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
       propertyPath: potionAni
       value: 
