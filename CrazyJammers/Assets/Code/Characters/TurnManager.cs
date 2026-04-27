@@ -553,8 +553,18 @@ public class TurnManager : MonoBehaviour
                 {   
                     hero.TakeDamage(enemyAttack.GetDamage());
                     hero.TakeDamage(enemyAttack.GetDamage());
-                    ApplyEffectWithDelay(iceAttack, enemy.transform, 0f, 3.0f, null, 2f, -90f);
-                    ApplyEffectWithDelay(iceHit, hero.transform, 0.5f, 3.0f, null, 1f, null, null, 1f, 0f);
+
+                    float yRotationOffset = -90f;
+                    switch (i)
+                    {
+                        case 0: yRotationOffset = -70f; break;
+                        case 1: yRotationOffset = -90f; break;
+                        case 2: yRotationOffset = -90f; break;
+                        case 3: yRotationOffset = -110f; break;
+                    }
+                    ApplyEffectWithDelay(iceAttack, enemy.transform, 0f, 3.0f, null, 2f, yRotationOffset);
+                    ApplyEffectWithDelay(iceHit, hero.transform, .2f, 4f, null, .5f);
+
                 }
 
                 if (enemyAttack.attributes.Contains("Lunge"))
@@ -1380,7 +1390,7 @@ public class TurnManager : MonoBehaviour
 
                 // Pass the dynamically calculated yRotationOffset into the effect
                 ApplyEffectWithDelay(iceAttack, hero.transform, 0f, 3.0f, null, 1.5f, yRotationOffset); 
-                ApplyEffectWithDelay(iceHit, targetEnemy.transform, .5f, 3.0f);
+                ApplyEffectWithDelay(iceHit, targetEnemy.transform, .2f, 4f, null, .5f);
                 
                 blurbEvent.Set($"You strike again");
                 EventBus.Publish(blurbEvent);
