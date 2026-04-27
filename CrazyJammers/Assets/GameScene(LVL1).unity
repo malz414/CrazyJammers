@@ -7275,6 +7275,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1267452480}
     - target: {fileID: 8485419520516605267, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
+      propertyPath: iceLungeAttack
+      value: 
+      objectReference: {fileID: 1014003377299866, guid: 5b2f5fb010f05b0439f2df752f1358b4, type: 3}
+    - target: {fileID: 8485419520516605267, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
       propertyPath: attackDropdown2
       value: 
       objectReference: {fileID: 1204392224}
@@ -7282,6 +7286,10 @@ PrefabInstance:
       propertyPath: descriptionText
       value: 
       objectReference: {fileID: 1174132654}
+    - target: {fileID: 8485419520516605267, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
+      propertyPath: fireLungeAttack
+      value: 
+      objectReference: {fileID: 1014003377299866, guid: 5b2f5fb010f05b0439f2df752f1358b4, type: 3}
     - target: {fileID: 8485419520516605267, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
       propertyPath: popupPrefabfire
       value: 

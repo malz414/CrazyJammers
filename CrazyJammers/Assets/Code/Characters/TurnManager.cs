@@ -67,6 +67,14 @@ public class TurnManager : MonoBehaviour
     [SerializeField] private GameObject healfield;
     [SerializeField] private GameObject zapAttack;
     [SerializeField] private GameObject zapHit;
+
+    [Header("Hybrid Lunge VFX")]
+    [SerializeField] private GameObject fireLungeAttack;
+    [SerializeField] private GameObject fireLungeHit;
+    [SerializeField] private GameObject iceLungeAttack;
+    [SerializeField] private GameObject iceLungeHit;
+    [SerializeField] private GameObject arrowLungeAttack;
+    [SerializeField] private GameObject arrowLungeHit;
     
     // Expanded Names
     [SerializeField] private GameObject paralysisVFX; // Was "para"
@@ -287,7 +295,6 @@ public class TurnManager : MonoBehaviour
         blurbEvent = new GameplayBlurbEvent();
     }
 
-    // UPDATED: Added xOffset and zOffset to the parameters so you don't need empty GameObjects or weird vector math!
     private void ApplyEffectWithDelay(GameObject effectPrefab, Transform target, float delay, float effectDuration, bool? xRotationEffect = null, float raiseAmount = 0f, float? yRotationOffset = null, bool? standUpright = null, float xOffset = 0f, float zOffset = 0f) 
     {
         StartCoroutine(DelayedEffectCoroutine(effectPrefab, target, delay, effectDuration, raiseAmount, xRotationEffect, yRotationOffset, standUpright, xOffset, zOffset));
@@ -297,10 +304,8 @@ public class TurnManager : MonoBehaviour
     {
         yield return new WaitForSeconds(delay);
         
-        // Stop visuals if game is over
         if (!isBattleActive) yield break;
 
-        // Apply all the offsets (X, Y/raiseAmount, Z) in one clean line!
         Vector3 effectPosition = target.position + new Vector3(xOffset, raiseAmount, zOffset);
 
         GameObject effect = Instantiate(effectPrefab, effectPosition, Quaternion.identity); 
@@ -355,7 +360,6 @@ public class TurnManager : MonoBehaviour
 
     public IEnumerator StartTurn()
     {
-        // Stop turn logic if game is over
         if (!isBattleActive) yield break;
 
         drop1Opened = false;
@@ -412,7 +416,6 @@ public class TurnManager : MonoBehaviour
             yield return null;
         }
             
-        // Only continue if the game is still running
         if(isBattleActive) StartCoroutine(DoTurnRoutine());
     }
 
@@ -433,7 +436,6 @@ public class TurnManager : MonoBehaviour
         
         if (!isBattleActive) yield break;
 
-        // Enemies attack hero
         for (int i = 0; i < enemies.Count; i++)
         {
             if (!isBattleActive) break;
@@ -450,7 +452,6 @@ public class TurnManager : MonoBehaviour
                      enemyAttacksByIndex.Add(skippedAttack);
                 }
 
-                 // --- ADDED: Individual paralysis text and delay ---
                 blurbEvent.Set($"{enemy.characterName} is paralyzed and cannot act this turn!");
                 EventBus.Publish(blurbEvent);
                 usedMove1.text = $"{enemy.characterName} is paralyzed and cannot act this turn!";
@@ -915,7 +916,6 @@ public class TurnManager : MonoBehaviour
         potionAmountText.text = PotionData.Instance.Potion.ToString();
     }
 
-    // --- RESTORED: OnBideButtonClicked ---
     public void OnBideButtonClicked()
     {
         if (!isBattleActive) return;
@@ -936,7 +936,6 @@ public class TurnManager : MonoBehaviour
         }
     }
 
-    // --- RESTORED: OnPotionClicked ---
     public void OnPotionClicked()
     {
         if (!isBattleActive) return;
@@ -985,7 +984,6 @@ public class TurnManager : MonoBehaviour
         }
     }
 
-    // --- RESTORED: OnPanaceaClicked ---
     public void OnPanaceaClicked()
     {
         if (!isBattleActive) return;
@@ -1215,21 +1213,25 @@ public class TurnManager : MonoBehaviour
                     usedMove1.text = $"{targetEnemy.characterName} was burned!";
                 }
 
-                float yRotationOffset = 0f;
-                switch (currentTargetIndex)
+                // NEW: Only play standard fire VFX if NOT lunging
+                if (!combinedAttack.attributes.Contains("Lunge"))
                 {
-                    case 0: yRotationOffset = 30f; break;
-                    case 1: yRotationOffset = 5f; break;
-                    case 2: yRotationOffset = 0f; break;
-                    case 3: yRotationOffset = -25f; break;
-                }
+                    float yRotationOffset = 0f;
+                    switch (currentTargetIndex)
+                    {
+                        case 0: yRotationOffset = 30f; break;
+                        case 1: yRotationOffset = 5f; break;
+                        case 2: yRotationOffset = 0f; break;
+                        case 3: yRotationOffset = -25f; break;
+                    }
 
-                Vector3 newPosition = hero.transform.position;
-                GameObject tempGameObject = new GameObject();
-                tempGameObject.transform.position = newPosition;
-                Quaternion customRot = Quaternion.Euler(0, yRotationOffset, 0);
-                ApplyEffectWithDelay(fireAttack, tempGameObject.transform, 0f, 3.0f, true, 1.5f, yRotationOffset);
-                ApplyEffectWithDelay(fireHit, targetEnemy.transform, 0.5f, 3.0f);
+                    Vector3 newPosition = hero.transform.position;
+                    GameObject tempGameObject = new GameObject();
+                    tempGameObject.transform.position = newPosition;
+                    Quaternion customRot = Quaternion.Euler(0, yRotationOffset, 0);
+                    ApplyEffectWithDelay(fireAttack, tempGameObject.transform, 0f, 3.0f, true, 1.5f, yRotationOffset);
+                    ApplyEffectWithDelay(fireHit, targetEnemy.transform, 0.5f, 3.0f);
+                }
             }
 
             if (combinedAttack.attributes.Contains("Paralysis"))
@@ -1245,20 +1247,24 @@ public class TurnManager : MonoBehaviour
                     }
                 }
 
-                float yRotationOffset = 0f;
-                Vector3 newPosition = hero.transform.position;
-                GameObject tempGameObject = new GameObject();
-                tempGameObject.transform.position = newPosition;
-                switch (currentTargetIndex)
+                // NEW: Only play standard arrow VFX if NOT lunging
+                if (!combinedAttack.attributes.Contains("Lunge"))
                 {
-                    case 0: yRotationOffset = 115f; break;
-                    case 1: yRotationOffset = 95f; break;
-                    case 2: yRotationOffset = 75f; break;
-                    case 3: yRotationOffset = 60f; break;
+                    float yRotationOffset = 0f;
+                    Vector3 newPosition = hero.transform.position;
+                    GameObject tempGameObject = new GameObject();
+                    tempGameObject.transform.position = newPosition;
+                    switch (currentTargetIndex)
+                    {
+                        case 0: yRotationOffset = 115f; break;
+                        case 1: yRotationOffset = 95f; break;
+                        case 2: yRotationOffset = 75f; break;
+                        case 3: yRotationOffset = 60f; break;
+                    }
+                    Destroy(tempGameObject, 5f);
+                    ApplyEffectWithDelay(arrowAttack, tempGameObject.transform, 0f, 3.0f, true, 1.5f, yRotationOffset);
+                    ApplyEffectWithDelay(arrowHit, targetEnemy.transform, .5f, 3.0f);
                 }
-                Destroy(tempGameObject, 5f);
-                ApplyEffectWithDelay(arrowAttack, tempGameObject.transform, 0f, 3.0f, true, 1.5f, yRotationOffset);
-                ApplyEffectWithDelay(arrowHit, targetEnemy.transform, .5f, 3.0f);
             }
 
             if (combinedAttack.attributes.Contains("Heal"))
@@ -1378,19 +1384,21 @@ public class TurnManager : MonoBehaviour
             {
                 hero.Init(popupPrefab);
 
-                // Determine the rotation angle based on which enemy is being targeted
-                float yRotationOffset = 0f;
-                switch (currentTargetIndex)
+                // NEW: Only play standard ice VFX if NOT lunging
+                if (!combinedAttack.attributes.Contains("Lunge"))
                 {
-                    case 0: yRotationOffset = 115f; break;
-                    case 1: yRotationOffset = 95f; break;
-                    case 2: yRotationOffset = 75f; break;
-                    case 3: yRotationOffset = 60f; break;
-                }
+                    float yRotationOffset = 0f;
+                    switch (currentTargetIndex)
+                    {
+                        case 0: yRotationOffset = 115f; break;
+                        case 1: yRotationOffset = 95f; break;
+                        case 2: yRotationOffset = 75f; break;
+                        case 3: yRotationOffset = 60f; break;
+                    }
 
-                // Pass the dynamically calculated yRotationOffset into the effect
-                ApplyEffectWithDelay(iceAttack, hero.transform, 0f, 3.0f, null, 1.5f, yRotationOffset); 
-                ApplyEffectWithDelay(iceHit, hero.transform, 0.2f, 4.0f, null, 0.5f, null, null, 1f, 0f);
+                    ApplyEffectWithDelay(iceAttack, hero.transform, 0f, 3.0f, null, 1.5f, yRotationOffset); 
+                    ApplyEffectWithDelay(iceHit, hero.transform, 0.2f, 4.0f, null, 0.5f, null, null, 1f, 0f);
+                }
                 
                 blurbEvent.Set($"You strike again");
                 EventBus.Publish(blurbEvent);
@@ -1401,8 +1409,29 @@ public class TurnManager : MonoBehaviour
                 hero.Init(popupPrefab);
                 blurbEvent.Set($"You strike twice");
                 EventBus.Publish(blurbEvent);
-                ApplyEffectWithDelay(lungeAttack, hero.transform, 0f, 3.0f, true, 0f);
-                ApplyEffectWithDelay(lungeHit, targetEnemy.transform, .5f, 3.0f);
+
+                // NEW: Logic to swap standard lunge VFX for element specific VFX
+                GameObject currentLungeAttack = lungeAttack;
+                GameObject currentLungeHit = lungeHit;
+
+                if (combinedAttack.attributes.Contains("Burn") && fireLungeAttack != null && fireLungeHit != null)
+                {
+                    currentLungeAttack = fireLungeAttack;
+                    currentLungeHit = fireLungeHit;
+                }
+                else if (combinedAttack.attributes.Contains("Ice") && iceLungeAttack != null && iceLungeHit != null)
+                {
+                    currentLungeAttack = iceLungeAttack;
+                    currentLungeHit = iceLungeHit;
+                }
+                else if (combinedAttack.attributes.Contains("Paralysis") && arrowLungeAttack != null && arrowLungeHit != null)
+                {
+                    currentLungeAttack = arrowLungeAttack;
+                    currentLungeHit = arrowLungeHit;
+                }
+
+                ApplyEffectWithDelay(currentLungeAttack, hero.transform, 0f, 3.0f, true, 0f);
+                ApplyEffectWithDelay(currentLungeHit, targetEnemy.transform, .5f, 3.0f);
             }
 
             heroCritRate = 0.05f;
