@@ -562,7 +562,7 @@ public class TurnManager : MonoBehaviour
                         case 3: yRotationOffset = -110f; break;
                     }
                     ApplyEffectWithDelay(iceAttack, enemy.transform, 0f, 3.0f, null, 2f, yRotationOffset);
-                    ApplyEffectWithDelay(iceHit, hero.transform, .5f, 3.0f);
+                    ApplyEffectWithDelay(iceHit, hero.transform, .2f, 4f, null, .5f);
 
                 }
 
@@ -1389,7 +1389,7 @@ public class TurnManager : MonoBehaviour
 
                 // Pass the dynamically calculated yRotationOffset into the effect
                 ApplyEffectWithDelay(iceAttack, hero.transform, 0f, 3.0f, null, 1.5f, yRotationOffset); 
-                ApplyEffectWithDelay(iceHit, targetEnemy.transform, .5f, 3.0f);
+                ApplyEffectWithDelay(iceHit, targetEnemy.transform, .2f, 4f, null, .5f);
                 
                 blurbEvent.Set($"You strike again");
                 EventBus.Publish(blurbEvent);
