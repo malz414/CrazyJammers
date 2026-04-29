@@ -7065,7 +7065,7 @@ PrefabInstance:
     - target: {fileID: 8485419520516605267, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
       propertyPath: iceHit
       value: 
-      objectReference: {fileID: 1320316104850776, guid: 1977fc844cb969a44866c4dcd32996d1, type: 3}
+      objectReference: {fileID: 1231636063597364, guid: 3aa0fab185f378240b831342bde74b26, type: 3}
     - target: {fileID: 8485419520516605267, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
       propertyPath: zapHit
       value: 
