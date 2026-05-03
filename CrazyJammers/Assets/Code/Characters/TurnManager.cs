@@ -1151,7 +1151,7 @@ public class TurnManager : MonoBehaviour
     private int GetMaxTargetsForAttack(List<string> attributes)
     {
         if (attributes.Contains("Field")) return 4;
-        else if (attributes.Contains("Ice")) return 4; 
+        else if (attributes.Contains("Ice")) return 3; 
         else if (attributes.Contains("Lunge")) return 2;
         else return 1; 
     }
