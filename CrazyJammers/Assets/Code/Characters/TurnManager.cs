@@ -75,6 +75,16 @@ public class TurnManager : MonoBehaviour
     [SerializeField] private GameObject iceLungeHit;
     [SerializeField] private GameObject arrowLungeAttack;
     [SerializeField] private GameObject arrowLungeHit;
+    [SerializeField] private GameObject paralysisAttack;
+    [SerializeField] private GameObject paralysisHit;
+
+    [Header("Hybrid Elemental VFX")]
+    [SerializeField] private GameObject iceBurnAttack;
+    [SerializeField] private GameObject iceBurnHit;
+    [SerializeField] private GameObject iceParaAttack; // Ice Bullet x Paralysis
+    [SerializeField] private GameObject iceParaHit;
+    [SerializeField] private GameObject arrowBurnAttack; // Arrow x Burn
+    [SerializeField] private GameObject arrowBurnHit;
     
     // Expanded Names
     [SerializeField] private GameObject paralysisVFX; // Was "para"
@@ -314,7 +324,7 @@ public class TurnManager : MonoBehaviour
         effect.transform.SetParent(null);
     
         if (yRotationOffset.HasValue)
-        {    
+        {   
             Vector3 direction = Quaternion.Euler(0f, yRotationOffset.Value, 0f) * Vector3.forward;
             effect.transform.rotation = Quaternion.LookRotation(direction);
             HS_ProjectileMover mover = effect.GetComponent<HS_ProjectileMover>();
@@ -896,8 +906,30 @@ public class TurnManager : MonoBehaviour
         }
 
         hero.CombineAttacks(selectedAttack1, selectedAttack2);
-        usedMove1.text = ($"Choose a target");
 
+        int maxTargets = GetMaxTargetsForAttack(combinedAttack.attributes);
+        var aliveEnemiesList = enemies.Where(e => !e.dead).ToList();
+
+        // --- AUTO-EXECUTE LOGIC ---
+        if (IsMultiTargetAttack(combinedAttack.attributes) && maxTargets >= aliveEnemiesList.Count && aliveEnemiesList.Count > 0)
+        {
+            usedMove1.text = $"Boss Used {combinedAttack.attackName}";
+            
+            selectedAttack1 = null;
+            selectedAttack2 = null;
+            attackOptionsParent.SetActive(false);
+            attackOptionsMenu.SetActive(false);
+            potionOptions.SetActive(false);
+
+            if (bossAttackCoroutine != null) StopCoroutine(bossAttackCoroutine);
+            
+            // Pass the alive enemies directly (no more duplicates)
+            bossAttackCoroutine = StartCoroutine(DoBossAttackRoutine(aliveEnemiesList.ToArray()));
+            return;
+        }
+
+        // --- STANDARD MANUAL TARGETING ---
+        usedMove1.text = ($"Choose a target");
         selectedAttack1 = null;
         selectedAttack2 = null;
 
@@ -907,6 +939,8 @@ public class TurnManager : MonoBehaviour
         targetingHUDParent.SetActive(true);
         
         targetingMode = true;
+        selectingEnemies = false; // Reset to ensure clean selection state
+        selectedEnemies.Clear();
     }
 
     public void OnItemOptionsClicked()
@@ -1036,12 +1070,9 @@ public class TurnManager : MonoBehaviour
         if (!targetingMode) return;
 
         int maxTargets = GetMaxTargetsForAttack(combinedAttack.attributes);
-        int aliveEnemies = enemies.Count(e => !e.dead);
-        int targets = System.Math.Min(maxTargets, aliveEnemies);
 
-        if (targets == 1 || !IsMultiTargetAttack(combinedAttack.attributes))
+        if (maxTargets <= 1 || !IsMultiTargetAttack(combinedAttack.attributes))
         {
-            Debug.Log("ATTACKING SINGLE TARGET");
             blurbEvent.Set("Attacking");
             EventBus.Publish(blurbEvent);
 
@@ -1051,6 +1082,7 @@ public class TurnManager : MonoBehaviour
             targetingHUDParent.SetActive(false);
             bossAttackCoroutine = StartCoroutine(DoBossAttackRoutine(enemy));
             usedMove1.text = ($"Boss Used {combinedAttack.attackName}");
+            
              for (int i = 0; i < enemies.Count; i++)
                 {
                     if (enemies[i] == enemy)
@@ -1062,17 +1094,18 @@ public class TurnManager : MonoBehaviour
         }
         else
         {
-            Debug.Log("ATTACKING MULTI-TARGET");
+            // Manual selection when there are MORE enemies alive than max targets
             usedMove1.text = ($"Choose another target");
 
             if (!selectingEnemies)
             {
                 selectedEnemies.Clear();
                 selectingEnemies = true;
-                blurbEvent.Set($"Select up to {targets} different enemies to attack!");
+                blurbEvent.Set($"Select {maxTargets} targets!");
                 EventBus.Publish(blurbEvent);
             }
 
+            // Put this block back to prevent picking the same enemy twice
             if (selectedEnemies.Contains(enemy))
             {
                 blurbEvent.Set("Enemy already selected! Choose a different enemy.");
@@ -1084,7 +1117,7 @@ public class TurnManager : MonoBehaviour
             blurbEvent.Set($"Selected: {enemy.characterName}");
             EventBus.Publish(blurbEvent);
 
-            if (selectedEnemies.Count == targets)
+            if (selectedEnemies.Count == maxTargets)
             {
                 usedMove1.text = ($"Boss Used {combinedAttack.attackName}");
                  for (int i = 0; i < enemies.Count; i++)
@@ -1107,7 +1140,7 @@ public class TurnManager : MonoBehaviour
     private int GetMaxTargetsForAttack(List<string> attributes)
     {
         if (attributes.Contains("Field")) return 4;
-        else if (attributes.Contains("Ice")) return 3; 
+        else if (attributes.Contains("Ice")) return 4; 
         else if (attributes.Contains("Lunge")) return 2;
         else return 1; 
     }
@@ -1131,16 +1164,19 @@ public class TurnManager : MonoBehaviour
             if(t != null) allTargetNames.Add(t.characterName);
         }
 
-        if (allTargetNames.Count > 0)
+        // --- NEW: Filter out duplicates so it doesn't say "Swordsman and Swordsman" ---
+        List<string> uniqueNames = allTargetNames.Distinct().ToList();
+
+        if (uniqueNames.Count > 0)
         {
             attackNamesText = "";
-            if (allTargetNames.Count == 1)
+            if (uniqueNames.Count == 1)
             {
-                attackNamesText = allTargetNames[0];
+                attackNamesText = uniqueNames[0];
             }
             else
             {
-                attackNamesText = string.Join(", ", allTargetNames.Take(allTargetNames.Count - 1)) + " and " + allTargetNames.Last();
+                attackNamesText = string.Join(", ", uniqueNames.Take(uniqueNames.Count - 1)) + " and " + uniqueNames.Last();
             }
 
             string fullAttackMsg = $"Boss attacked {attackNamesText} with {combinedAttack.attackName}";
@@ -1152,10 +1188,21 @@ public class TurnManager : MonoBehaviour
         List<string> paralyzedNames = new List<string>();
         List<string> defeatedNames = new List<string>(); 
 
+        // MOVED THESE OUTSIDE THE LOOP!
+        hasIced = false; 
+        hasLunged = false;
+
         foreach (var targetEnemy in targetEnemies)
         {
             if (!isBattleActive) yield break;
             int currentTargetIndex = enemies.IndexOf(targetEnemy);
+            
+            // Cache attack types (Order Independent)
+            bool isBurn = combinedAttack.attributes.Contains("Burn");
+            bool isIce = combinedAttack.attributes.Contains("Ice");
+            bool isPara = combinedAttack.attributes.Contains("Paralysis");
+            bool isLunge = combinedAttack.attributes.Contains("Lunge");
+            bool isHybridElements = (isBurn && isIce) || (isBurn && isPara) || (isIce && isPara);
 
             // Reset Popup Color
             targetEnemy.Init(popupPrefab); 
@@ -1200,7 +1247,7 @@ public class TurnManager : MonoBehaviour
                 targetEnemy.TakeDamage(damage);
             }
 
-            if (combinedAttack.attributes.Contains("Burn"))
+            if (isBurn)
             {
                 hero.Init(popupPrefab);
                 randomChance = (bideAttribute > 0) ? 0.2f : 0.2f;
@@ -1213,8 +1260,7 @@ public class TurnManager : MonoBehaviour
                     usedMove1.text = $"{targetEnemy.characterName} was burned!";
                 }
 
-                // NEW: Only play standard fire VFX if NOT lunging
-                if (!combinedAttack.attributes.Contains("Lunge"))
+                if (!isLunge && !isHybridElements)
                 {
                     float yRotationOffset = 0f;
                     switch (currentTargetIndex)
@@ -1234,7 +1280,7 @@ public class TurnManager : MonoBehaviour
                 }
             }
 
-            if (combinedAttack.attributes.Contains("Paralysis"))
+            if (isPara)
             {
                 hero.Init(popupPrefab);
 
@@ -1247,8 +1293,7 @@ public class TurnManager : MonoBehaviour
                     }
                 }
 
-                // NEW: Only play standard arrow VFX if NOT lunging
-                if (!combinedAttack.attributes.Contains("Lunge"))
+                if (!isLunge && !isHybridElements)
                 {
                     float yRotationOffset = 0f;
                     Vector3 newPosition = hero.transform.position;
@@ -1262,8 +1307,8 @@ public class TurnManager : MonoBehaviour
                         case 3: yRotationOffset = 60f; break;
                     }
                     Destroy(tempGameObject, 5f);
-                    ApplyEffectWithDelay(arrowAttack, tempGameObject.transform, 0f, 3.0f, true, 1.5f, yRotationOffset);
-                    ApplyEffectWithDelay(arrowHit, targetEnemy.transform, .5f, 3.0f);
+                    ApplyEffectWithDelay(paralysisAttack, tempGameObject.transform, 0f, 3.0f, true, 1.5f, yRotationOffset);
+                    ApplyEffectWithDelay(paralysisHit, targetEnemy.transform, .5f, 3.0f);
                 }
             }
 
@@ -1380,51 +1425,94 @@ public class TurnManager : MonoBehaviour
                 ApplyEffectWithDelay(tripleHit, targetEnemy.transform, .5f, 3.0f, null, 1.5f);
             }
 
-            if (combinedAttack.attributes.Contains("Ice") && !hasIced)
+            if (isIce)
             {
                 hero.Init(popupPrefab);
 
-                // NEW: Only play standard ice VFX if NOT lunging
-                if (!combinedAttack.attributes.Contains("Lunge"))
+                if (!isLunge && !isHybridElements)
                 {
-                    float yRotationOffset = 0f;
-                    switch (currentTargetIndex)
+                    if (!hasIced)
                     {
-                        case 0: yRotationOffset = 115f; break;
-                        case 1: yRotationOffset = 95f; break;
-                        case 2: yRotationOffset = 75f; break;
-                        case 3: yRotationOffset = 60f; break;
-                    }
+                        float yRotationOffset = 0f;
+                        switch (currentTargetIndex)
+                        {
+                            case 0: yRotationOffset = 115f; break;
+                            case 1: yRotationOffset = 95f; break;
+                            case 2: yRotationOffset = 75f; break;
+                            case 3: yRotationOffset = 60f; break;
+                        }
 
-                    ApplyEffectWithDelay(iceAttack, hero.transform, 0f, 3.0f, null, 1.5f, yRotationOffset); 
-                    ApplyEffectWithDelay(iceHit, hero.transform, 0.2f, 4.0f, null, 0.5f, null, null, 1f, 0f);
+                        ApplyEffectWithDelay(iceAttack, hero.transform, 0f, 3.0f, null, 1.5f, yRotationOffset); 
+                        hasIced = true;
+                    }
+                    ApplyEffectWithDelay(iceHit, targetEnemy.transform, 0.2f, 4.0f, null, 0.5f, null, null, 1f, 0f);
                 }
                 
                 blurbEvent.Set($"You strike again");
                 EventBus.Publish(blurbEvent);
             }
 
-            if (combinedAttack.attributes.Contains("Lunge"))
+            // --- HYBRID ELEMENTAL VFX ---
+            if (!isLunge && isHybridElements) 
+            {
+                if (isIce && isBurn)
+                {
+                    if (!hasIced) // Cast attack visual once
+                    {
+                        float yRot = 0f;
+                        switch (currentTargetIndex) { case 0: yRot = 115f; break; case 1: yRot = 95f; break; case 2: yRot = 75f; break; case 3: yRot = 60f; break; }
+                        ApplyEffectWithDelay(iceBurnAttack, hero.transform, 0f, 3.0f, null, 1.5f, yRot);
+                        hasIced = true;
+                    }
+                    ApplyEffectWithDelay(iceBurnHit, targetEnemy.transform, 0.2f, 4.0f, null, 0.5f, null, null, 1f, 0f);
+                }
+                else if (isIce && isPara)
+                {
+                    if (!hasIced) // Cast attack visual once
+                    {
+                        float yRot = 0f;
+                        switch (currentTargetIndex) { case 0: yRot = 115f; break; case 1: yRot = 95f; break; case 2: yRot = 75f; break; case 3: yRot = 60f; break; }
+                        ApplyEffectWithDelay(iceParaAttack, hero.transform, 0f, 3.0f, null, 1.5f, yRot);
+                        hasIced = true;
+                    }
+                    ApplyEffectWithDelay(iceParaHit, targetEnemy.transform, 0.2f, 4.0f, null, 0.5f, null, null, 1f, 0f);
+                }
+                else if (isBurn && isPara)
+                {
+                    // Arrow x Burn (Casts per target like standard arrows do)
+                    float yRot = 0f;
+                    switch (currentTargetIndex) { case 0: yRot = 115f; break; case 1: yRot = 95f; break; case 2: yRot = 75f; break; case 3: yRot = 60f; break; }
+                    
+                    Vector3 newPos = hero.transform.position;
+                    GameObject tempGameObject = new GameObject();
+                    tempGameObject.transform.position = newPos;
+                    Destroy(tempGameObject, 5f);
+
+                    ApplyEffectWithDelay(arrowBurnAttack, tempGameObject.transform, 0f, 3.0f, true, 1.5f, yRot);
+                    ApplyEffectWithDelay(arrowBurnHit, targetEnemy.transform, .5f, 3.0f);
+                }
+            }
+
+            if (isLunge)
             {
                 hero.Init(popupPrefab);
                 blurbEvent.Set($"You strike twice");
                 EventBus.Publish(blurbEvent);
 
-                // NEW: Logic to swap standard lunge VFX for element specific VFX
                 GameObject currentLungeAttack = lungeAttack;
                 GameObject currentLungeHit = lungeHit;
 
-                if (combinedAttack.attributes.Contains("Burn") && fireLungeAttack != null && fireLungeHit != null)
+                if (isBurn && fireLungeAttack != null && fireLungeHit != null)
                 {
                     currentLungeAttack = fireLungeAttack;
                     currentLungeHit = fireLungeHit;
                 }
-                else if (combinedAttack.attributes.Contains("Ice") && iceLungeAttack != null && iceLungeHit != null)
+                else if (isIce && iceLungeAttack != null && iceLungeHit != null)
                 {
                     currentLungeAttack = iceLungeAttack;
                     currentLungeHit = iceLungeHit;
                 }
-                else if (combinedAttack.attributes.Contains("Paralysis") && arrowLungeAttack != null && arrowLungeHit != null)
+                else if (isPara && arrowLungeAttack != null && arrowLungeHit != null)
                 {
                     currentLungeAttack = arrowLungeAttack;
                     currentLungeHit = arrowLungeHit;
@@ -1435,8 +1523,6 @@ public class TurnManager : MonoBehaviour
             }
 
             heroCritRate = 0.05f;
-            hasIced = false;
-            hasLunged = false;
         } 
 
         // Grouped Text Display
