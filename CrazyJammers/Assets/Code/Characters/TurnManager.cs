@@ -574,7 +574,7 @@ public class TurnManager : MonoBehaviour
                         case 3: yRotationOffset = -110f; break;
                     }
                     ApplyEffectWithDelay(iceAttack, enemy.transform, 0f, 3.0f, null, 2f, yRotationOffset);
-                    ApplyEffectWithDelay(iceHit, hero.transform, .3f, 3.5f, null, 2f, null,null,0.78f);
+                    ApplyEffectWithDelay(iceHit, hero.transform, .2f, 4f, null, .5f);
 
                 }
 
@@ -929,7 +929,15 @@ public class TurnManager : MonoBehaviour
         }
 
         // --- STANDARD MANUAL TARGETING ---
-        usedMove1.text = ($"Choose a target");
+        if (maxTargets > 1 && IsMultiTargetAttack(combinedAttack.attributes))
+        {
+            usedMove1.text = $"Select {maxTargets} targets";
+        }
+        else
+        {
+            usedMove1.text = "Choose a target";
+        }
+
         selectedAttack1 = null;
         selectedAttack2 = null;
 
@@ -1095,8 +1103,6 @@ public class TurnManager : MonoBehaviour
         else
         {
             // Manual selection when there are MORE enemies alive than max targets
-            usedMove1.text = ($"Choose another target");
-
             if (!selectingEnemies)
             {
                 selectedEnemies.Clear();
@@ -1114,7 +1120,12 @@ public class TurnManager : MonoBehaviour
             }
 
             selectedEnemies.Add(enemy);
-            blurbEvent.Set($"Selected: {enemy.characterName}");
+            
+            // Keeps the main text stable
+            usedMove1.text = $"Select {maxTargets} targets"; 
+            
+            // Gives the player a nice visual update of how many they have clicked
+            blurbEvent.Set($"Selected: {enemy.characterName} ({selectedEnemies.Count}/{maxTargets})"); 
             EventBus.Publish(blurbEvent);
 
             if (selectedEnemies.Count == maxTargets)
@@ -1319,7 +1330,7 @@ public class TurnManager : MonoBehaviour
                 blurbEvent.Set($"{damage} Health Recovered!");
                 EventBus.Publish(blurbEvent);
                 usedMove1.text = $"Boss attacked {attackNamesText} with {combinedAttack.attackName} and recovered {damage} Health!";
-                ApplyEffectWithDelay(heal, hero.transform, 0f, 2.0f);
+                ApplyEffectWithDelay(heal, hero.transform, 0f, 3.0f);
                 EventBus.Publish(statusUpdateEvent);
             }
 
@@ -1361,7 +1372,7 @@ public class TurnManager : MonoBehaviour
                 blurbEvent.Set($"Status Healed");
                 EventBus.Publish(blurbEvent);
                 usedMove1.text = $"Status Healed";
-                ApplyEffectWithDelay(healfield, hero.transform, 0f, 2.0f, true, 0.10f, null, true);
+                ApplyEffectWithDelay(healfield, hero.transform, 0f, 3.0f, true, 0.10f, null, true);
                 ApplyEffectWithDelay(panaceaVFX, hero.transform, 0f, 3.0f);
             }
 
@@ -1445,7 +1456,7 @@ public class TurnManager : MonoBehaviour
                         ApplyEffectWithDelay(iceAttack, hero.transform, 0f, 3.0f, null, 1.5f, yRotationOffset); 
                         hasIced = true;
                     }
-                    ApplyEffectWithDelay(iceHit, targetEnemy.transform, 0.2f, 4.0f, null, 0.5f, null, null, 1f, 0f);
+                    ApplyEffectWithDelay(iceHit, targetEnemy.transform, 0.2f, 4.0f, null, 0.5f, null, null, 0.78f, 0f);
                 }
                 
                 blurbEvent.Set($"You strike again");
@@ -1464,7 +1475,7 @@ public class TurnManager : MonoBehaviour
                         ApplyEffectWithDelay(iceBurnAttack, hero.transform, 0f, 3.0f, null, 1.5f, yRot);
                         hasIced = true;
                     }
-                    ApplyEffectWithDelay(iceBurnHit, targetEnemy.transform, 0.2f, 4.0f, null, 0.5f, null, null, 1f, 0f);
+                    ApplyEffectWithDelay(iceBurnHit, targetEnemy.transform, 0.2f, 4.0f, null, 0.5f, null, null, 0.78f, 0f);
                 }
                 else if (isIce && isPara)
                 {
@@ -1475,7 +1486,7 @@ public class TurnManager : MonoBehaviour
                         ApplyEffectWithDelay(iceParaAttack, hero.transform, 0f, 3.0f, null, 1.5f, yRot);
                         hasIced = true;
                     }
-                    ApplyEffectWithDelay(iceParaHit, targetEnemy.transform, 0.2f, 4.0f, null, 0.5f, null, null, 1f, 0f);
+                    ApplyEffectWithDelay(iceParaHit, targetEnemy.transform, 0.2f, 4.0f, null, 0.5f, null, null, 0.78f, 0f);
                 }
                 else if (isBurn && isPara)
                 {
