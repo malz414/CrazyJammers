@@ -272,6 +272,9 @@ MonoBehaviour:
     - B
     suffixDigits: 030000000300000003000000
     maxDigits: 4
+    suffixDecimals: 1
+    suffixDecimalChar: .
+    suffixHideZeros: 0
   enableLeftText: 0
   leftText: 
   leftTextSettings:
@@ -1123,20 +1126,71 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4408cbd1e166ce1479793b2784c5bb22, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  currentGameMode: 0
+  easyEnemies: []
+  mediumEnemies: []
+  hardEnemies: []
+  hero: {fileID: 0}
   knightPrefab: {fileID: 7535063419431838297, guid: b769f0f2b05d84343a953cc7e5f325e2, type: 3}
   magePrefab: {fileID: 3111818004308000480, guid: d6ceaccb352ecfe40b7d8a4c0d3f04eb, type: 3}
   swordsmanPrefab: {fileID: 7211050417971849891, guid: 4d5764ed5b010f54398a4ade3825485f, type: 3}
   archerPrefab: {fileID: 8894184840840292598, guid: 7f36abe30e315434fbb4601c13f18c47, type: 3}
+  bossPrefab: {fileID: 5538957764663788702, guid: 30690138de2a5ee4b8572381dcafc195, type: 3}
+  SteadyAttack: {fileID: 0}
+  SteadyHit: {fileID: 0}
+  lungeAttack: {fileID: 0}
+  lungeHit: {fileID: 0}
+  tripleHit: {fileID: 0}
+  tripleAttack: {fileID: 0}
+  arrowAttack: {fileID: 0}
+  arrowAttack1: {fileID: 0}
+  arrowHit: {fileID: 0}
+  slashAttack: {fileID: 0}
+  slashHit: {fileID: 0}
+  slashCrater: {fileID: 0}
+  iceAttack: {fileID: 0}
+  iceHit: {fileID: 0}
+  fireAttack: {fileID: 0}
+  fireHit: {fileID: 0}
+  barrier1: {fileID: 0}
+  barrier1Big: {fileID: 0}
+  barrier2: {fileID: 0}
+  barrier3: {fileID: 0}
+  heal: {fileID: 0}
+  healfield: {fileID: 0}
+  zapAttack: {fileID: 0}
+  zapHit: {fileID: 0}
+  fireLungeAttack: {fileID: 0}
+  fireLungeHit: {fileID: 0}
+  iceLungeAttack: {fileID: 0}
+  iceLungeHit: {fileID: 0}
+  arrowLungeAttack: {fileID: 0}
+  arrowLungeHit: {fileID: 0}
+  paralysisAttack: {fileID: 0}
+  paralysisHit: {fileID: 0}
+  iceBurnAttack: {fileID: 0}
+  iceBurnHit: {fileID: 0}
+  iceParaAttack: {fileID: 0}
+  iceParaHit: {fileID: 0}
+  arrowBurnAttack: {fileID: 0}
+  arrowBurnHit: {fileID: 0}
+  paralysisVFX: {fileID: 0}
+  burn: {fileID: 0}
+  bideVFX: {fileID: 0}
+  potionVFX: {fileID: 0}
+  panaceaVFX: {fileID: 0}
   combinedAttack: {fileID: 11400000, guid: 3687350894a4c0142b0993f34a1ae24d, type: 2}
   enemySpawns:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
-  bossPrefab: {fileID: 5538957764663788702, guid: 30690138de2a5ee4b8572381dcafc195, type: 3}
   bossSpawn: {fileID: 0}
   MainUIParent: {fileID: 0}
   attackOptionsParent: {fileID: 0}
+  attackOptionsMenu: {fileID: 0}
+  attackDropdown: {fileID: 0}
+  attackDropdown2: {fileID: 0}
   potionOptions: {fileID: 0}
   targetingHUDParent: {fileID: 0}
   winScreen: {fileID: 0}
@@ -1147,14 +1201,41 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   bossHUD: {fileID: 0}
+  popupPrefabNeutral: {fileID: 0}
   popupPrefab: {fileID: 5918278735219793341}
-  attackButtons:
+  popupPrefabfire: {fileID: 0}
+  popupPrefabgreen: {fileID: 0}
+  listOfObjectToDeactivateAtStartOfBattle: []
+  aliveEnemies: []
+  enemyAttacksByIndex: []
+  enemyAttacksByIndexPerm:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
+  previousTurnMoves: []
+  drop1Opened: 0
+  drop2Opened: 0
+  attacksReset: []
   bideButton: {fileID: 0}
   potionButton: {fileID: 0}
   panaceaButton: {fileID: 0}
+  itemOptions: {fileID: 0}
+  bideAttribute: 0
+  heroBideLevelBase: 1
   critMultiplier: 1.2
   heroCritRate: 0.05
+  reviveButton: {fileID: 0}
+  enemiesDead: 0
+  potionAmountText: {fileID: 0}
+  panaceaAmountText: {fileID: 0}
+  descriptionText: {fileID: 0}
+  descriptionTextPotion: {fileID: 0}
+  usedMove: {fileID: 0}
+  usedMove1: {fileID: 0}
+  usedMoveGO: {fileID: 0}
+  popupText: {fileID: 0}
+  selectedAttack1: {fileID: 0}
+  selectedAttack2: {fileID: 0}
+  isFirstMatch: 0
+  endGameDelay: 3

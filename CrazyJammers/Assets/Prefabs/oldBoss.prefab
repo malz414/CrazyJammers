@@ -398,7 +398,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 26e0caa92c664c747b43b5654de955fd, type: 3}
       propertyPath: m_Name
-      value: Boss
+      value: oldBoss
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -470,11 +470,19 @@ MonoBehaviour:
   characterName: Boss
   maxHealth: 5000
   currentHealth: 5000
-  popupPrefab: {fileID: 0}
+  barrierCount: 0
+  burning: 0
+  bideBuff: 0
+  burnIcon: {fileID: 0}
+  paraIcon: {fileID: 0}
   animator: {fileID: 3769531731434638702}
   currentAttack: {fileID: 11400000, guid: 3687350894a4c0142b0993f34a1ae24d, type: 2}
   allAttacks: []
   bideLevel: 1
+  bideLevelBase: 1
+  bideUses: 0
+  dead: 0
+  originalY: 0
 --- !u!210 &2036177934998243312
 SortingGroup:
   m_ObjectHideFlags: 0

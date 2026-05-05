@@ -826,7 +826,6 @@ Transform:
   - {fileID: 8602950227422003842}
   - {fileID: 7931983612676214915}
   - {fileID: 766638527241511282}
-  - {fileID: 676940599987762037}
   - {fileID: 2433903052381875832}
   m_Father: {fileID: 8386265379091645628}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1050,6 +1049,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 7238271778863743296}
+  - {fileID: 676940599987762037}
   m_Father: {fileID: 766638527241511282}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2979915281665592440
@@ -1076,12 +1076,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2979915281665592440}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.7071068, y: 0.00000022930232, z: 0.000000046055135, w: 0.7071067}
-  m_LocalPosition: {x: -0.1709449, y: 0.29231027, z: 0.57581246}
-  m_LocalScale: {x: 1, y: 0.99999994, z: 0.99999994}
+  m_LocalRotation: {x: -0.69471496, y: 0.00000018165817, z: -0.00000022134813, w: 0.7192851}
+  m_LocalPosition: {x: -0.34188995, y: 0.24680836, z: -0.5675802}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 4764507034388389628}
+  m_Father: {fileID: 2272097633359574494}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &3257944067575302142
 GameObject:
@@ -2582,6 +2582,8 @@ MonoBehaviour:
   barrierCount: 0
   burning: 0
   bideBuff: 0
+  burnIcon: {fileID: 0}
+  paraIcon: {fileID: 0}
   animator: {fileID: 5339149700375281621}
   possibleAttacks:
   - {fileID: 11400000, guid: 8d1fafe2eae2346468755b04daeaa076, type: 2}
@@ -2694,7 +2696,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c43dde00e48e47f4f8f921432db7b88d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  walkSpeed: 2
 --- !u!1 &8951843941263799395
 GameObject:
   m_ObjectHideFlags: 0

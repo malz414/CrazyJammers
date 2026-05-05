@@ -269,6 +269,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   descText: {fileID: 366024075}
   text: Cures all ailments
+  textNo: 
 --- !u!43 &135060593
 Mesh:
   m_ObjectHideFlags: 0
@@ -553,6 +554,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   descText: {fileID: 1449458739}
   text: Power up your moves and gain some defence
+  textNo: 
 --- !u!114 &257257768 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 3268862385935356961, guid: edc093f874874f64d9cfa15aa220a370, type: 3}
@@ -951,6 +953,9 @@ MonoBehaviour:
     - B
     suffixDigits: 030000000300000003000000
     maxDigits: 4
+    suffixDecimals: 1
+    suffixDecimalChar: .
+    suffixHideZeros: 0
   enableLeftText: 0
   leftText: 
   leftTextSettings:
@@ -1418,6 +1423,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   descText: {fileID: 366024075}
   text: Heals 1000hp
+  textNo: 
 --- !u!1 &486903838
 GameObject:
   m_ObjectHideFlags: 0
@@ -4386,6 +4392,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   descText: {fileID: 1877336720}
   text: Select an item to support you in this battle
+  textNo: 
 --- !u!114 &1449458739 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 5484620246313956202, guid: edc093f874874f64d9cfa15aa220a370, type: 3}
@@ -4772,6 +4779,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   descText: {fileID: 1449458739}
   text: Remix the of your enemies to create a stronger one
+  textNo: 
 --- !u!114 &1569385520 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 3582590496487219367, guid: edc093f874874f64d9cfa15aa220a370, type: 3}
@@ -4912,6 +4920,9 @@ MonoBehaviour:
     - B
     suffixDigits: 030000000300000003000000
     maxDigits: 4
+    suffixDecimals: 1
+    suffixDecimalChar: .
+    suffixHideZeros: 0
   enableLeftText: 0
   leftText: 
   leftTextSettings:
@@ -5473,6 +5484,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   descText: {fileID: 988084837}
   text: Cures Ailments
+  textNo: 
 --- !u!114 &1764578738
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5487,6 +5499,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   descText: {fileID: 988084837}
   text: Heals 1000hp
+  textNo: 
 --- !u!114 &1781831810
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5656,6 +5669,9 @@ MonoBehaviour:
     - B
     suffixDigits: 030000000300000003000000
     maxDigits: 4
+    suffixDecimals: 1
+    suffixDecimalChar: .
+    suffixHideZeros: 0
   enableLeftText: 0
   leftText: 
   leftTextSettings:
@@ -6846,6 +6862,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   descText: {fileID: 1877336720}
   text: Power up your moves and gain some defence
+  textNo: 
 --- !u!114 &1797794581
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6860,6 +6877,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   descText: {fileID: 1877336720}
   text: Remix the of your enemies to create a stronger one
+  textNo: 
 --- !u!1 &1815146222 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 326001223331256996, guid: fec496db80a07c640a9a640f4b6a9472, type: 3}
@@ -7064,6 +7082,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   descText: {fileID: 1449458739}
   text: Select an item to support you in this battle
+  textNo: 
 --- !u!114 &1877336720 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 4785181926915849683, guid: 5bc48eb34602b7d4b9e3d44d54050c50, type: 3}
@@ -8373,6 +8392,18 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 8371277384047029730, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1959827266}
+    - targetCorrespondingSourceObject: {fileID: 6245697123426695433, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 0}
+    - targetCorrespondingSourceObject: {fileID: 3624805691898507385, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 0}
+    - targetCorrespondingSourceObject: {fileID: 4685291011576216175, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 0}
+    - targetCorrespondingSourceObject: {fileID: 7611949365070872331, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 0}
   m_SourcePrefab: {fileID: 100100000, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
 --- !u!1001 &9075993967696190981
 PrefabInstance:

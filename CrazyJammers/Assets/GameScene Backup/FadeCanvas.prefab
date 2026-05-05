@@ -261,6 +261,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   quoteBox: {fileID: 342818004534720019}
   quoteText: {fileID: 5683652044392192217}
+  enemyHp: {fileID: 0}
+  HeroHp: {fileID: 0}
 --- !u!1 &3039298790189562326
 GameObject:
   m_ObjectHideFlags: 0
@@ -364,11 +366,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 35f72cdf86e2bee43bb57bd52f09156e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  prologueText: Once upon a time there was a powerfull monster that many heroes tried
-    to face.....
-  nextBattleText: '...again and again...
-
-    ...over and over...'
+  introText: []
   enemyQuote:
   - We will defeat you
   - We will avenge our brothers
@@ -377,6 +375,8 @@ MonoBehaviour:
   prologueTextUI: {fileID: 3887836726699468821}
   skipButton: {fileID: 981696554406385838}
   quoteBoxManager: {fileID: 1032298146448577420}
+  quoteNum: 0
+  startInstantly: 0
 --- !u!1 &3357859066234620023
 GameObject:
   m_ObjectHideFlags: 0

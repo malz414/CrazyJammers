@@ -364,6 +364,8 @@ MonoBehaviour:
   nameText: {fileID: 1360667383640392125}
   hpFill: {fileID: 3145983609005678076}
   hpText: {fileID: 2929358936565984584}
+  burnIcon: {fileID: 0}
+  paraIcon: {fileID: 0}
 --- !u!1 &1102024843434050272
 GameObject:
   m_ObjectHideFlags: 0
@@ -886,6 +888,8 @@ MonoBehaviour:
   nameText: {fileID: 264927170924775501}
   hpFill: {fileID: 6441869876600518238}
   hpText: {fileID: 6125005241006086725}
+  burnIcon: {fileID: 0}
+  paraIcon: {fileID: 0}
 --- !u!1 &1980979846831511653
 GameObject:
   m_ObjectHideFlags: 0
@@ -2815,6 +2819,8 @@ MonoBehaviour:
   nameText: {fileID: 851500369105125521}
   hpFill: {fileID: 784804709095621776}
   hpText: {fileID: 98234021516395739}
+  burnIcon: {fileID: 0}
+  paraIcon: {fileID: 0}
 --- !u!1 &4681876174018102841
 GameObject:
   m_ObjectHideFlags: 0
@@ -3591,14 +3597,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 35f72cdf86e2bee43bb57bd52f09156e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  prologueText: 
-  nextBattleText: 
+  introText: []
   enemyQuote: []
   category: 1
   fadeScreen: {fileID: 6231816913092895372}
   prologueTextUI: {fileID: 0}
   skipButton: {fileID: 0}
   quoteBoxManager: {fileID: 0}
+  quoteNum: 0
+  startInstantly: 0
 --- !u!1 &5557004511148825764
 GameObject:
   m_ObjectHideFlags: 0
@@ -4766,6 +4773,8 @@ MonoBehaviour:
   nameText: {fileID: 5897241545578440314}
   hpFill: {fileID: 2001385735016650225}
   hpText: {fileID: 5964994013344576329}
+  burnIcon: {fileID: 0}
+  paraIcon: {fileID: 0}
 --- !u!1 &8219926841860951687
 GameObject:
   m_ObjectHideFlags: 0
@@ -5107,6 +5116,8 @@ MonoBehaviour:
   nameText: {fileID: 5669053941846780810}
   hpFill: {fileID: 6677945523108781763}
   hpText: {fileID: 5068409851962623615}
+  burnIcon: {fileID: 0}
+  paraIcon: {fileID: 0}
 --- !u!1 &8904633538299761734
 GameObject:
   m_ObjectHideFlags: 0
