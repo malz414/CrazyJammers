@@ -223,7 +223,7 @@ ParticleSystem:
       serializedVersion: 2
       minMaxState: 0
       minColor: {r: 1, g: 1, b: 1, a: 1}
-      maxColor: {r: 1, g: 0.6918927, b: 0.34509802, a: 1}
+      maxColor: {r: 1, g: 0.9204348, b: 0.34509802, a: 1}
       maxGradient:
         serializedVersion: 2
         key0: {r: 1, g: 1, b: 1, a: 1}
@@ -5126,7 +5126,7 @@ ParticleSystem:
       serializedVersion: 2
       minMaxState: 0
       minColor: {r: 1, g: 1, b: 1, a: 1}
-      maxColor: {r: 1, g: 0.43612334, b: 0, a: 0.4392157}
+      maxColor: {r: 1, g: 0.8758237, b: 0, a: 0.4392157}
       maxGradient:
         serializedVersion: 2
         key0: {r: 1, g: 1, b: 1, a: 1}
@@ -10047,7 +10047,7 @@ ParticleSystem:
       serializedVersion: 2
       minMaxState: 0
       minColor: {r: 0.1792453, g: 0.15086909, b: 0.11414205, a: 0.32941177}
-      maxColor: {r: 1, g: 0.38789618, b: 0.1462264, a: 1}
+      maxColor: {r: 0.82062507, g: 1, b: 0.14509803, a: 1}
       maxGradient:
         serializedVersion: 2
         key0: {r: 0.509434, g: 0.35790056, b: 0.2811499, a: 0.3529412}
@@ -14901,7 +14901,7 @@ ParticleSystem:
       serializedVersion: 2
       minMaxState: 0
       minColor: {r: 1, g: 1, b: 1, a: 1}
-      maxColor: {r: 1, g: 0.5871254, b: 0.2688679, a: 0.2509804}
+      maxColor: {r: 1, g: 0.97850996, b: 0.27058828, a: 0.2509804}
       maxGradient:
         serializedVersion: 2
         key0: {r: 1, g: 1, b: 1, a: 1}
@@ -19822,7 +19822,7 @@ ParticleSystem:
       serializedVersion: 2
       minMaxState: 0
       minColor: {r: 1, g: 1, b: 1, a: 1}
-      maxColor: {r: 1, g: 0.5749664, b: 0.3443396, a: 1}
+      maxColor: {r: 0.9096855, g: 1, b: 0.34509802, a: 1}
       maxGradient:
         serializedVersion: 2
         key0: {r: 1, g: 1, b: 1, a: 1}
@@ -24735,7 +24735,7 @@ ParticleSystem:
       serializedVersion: 2
       minMaxState: 0
       minColor: {r: 1, g: 1, b: 1, a: 1}
-      maxColor: {r: 1, g: 0.76224256, b: 0.4481132, a: 0.6784314}
+      maxColor: {r: 0.96286094, g: 1, b: 0.4470588, a: 0.6784314}
       maxGradient:
         serializedVersion: 2
         key0: {r: 1, g: 1, b: 1, a: 1}
@@ -29656,7 +29656,7 @@ ParticleSystem:
       serializedVersion: 2
       minMaxState: 0
       minColor: {r: 1, g: 1, b: 1, a: 1}
-      maxColor: {r: 1, g: 0.5019144, b: 0.1372549, a: 0.6784314}
+      maxColor: {r: 0.74510384, g: 1, b: 0.1372549, a: 0.6784314}
       maxGradient:
         serializedVersion: 2
         key0: {r: 1, g: 1, b: 1, a: 1}
@@ -34586,7 +34586,7 @@ ParticleSystem:
       serializedVersion: 2
       minMaxState: 0
       minColor: {r: 1, g: 1, b: 1, a: 1}
-      maxColor: {r: 1, g: 0.508208, b: 0.24056602, a: 1}
+      maxColor: {r: 1, g: 0.9180539, b: 0.23921567, a: 1}
       maxGradient:
         serializedVersion: 2
         key0: {r: 1, g: 1, b: 1, a: 1}
@@ -39507,7 +39507,7 @@ ParticleSystem:
       serializedVersion: 2
       minMaxState: 0
       minColor: {r: 1, g: 1, b: 1, a: 1}
-      maxColor: {r: 0.78431374, g: 0.51632094, b: 0.27058822, a: 1}
+      maxColor: {r: 0.7077002, g: 0.78431374, b: 0.27058822, a: 1}
       maxGradient:
         serializedVersion: 2
         key0: {r: 1, g: 1, b: 1, a: 1}
@@ -44150,6 +44150,7 @@ GameObject:
   - component: {fileID: 198646846901175090}
   - component: {fileID: 199569954839013096}
   - component: {fileID: 431857702974149511}
+  - component: {fileID: -3588749847898271560}
   m_Layer: 0
   m_Name: Dragon punch - thunder
   m_TagString: Untagged
@@ -44373,7 +44374,7 @@ ParticleSystem:
       serializedVersion: 2
       minMaxState: 0
       minColor: {r: 1, g: 1, b: 1, a: 1}
-      maxColor: {r: 0.8271914, g: 0.91764706, b: 0.40784317, a: 1}
+      maxColor: {r: 0.7868449, g: 0.91823894, b: 0.089513704, a: 1}
       maxGradient:
         serializedVersion: 2
         key0: {r: 1, g: 1, b: 1, a: 1}
@@ -49032,7 +49033,7 @@ ParticleSystemRenderer:
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: dd19e1cff6a8f1a448924a373d58c797, type: 2}
+  - {fileID: 2100000, guid: 6df9bae9137f94340948fed8f92d8bf8, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -49158,6 +49159,103 @@ AudioSource:
     - serializedVersion: 3
       time: 0
       value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+--- !u!82 &-3588749847898271560
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1873886433987638}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 8300000, guid: 340d2fc1950b06549b71231d43d509f6, type: 3}
+  m_Resource: {fileID: 8300000, guid: 340d2fc1950b06549b71231d43d509f6, type: 3}
+  m_PlayOnAwake: 1
+  m_Volume: 0.799
+  m_Pitch: 3
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 135
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0.196
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0.19444445
       inSlope: 0
       outSlope: 0
       tangentMode: 0
@@ -49405,7 +49503,7 @@ ParticleSystem:
       serializedVersion: 2
       minMaxState: 0
       minColor: {r: 1, g: 1, b: 1, a: 1}
-      maxColor: {r: 1, g: 0.6918927, b: 0.34509802, a: 1}
+      maxColor: {r: 0.74050415, g: 1, b: 0.34509802, a: 1}
       maxGradient:
         serializedVersion: 2
         key0: {r: 1, g: 1, b: 1, a: 1}
@@ -54311,7 +54409,7 @@ ParticleSystem:
       maxColor: {r: 1, g: 0.9671496, b: 0.9292453, a: 0.6431373}
       maxGradient:
         serializedVersion: 2
-        key0: {r: 0.509434, g: 0.35790056, b: 0.2811499, a: 0.49411765}
+        key0: {r: 0.4784258, g: 0.50980395, b: 0.28235295, a: 0.49411765}
         key1: {r: 1, g: 0.86341655, b: 0.6462264, a: 0.85882354}
         key2: {r: 1, g: 0.96548647, b: 0.8745098, a: 0.3764706}
         key3: {r: 1, g: 0.9838426, b: 0.8726415, a: 0}
@@ -54336,7 +54434,7 @@ ParticleSystem:
         atime6: 0
         atime7: 0
         m_Mode: 0
-        m_ColorSpace: -1
+        m_ColorSpace: 0
         m_NumColorKeys: 3
         m_NumAlphaKeys: 3
       minGradient:
@@ -59153,7 +59251,7 @@ ParticleSystem:
       serializedVersion: 2
       minMaxState: 0
       minColor: {r: 1, g: 1, b: 1, a: 1}
-      maxColor: {r: 1, g: 0.7293312, b: 0.33333337, a: 0.67058825}
+      maxColor: {r: 0.5143671, g: 1, b: 0.33333337, a: 0.67058825}
       maxGradient:
         serializedVersion: 2
         key0: {r: 1, g: 1, b: 1, a: 1}

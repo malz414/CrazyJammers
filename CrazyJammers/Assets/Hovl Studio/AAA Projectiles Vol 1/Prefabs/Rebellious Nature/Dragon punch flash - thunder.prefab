@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 6490298896131592140}
   - component: {fileID: 6490075009991673658}
   m_Layer: 0
-  m_Name: Dragon punch flash
+  m_Name: Dragon punch flash - thunder
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5145,7 +5145,7 @@ ParticleSystem:
       serializedVersion: 2
       minMaxState: 0
       minColor: {r: 1, g: 1, b: 1, a: 1}
-      maxColor: {r: 1, g: 0.508208, b: 0.24056602, a: 1}
+      maxColor: {r: 0.930135, g: 1, b: 0.23921567, a: 1}
       maxGradient:
         serializedVersion: 2
         key0: {r: 1, g: 1, b: 1, a: 1}
@@ -19890,7 +19890,7 @@ ParticleSystem:
       serializedVersion: 2
       minMaxState: 0
       minColor: {r: 1, g: 1, b: 1, a: 1}
-      maxColor: {r: 1, g: 0.7293312, b: 0.33333337, a: 0.67058825}
+      maxColor: {r: 0.6406082, g: 1, b: 0.33333337, a: 0.67058825}
       maxGradient:
         serializedVersion: 2
         key0: {r: 1, g: 1, b: 1, a: 1}
@@ -24793,7 +24793,7 @@ ParticleSystem:
       serializedVersion: 2
       minMaxState: 0
       minColor: {r: 1, g: 1, b: 1, a: 1}
-      maxColor: {r: 1, g: 0.5749664, b: 0.3443396, a: 1}
+      maxColor: {r: 0.92701644, g: 0.9559748, b: 0.5561488, a: 1}
       maxGradient:
         serializedVersion: 2
         key0: {r: 1, g: 1, b: 1, a: 1}
