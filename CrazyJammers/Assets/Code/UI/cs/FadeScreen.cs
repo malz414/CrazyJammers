@@ -65,7 +65,7 @@ public class FadeScreen : MonoBehaviour
             if (skipped) return;
             skipped=true;
             LeanTween.alphaCanvas(fadeScreen, 0, 0);
-            MusicManager.Instance.ChangeSong(4);
+            MusicManager.Instance.PlayMusic(MusicManager.Instance.prologueMusic2);
             quoteBoxManager.SetQuoteBox(enemyQuote[quoteNum]);
             
             
@@ -80,7 +80,7 @@ public class FadeScreen : MonoBehaviour
         skipped=true;
         StopAllCoroutines();
         LeanTween.alphaCanvas(fadeScreen, 0, FADE_OUT_TIME);
-        MusicManager.Instance.ChangeSong(4);
+        MusicManager.Instance.PlayMusic(MusicManager.Instance.prologueMusic2);
         quoteBoxManager.SetQuoteBox(enemyQuote[quoteNum]);
     }
 

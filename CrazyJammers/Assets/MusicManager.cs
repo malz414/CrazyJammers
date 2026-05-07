@@ -9,8 +9,16 @@ public class MusicManager : MonoBehaviour
     [Tooltip("Drag your Audio Source here")]
     public AudioSource audioSource;
     
-    [Tooltip("Drag your 8 (or more) songs here")]
-    public AudioClip[] songs;
+    [Header("Songs")]
+    public AudioClip battleMusic;
+    public AudioClip preMatchMusic;
+    public AudioClip prologueMusic;
+    public AudioClip prologueMusicHalf; // Prologue Music.5
+    public AudioClip prologueMusic2;
+    public AudioClip midnightMasquerade;
+    public AudioClip jingle12;
+    
+    public AudioClip credits;
 
     [Header("Settings")]
     public float fadeDuration = 1.0f; 
@@ -41,19 +49,19 @@ public class MusicManager : MonoBehaviour
         }
     }
 
-    
-    public void ChangeSong(int songIndex)
+    // 🟢 REPLACED: Now takes the specific AudioClip variable instead of an array index
+    public void PlayMusic(AudioClip nextClip)
     {
-        if (songIndex < 0 || songIndex >= songs.Length)
+        if (nextClip == null)
         {
-            Debug.LogError($"MusicManager: Song index {songIndex} is out of range!");
+            Debug.LogWarning("MusicManager: Tried to play a null audio clip!");
             return;
         }
 
-        if (audioSource.clip == songs[songIndex] && audioSource.isPlaying)
+        if (audioSource.clip == nextClip && audioSource.isPlaying)
             return;
 
-        StartCoroutine(FadeToNextSong(songs[songIndex]));
+        StartCoroutine(FadeToNextSong(nextClip));
     }
 
     private IEnumerator FadeToNextSong(AudioClip nextClip)

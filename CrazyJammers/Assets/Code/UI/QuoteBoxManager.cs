@@ -34,7 +34,7 @@ public class QuoteBoxManager : MonoBehaviour
     public void Next()
     {
         TurnManager.Instance.SetUpBattle();
-        MusicManager.Instance.ChangeSong(0);
+        MusicManager.Instance.PlayMusic(MusicManager.Instance.battleMusic);
 
         if(enemyHp != null)
             {

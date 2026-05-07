@@ -24,10 +24,14 @@ public class MainMenuManager : MonoBehaviour
 
     public void ShowCredits()
     {
+        MusicManager.Instance.PlayMusic(MusicManager.Instance.credits);
+
         SceneManager.LoadScene("CreditsScene");
     }
     public void HideCredits()
     {
+        MusicManager.Instance.PlayMusic(MusicManager.Instance.midnightMasquerade);
+
          SceneManager.LoadScene("GameScene(LVL1)");
     }
 

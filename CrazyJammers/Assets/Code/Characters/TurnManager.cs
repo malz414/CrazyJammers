@@ -1466,39 +1466,34 @@ public class TurnManager : MonoBehaviour
             // --- HYBRID ELEMENTAL VFX ---
             if (!isLunge && isHybridElements) 
             {
+                // Create a temporary spawn point for all hybrid projectiles (matches standard Burn/Para)
+                Vector3 newPos = hero.transform.position;
+                GameObject tempGameObject = new GameObject();
+                tempGameObject.transform.position = newPos;
+                Destroy(tempGameObject, 5f);
+
+                // Calculate aiming angle based on the target's grid slot
+                float yRot = 0f;
+                switch (currentTargetIndex) 
+                { 
+                    case 0: yRot = 115f; break; 
+                    case 1: yRot = 95f; break; 
+                    case 2: yRot = 75f; break; 
+                    case 3: yRot = 60f; break; 
+                }
+
                 if (isIce && isBurn)
                 {
-                    if (!hasIced) // Cast attack visual once
-                    {
-                        float yRot = 0f;
-                        switch (currentTargetIndex) { case 0: yRot = 115f; break; case 1: yRot = 95f; break; case 2: yRot = 75f; break; case 3: yRot = 60f; break; }
-                        ApplyEffectWithDelay(iceBurnAttack, hero.transform, 0f, 3.0f, null, 1.5f, yRot);
-                        hasIced = true;
-                    }
+                    ApplyEffectWithDelay(iceBurnAttack, tempGameObject.transform, 0f, 3.0f, true, 1.5f, yRot);
                     ApplyEffectWithDelay(iceBurnHit, targetEnemy.transform, 0.2f, 4.0f, null, 0.5f, null, null, 0.78f, 0f);
                 }
                 else if (isIce && isPara)
                 {
-                    if (!hasIced) // Cast attack visual once
-                    {
-                        float yRot = 0f;
-                        switch (currentTargetIndex) { case 0: yRot = 115f; break; case 1: yRot = 95f; break; case 2: yRot = 75f; break; case 3: yRot = 60f; break; }
-                        ApplyEffectWithDelay(iceParaAttack, hero.transform, 0f, 3.0f, null, 1.5f, yRot);
-                        hasIced = true;
-                    }
+                    ApplyEffectWithDelay(iceParaAttack, tempGameObject.transform, 0f, 3.0f, true, 1.5f, yRot);
                     ApplyEffectWithDelay(iceParaHit, targetEnemy.transform, 0.2f, 4.0f, null, 0.5f, null, null, 0.78f, 0f);
                 }
                 else if (isBurn && isPara)
                 {
-                    // Arrow x Burn (Casts per target like standard arrows do)
-                    float yRot = 0f;
-                    switch (currentTargetIndex) { case 0: yRot = 115f; break; case 1: yRot = 95f; break; case 2: yRot = 75f; break; case 3: yRot = 60f; break; }
-                    
-                    Vector3 newPos = hero.transform.position;
-                    GameObject tempGameObject = new GameObject();
-                    tempGameObject.transform.position = newPos;
-                    Destroy(tempGameObject, 5f);
-
                     ApplyEffectWithDelay(arrowBurnAttack, tempGameObject.transform, 0f, 3.0f, true, 1.5f, yRot);
                     ApplyEffectWithDelay(arrowBurnHit, targetEnemy.transform, .5f, 3.0f);
                 }
@@ -1735,7 +1730,7 @@ public class TurnManager : MonoBehaviour
     private IEnumerator DoEndGameRoutine(bool playerWon)
     {
         yield return new WaitForSeconds(endGameDelay);
-        MusicManager.Instance.ChangeSong(6);
+        MusicManager.Instance.PlayMusic(MusicManager.Instance.jingle12);
 
 
         if (playerWon)
