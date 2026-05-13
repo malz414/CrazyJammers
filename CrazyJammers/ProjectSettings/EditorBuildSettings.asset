@@ -9,14 +9,26 @@ EditorBuildSettings:
     path: Assets/CrazySDK/Demo/LoadingScene.unity
     guid: d34c3ed37bb0fd745b38d55bc61e21c8
   - enabled: 1
-    path: Assets/GameScene(LVL1).unity
+    path: Assets/Levels/GameScene(LVL1).unity
     guid: 989424bb7cff07d418304324c598203b
   - enabled: 0
     path: Assets/Scenes/LVL2.unity
     guid: 0ec2c71a8d506bd4f8aea3daead1ed77
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/NewLevels/Level2.unity
     guid: 6488999f16ee4874396da6498c77a105
+  - enabled: 1
+    path: Assets/Levels/GameScene(LVL2).unity
+    guid: 60bb2e004f86545479e00507a9ca7b4b
+  - enabled: 1
+    path: Assets/Levels/GameScene(LVL3).unity
+    guid: 73502d33f1ff6664bb42ffce7a1bf295
+  - enabled: 1
+    path: Assets/Levels/GameScene(LVL4).unity
+    guid: 920ab76d5561b724bbe824ca12ca24c9
+  - enabled: 1
+    path: Assets/Levels/GameScene(LVL5).unity
+    guid: 9bd3f739a034d36499daac40e6e9d3ff
   - enabled: 1
     path: Assets/Scenes/CreditsScene.unity
     guid: 6cc7558b3dbe59b4db77c0be19d94af5

@@ -2472,10 +2472,12 @@ MonoBehaviour:
   - {fileID: 286656958687433960, guid: 2921c7cfe4b33294facb78b8cbb2e7bf, type: 3}
   mediumEnemies: []
   hardEnemies: []
+  hero: {fileID: 0}
   knightPrefab: {fileID: 8752190016439242206, guid: 67348a45c8548214291b57659daa93c2, type: 3}
   magePrefab: {fileID: 344943568324299905, guid: d10562b8e5a98c647916ca374f9227be, type: 3}
   swordsmanPrefab: {fileID: 286656958687433960, guid: 2921c7cfe4b33294facb78b8cbb2e7bf, type: 3}
   archerPrefab: {fileID: 2289685435781549048, guid: 4d60d244a63473f4a89ffcaedae97891, type: 3}
+  bossPrefab: {fileID: 2932479530311384160, guid: f8b0445d176b4fc4a93dfdba6b6ec6fa, type: 3}
   SteadyAttack: {fileID: 1106083537938030, guid: 68ad232820027fb46ab18b209499dc65, type: 3}
   SteadyHit: {fileID: 1529907042512856, guid: ffef45a79ddad9c48a486d763f114750, type: 3}
   lungeAttack: {fileID: 1873886433987638, guid: fb2df51e77abde1429eb83c0317784af, type: 3}
@@ -2500,18 +2502,31 @@ MonoBehaviour:
   healfield: {fileID: 1014003377299866, guid: 5b2f5fb010f05b0439f2df752f1358b4, type: 3}
   zapAttack: {fileID: 1701074268541622, guid: ec40dcc0df25c9c44bb4f938a05e1482, type: 3}
   zapHit: {fileID: 1651363388222792, guid: a32d87b33cadfed4b83eeaa564eb7724, type: 3}
-  para: {fileID: 1938923066956235919, guid: e1c1c9e9cbfc3fe4db0d0c4208fb988d, type: 3}
+  fireLungeAttack: {fileID: 0}
+  fireLungeHit: {fileID: 0}
+  iceLungeAttack: {fileID: 0}
+  iceLungeHit: {fileID: 0}
+  arrowLungeAttack: {fileID: 0}
+  arrowLungeHit: {fileID: 0}
+  paralysisAttack: {fileID: 0}
+  paralysisHit: {fileID: 0}
+  iceBurnAttack: {fileID: 0}
+  iceBurnHit: {fileID: 0}
+  iceParaAttack: {fileID: 0}
+  iceParaHit: {fileID: 0}
+  arrowBurnAttack: {fileID: 0}
+  arrowBurnHit: {fileID: 0}
+  paralysisVFX: {fileID: 0}
   burn: {fileID: 5652016574901158899, guid: de017453d31765d4bb44cf9b52af9820, type: 3}
-  bideani: {fileID: 1014003377299866, guid: 5b2f5fb010f05b0439f2df752f1358b4, type: 3}
-  potionAni: {fileID: 1918476138427834, guid: 3e4e9c6a4ac7e10418454a21dd359975, type: 3}
-  panaceaAni: {fileID: 1918476138427834, guid: 3e4e9c6a4ac7e10418454a21dd359975, type: 3}
+  bideVFX: {fileID: 0}
+  potionVFX: {fileID: 0}
+  panaceaVFX: {fileID: 0}
   combinedAttack: {fileID: 11400000, guid: 3687350894a4c0142b0993f34a1ae24d, type: 2}
   enemySpawns:
   - {fileID: 915156603}
   - {fileID: 1464465898}
   - {fileID: 1559641380}
   - {fileID: 2084238348}
-  bossPrefab: {fileID: 2932479530311384160, guid: f8b0445d176b4fc4a93dfdba6b6ec6fa, type: 3}
   bossSpawn: {fileID: 640213380}
   MainUIParent: {fileID: 1190966761}
   attackOptionsParent: {fileID: 1190966764}
@@ -2520,7 +2535,6 @@ MonoBehaviour:
   attackDropdown2: {fileID: 1190966789}
   potionOptions: {fileID: 1190966764}
   targetingHUDParent: {fileID: 1190966788}
-  aliveEnemies: []
   winScreen: {fileID: 1300673331}
   loseScreen: {fileID: 483464078}
   enemyHUDs:
@@ -2533,6 +2547,9 @@ MonoBehaviour:
   popupPrefab: {fileID: 1636494939}
   popupPrefabfire: {fileID: 1903279333}
   popupPrefabgreen: {fileID: 1081417975}
+  listOfObjectToDeactivateAtStartOfBattle:
+  - {fileID: 4879243938263046864, guid: 5b170e3854ef96f40b66167df373619d, type: 3}
+  aliveEnemies: []
   enemyAttacksByIndex: []
   enemyAttacksByIndexPerm:
   - {fileID: 0}
@@ -2540,8 +2557,8 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   previousTurnMoves: []
-  hero: {fileID: 0}
-  enemies: []
+  drop1Opened: 0
+  drop2Opened: 0
   attacksReset:
   - {fileID: 11400000, guid: 27cfda9b1a1637746985ceb311c3760c, type: 2}
   - {fileID: 11400000, guid: f2f783aa023e8a94396214733b6494c2, type: 2}
@@ -2557,26 +2574,24 @@ MonoBehaviour:
   potionButton: {fileID: 1190966772}
   panaceaButton: {fileID: 1190966768}
   itemOptions: {fileID: 1190966792}
+  bideAttribute: 0
+  heroBideLevelBase: 1
   critMultiplier: 1.2
   heroCritRate: 0.05
-  bideAttribute: 0
   reviveButton: {fileID: 303387894}
   enemiesDead: 0
-  PotAmount: {fileID: 1190966771}
-  PanAmount: {fileID: 1190966765}
+  potionAmountText: {fileID: 0}
+  panaceaAmountText: {fileID: 0}
   descriptionText: {fileID: 1190966770}
   descriptionTextPotion: {fileID: 1190966763}
   usedMove: {fileID: 1190966769}
   usedMove1: {fileID: 1564192727}
   usedMoveGO: {fileID: 1564192724}
-  Popop: {fileID: 0}
+  popupText: {fileID: 0}
   selectedAttack1: {fileID: 0}
   selectedAttack2: {fileID: 0}
-  drop1Opened: 0
-  drop2Opened: 0
   isFirstMatch: 1
-  listOfObjectToDeactivateAtStartOfBattle:
-  - {fileID: 4879243938263046864, guid: 5b170e3854ef96f40b66167df373619d, type: 3}
+  endGameDelay: 3
 --- !u!4 &743896527
 Transform:
   m_ObjectHideFlags: 0
@@ -5853,14 +5868,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   audioSource: {fileID: 361505357}
-  songs:
-  - {fileID: 8300000, guid: 815c55158b779f54fa3fde8d2890e1a0, type: 3}
-  - {fileID: 8300000, guid: 71aa091a8891624409c76b05fe21ca75, type: 3}
-  - {fileID: 8300000, guid: 0401639d2c9cb034db9d5e7737827b98, type: 3}
-  - {fileID: 8300000, guid: 36315d3c6bfadad488ce34ac4e3bd714, type: 3}
-  - {fileID: 8300000, guid: 92db0d63c94487a4a9a571b04d24eb6f, type: 3}
-  - {fileID: 8300000, guid: 8715b2c56e4c553499d1e1059aaee693, type: 3}
-  - {fileID: 8300000, guid: 3c9d1ebbe59dfeb468e34d5775cf770c, type: 3}
+  battleMusic: {fileID: 0}
+  preMatchMusic: {fileID: 0}
+  prologueMusic: {fileID: 0}
+  prologueMusicHalf: {fileID: 0}
+  prologueMusic2: {fileID: 0}
+  midnightMasquerade: {fileID: 0}
+  jingle12: {fileID: 0}
+  credits: {fileID: 0}
   fadeDuration: 0.1
   maxVolume: 1
 --- !u!4 &1352062516

@@ -21,8 +21,6 @@ MonoBehaviour:
   m_OverrideGlobalSceneList: 0
   m_Scenes:
   - m_enabled: 1
-    m_path: Assets/GameScene(LVL1).unity
-  - m_enabled: 1
     m_path: Assets/Scenes/LVL2.unity
   - m_enabled: 1
     m_path: Assets/Scenes/CreditsScene.unity

@@ -1735,7 +1735,7 @@ public class TurnManager : MonoBehaviour
 
         if (playerWon)
         {
-            if (SceneManager.GetActiveScene().name == "LVL5")
+            if (SceneManager.GetActiveScene().name == "GameScene(LVL6)")
             {
                 //Todo Make a congrats you win scene?
             }
