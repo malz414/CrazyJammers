@@ -1694,6 +1694,7 @@ public class TurnManager : MonoBehaviour
 
     public void ReviveBoss()
     {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         // CrazySDK.Ad.RequestAd(CrazyAdType.Rewarded, () => 
         // {
         //     // ad started
