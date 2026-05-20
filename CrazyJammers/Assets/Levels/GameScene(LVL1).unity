@@ -218,19 +218,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5754342142928533967, guid: 263d454bbece65547ba258ce22da98b2, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
-      value: 5
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5754342142928533967, guid: 263d454bbece65547ba258ce22da98b2, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 11500000, guid: 4408cbd1e166ce1479793b2784c5bb22, type: 3}
+      objectReference: {fileID: 1366225628}
     - target: {fileID: 5754342142928533967, guid: 263d454bbece65547ba258ce22da98b2, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: set_name
+      value: ReviveBoss
       objectReference: {fileID: 0}
     - target: {fileID: 5754342142928533967, guid: 263d454bbece65547ba258ce22da98b2, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: UnityEngine.Object, UnityEngine
+      value: TurnManager, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 5833526138698229305, guid: 263d454bbece65547ba258ce22da98b2, type: 3}
       propertyPath: m_Name
