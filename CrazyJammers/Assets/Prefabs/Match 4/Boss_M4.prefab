@@ -62,7 +62,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 9f86cde5891f43d4aafe5008e54d5aa1, type: 3}
       propertyPath: m_Name
-      value: Boss_M3
+      value: Boss_M4
       objectReference: {fileID: 0}
     - target: {fileID: 5866666021909216657, guid: 9f86cde5891f43d4aafe5008e54d5aa1, type: 3}
       propertyPath: m_Controller
@@ -97,16 +97,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   characterName: Boss
-  maxHealth: 5360
-  currentHealth: 5360
+  maxHealth: 300
+  currentHealth: 300
   barrierCount: 0
   burning: 0
   bideBuff: 0
+  burnIcon: {fileID: 0}
+  paraIcon: {fileID: 0}
   animator: {fileID: 8437985248630668448}
   currentAttack: {fileID: 11400000, guid: 3687350894a4c0142b0993f34a1ae24d, type: 2}
   allAttacks: []
   bideLevel: 1
+  bideLevelBase: 1
   bideUses: 0
+  dead: 0
+  originalY: 0
 --- !u!210 &5653843745834978628
 SortingGroup:
   m_ObjectHideFlags: 0
