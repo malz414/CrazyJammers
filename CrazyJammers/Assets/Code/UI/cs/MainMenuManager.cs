@@ -51,7 +51,7 @@ public class MainMenuManager : MonoBehaviour
     }
     public void ResetLevel()
     {
-         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+         SceneManager.LoadScene("MainMenu");
     }
 
 }
