@@ -1141,7 +1141,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 5774112266227435869, guid: f3e4ceea7121dc64386a2bd69846452d, type: 3}
         m_TargetAssemblyTypeName: MainMenuManager, Assembly-CSharp
-        m_MethodName: HideCredits
+        m_MethodName: HideCreditsReal
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

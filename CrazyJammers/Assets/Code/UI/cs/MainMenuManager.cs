@@ -34,6 +34,12 @@ public class MainMenuManager : MonoBehaviour
 
          SceneManager.LoadScene("GameScene(LVL1)");
     }
+     public void HideCreditsReal()
+    {
+        MusicManager.Instance.PlayMusic(MusicManager.Instance.midnightMasquerade);
+
+         SceneManager.LoadScene("MainMenu");
+    }
 
     private IEnumerator DoStartGameRoutine()
     {

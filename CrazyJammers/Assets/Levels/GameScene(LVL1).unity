@@ -1844,6 +1844,10 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[3].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.AudioClip, UnityEngine
       objectReference: {fileID: 0}
+    - target: {fileID: 4821797628790136807, guid: bdca80ec484d2484880037cea5c59fba, type: 3}
+      propertyPath: startInstantly
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4893293605321091010, guid: bdca80ec484d2484880037cea5c59fba, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
@@ -4645,6 +4649,10 @@ PrefabInstance:
       propertyPath: enemyHp
       value: 
       objectReference: {fileID: 146537183}
+    - target: {fileID: 1143346409140994859, guid: fec496db80a07c640a9a640f4b6a9472, type: 3}
+      propertyPath: FirstMatch
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1143346409140994859, guid: fec496db80a07c640a9a640f4b6a9472, type: 3}
       propertyPath: skipButton
       value: 

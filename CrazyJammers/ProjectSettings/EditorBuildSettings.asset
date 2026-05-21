@@ -9,6 +9,9 @@ EditorBuildSettings:
     path: Assets/CrazySDK/Demo/LoadingScene.unity
     guid: d34c3ed37bb0fd745b38d55bc61e21c8
   - enabled: 1
+    path: Assets/Levels/MainMenu.unity
+    guid: 5876bb18e5e154742b446463684e4d58
+  - enabled: 1
     path: Assets/Levels/GameScene(LVL1).unity
     guid: 989424bb7cff07d418304324c598203b
   - enabled: 0

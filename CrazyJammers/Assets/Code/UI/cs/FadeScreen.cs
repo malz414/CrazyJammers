@@ -42,6 +42,7 @@ public class FadeScreen : MonoBehaviour
     [SerializeField] QuoteBoxManager quoteBoxManager;
     [SerializeField] int quoteNum;
     public bool startInstantly;
+    public bool FirstMatch;
 
 
 
@@ -71,18 +72,36 @@ public class FadeScreen : MonoBehaviour
             
 
         }
+        if(FirstMatch)
+        {
+
+            StartCoroutine(RunIntroSequence()); //
+        }
+
+        
         
     }
 
     public void SkipToGame()
     {
         if (skipped) return;
+
         skipped=true;
         StopAllCoroutines();
         LeanTween.alphaCanvas(fadeScreen, 0, FADE_OUT_TIME);
         MusicManager.Instance.PlayMusic(MusicManager.Instance.prologueMusic2);
         quoteBoxManager.SetQuoteBox(enemyQuote[quoteNum]);
     }
+    private IEnumerator TypeText(string textToType)
+{
+    prologueTextUI.text = ""; // Clear current text
+    foreach (char letter in textToType.ToCharArray())
+    {
+        prologueTextUI.text += letter;
+        // Adjust this wait time for faster or slower typing
+        yield return new WaitForSeconds(0.01f); 
+    }
+}
 
     private void OnFadeOut(FadeOutEvent fadeEvent)
     {
@@ -92,6 +111,20 @@ public class FadeScreen : MonoBehaviour
             StartCoroutine(NextBattleTransitionCoroutine());
         }
     }
+    private IEnumerator RunIntroSequence()
+{
+    fadeScreen.alpha = 1;
+    skipButton.SetActive(true);
+    
+    // Call the typewriter coroutine instead of setting text directly
+    yield return StartCoroutine(TypeText(introText[0]));
+    
+    // Wait for the user to read or for the timer to finish
+    yield return new WaitForSeconds(5f); 
+    
+    LeanTween.alphaCanvas(fadeScreen, 0, FADE_OUT_TIME);
+    SkipToGame();
+}
 
 
     private IEnumerator NextBattleTransitionCoroutine()

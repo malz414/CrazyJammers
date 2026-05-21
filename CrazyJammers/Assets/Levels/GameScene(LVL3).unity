@@ -4638,6 +4638,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 146537183}
     - target: {fileID: 1143346409140994859, guid: fec496db80a07c640a9a640f4b6a9472, type: 3}
+      propertyPath: quoteNum
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1143346409140994859, guid: fec496db80a07c640a9a640f4b6a9472, type: 3}
       propertyPath: skipButton
       value: 
       objectReference: {fileID: 1815146222}
