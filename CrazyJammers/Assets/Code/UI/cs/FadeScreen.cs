@@ -37,12 +37,15 @@ public class FadeScreen : MonoBehaviour
     [SerializeField] string[] enemyQuote;
     [SerializeField] UICategoryEnums category;
     [SerializeField] CanvasGroup fadeScreen;
+    [SerializeField] CanvasGroup mainMenuScreen;
     [SerializeField] TextMeshProUGUI prologueTextUI;
     [SerializeField] GameObject skipButton;
     [SerializeField] QuoteBoxManager quoteBoxManager;
+    [SerializeField] MainMenuManager mainMenuManager;
     [SerializeField] int quoteNum;
     public bool startInstantly;
     public bool FirstMatch;
+    public bool mainMenu = false;
 
 
 
@@ -67,7 +70,10 @@ public class FadeScreen : MonoBehaviour
             skipped=true;
             LeanTween.alphaCanvas(fadeScreen, 0, 0);
             MusicManager.Instance.PlayMusic(MusicManager.Instance.prologueMusic2);
-            quoteBoxManager.SetQuoteBox(enemyQuote[quoteNum]);
+            
+                quoteBoxManager.SetQuoteBox(enemyQuote[quoteNum]);
+            
+            
             
             
 
@@ -90,8 +96,17 @@ public class FadeScreen : MonoBehaviour
         StopAllCoroutines();
         LeanTween.alphaCanvas(fadeScreen, 0, FADE_OUT_TIME);
         MusicManager.Instance.PlayMusic(MusicManager.Instance.prologueMusic2);
+        if(!mainMenu)
+        {
         quoteBoxManager.SetQuoteBox(enemyQuote[quoteNum]);
+        }
     }
+    public void ShowIntro()
+    {
+                    StartCoroutine(RunIntroSequence()); //
+
+    }
+
     private IEnumerator TypeText(string textToType)
 {
     prologueTextUI.text = ""; // Clear current text
@@ -112,9 +127,12 @@ public class FadeScreen : MonoBehaviour
         }
     }
     private IEnumerator RunIntroSequence()
-{
+{   
     fadeScreen.alpha = 1;
     skipButton.SetActive(true);
+    mainMenuScreen.interactable = false;
+    LeanTween.alphaCanvas(mainMenuScreen, 0, FADE_OUT_TIME);
+    
     
     // Call the typewriter coroutine instead of setting text directly
     yield return StartCoroutine(TypeText(introText[0]));
@@ -123,7 +141,7 @@ public class FadeScreen : MonoBehaviour
     yield return new WaitForSeconds(5f); 
     
     LeanTween.alphaCanvas(fadeScreen, 0, FADE_OUT_TIME);
-    SkipToGame();
+    mainMenuManager.HideCredits();
 }
 
 
