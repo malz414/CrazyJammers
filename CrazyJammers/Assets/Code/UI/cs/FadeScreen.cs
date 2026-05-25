@@ -131,6 +131,7 @@ public class FadeScreen : MonoBehaviour
     fadeScreen.alpha = 1;
     skipButton.SetActive(true);
     mainMenuScreen.interactable = false;
+    mainMenuScreen.blocksRaycasts = false;
     LeanTween.alphaCanvas(mainMenuScreen, 0, FADE_OUT_TIME);
     
     

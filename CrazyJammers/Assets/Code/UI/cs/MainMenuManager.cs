@@ -30,7 +30,6 @@ public class MainMenuManager : MonoBehaviour
     }
     public void HideCredits()
     {
-        MusicManager.Instance.PlayMusic(MusicManager.Instance.midnightMasquerade);
 
          SceneManager.LoadScene("GameScene(LVL1)");
     }
