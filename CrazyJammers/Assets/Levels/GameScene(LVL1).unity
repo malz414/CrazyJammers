@@ -5436,7 +5436,7 @@ PrefabInstance:
     - target: {fileID: 5983332039427138553, guid: 8653b2476913f5e43aa2a51916215353, type: 3}
       propertyPath: battleMusic
       value: 
-      objectReference: {fileID: 8300000, guid: 815c55158b779f54fa3fde8d2890e1a0, type: 3}
+      objectReference: {fileID: 8300000, guid: 0b1bfb2c079271a43b4f57bd8752b32f, type: 3}
     - target: {fileID: 5983332039427138553, guid: 8653b2476913f5e43aa2a51916215353, type: 3}
       propertyPath: preMatchMusic
       value: 

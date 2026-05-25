@@ -103,8 +103,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   characterName: Boss
-  maxHealth: 60
-  currentHealth: 60
+  maxHealth: 600
+  currentHealth: 600
   barrierCount: 0
   burning: 0
   bideBuff: 0
