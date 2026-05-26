@@ -1731,11 +1731,12 @@ public class TurnManager : MonoBehaviour
     private IEnumerator DoEndGameRoutine(bool playerWon)
     {
         yield return new WaitForSeconds(endGameDelay);
-        MusicManager.Instance.PlayMusic(MusicManager.Instance.jingle12);
-
+       
 
         if (playerWon)
         {
+             MusicManager.Instance.PlayMusic(MusicManager.Instance.jingle12);
+
             if (SceneManager.GetActiveScene().name == "GameScene(LVL6)")
             {
                 //Todo Make a congrats you win scene?
@@ -1746,6 +1747,8 @@ public class TurnManager : MonoBehaviour
         }
         else
         {
+             MusicManager.Instance.PlayMusic(MusicManager.Instance.gameOver);
+
             loseScreen.SetActive(true);
             MainUIParent.SetActive(false);
             if (revived)

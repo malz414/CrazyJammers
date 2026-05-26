@@ -17,6 +17,7 @@ public class MusicManager : MonoBehaviour
     public AudioClip prologueMusic2;
     public AudioClip midnightMasquerade;
     public AudioClip jingle12;
+    public AudioClip gameOver;
     
     public AudioClip credits;
 
