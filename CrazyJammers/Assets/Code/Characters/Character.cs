@@ -12,6 +12,7 @@
         public int barrierCount;
         public int burning;
         public bool bideBuff = false;
+        public float bideDefenseMultiplier = 0.90f;
          public GameObject burnIcon;
         public GameObject paraIcon;
 
@@ -49,23 +50,24 @@
 
         public virtual void TakeDamage(int damage)
         {
-            
-          if(barrierCount > 0 && bideBuff)
+            if (barrierCount > 0 && bideBuff)
             {
                 barrierCount--;
                 bideBuff = false;
-                damage = Mathf.RoundToInt(damage * 0.70f);  
+                
+                float combinedMultiplier = Mathf.Max(0f, bideDefenseMultiplier - 0.20f);
+                damage = Mathf.RoundToInt(damage * combinedMultiplier);  
                 currentHealth -= damage;
             }
-            else if(barrierCount > 0)
+            else if (barrierCount > 0)
             {
                 barrierCount--;
-                damage = Mathf.RoundToInt(damage * 0.80f);  
+                damage = Mathf.RoundToInt(damage * 0.80f); 
                 currentHealth -= damage;
             }
-            else if(bideBuff)
+            else if (bideBuff)
             {
-                damage = Mathf.RoundToInt(damage * 0.90f); 
+                damage = Mathf.RoundToInt(damage * bideDefenseMultiplier); 
                 currentHealth -= damage;
             }
             else
@@ -73,12 +75,10 @@
                 currentHealth -= damage;
             }
 
-
             if (currentHealth <= 0)
             {
                 Die();
             }
-            //Barrier Animation?
             StartCoroutine(DoHitRoutine(damage));
         }
 

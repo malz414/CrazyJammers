@@ -1233,8 +1233,9 @@ public class TurnManager : MonoBehaviour
             }
             else
             {
-                float multiplier = 1.0f + (combinedAttack.upgradeLevel / 30f);
-                damage = Mathf.RoundToInt(hero.GetDamage() * multiplier);
+                float upgradeMultiplier = 1.0f + (combinedAttack.upgradeLevel / 30f);
+                
+                damage = Mathf.RoundToInt(hero.GetDamage() * hero.bideLevel * upgradeMultiplier);
             }
 
             if (combinedAttack.attributes.Contains("Steady"))
