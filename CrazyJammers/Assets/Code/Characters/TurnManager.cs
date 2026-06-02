@@ -281,7 +281,7 @@ public class TurnManager : MonoBehaviour
         foreach (var attack in attacksReset)
         {
             attack.upgradeLevel = 0;
-            Debug.Log($"Attack: {attack.attackName}, Upgrade Level: {attack.upgradeLevel}");
+//            Debug.Log($"Attack: {attack.attackName}, Upgrade Level: {attack.upgradeLevel}");
         }
 
         targetingMode = false;
@@ -443,7 +443,6 @@ public class TurnManager : MonoBehaviour
             enemyAttacksByIndexPerm.Add(null);
         }
 
-        
         if (!isBattleActive) yield break;
 
         for (int i = 0; i < enemies.Count; i++)
@@ -497,6 +496,8 @@ public class TurnManager : MonoBehaviour
                     enemyAttacksByIndex.Clear();
                     enemyAttacksByIndex.AddRange(previousTurnMoves);
                 }
+
+                Debug.Log($"[ATTACK DIAGNOSTIC] {enemy.characterName} -> Hero | Move: {enemyAttack.attackName} | Base Dmg: {enemyAttack.GetDamage()} | Enemy Multiplier: {enemy.multiplier}");
 
                 if (enemyAttack.attributes.Contains("Barrier"))
                 {
@@ -714,7 +715,6 @@ public class TurnManager : MonoBehaviour
             hero.Init(popupPrefabfire);
             hero.TakeDamage((int)(hero.maxHealth*.1));
             
-            
             ApplyEffectWithDelay(burn, hero.transform, 0f, 3.0f);
                 blurbEvent.Set($" Boss is burning for {hero.burning} turns!");
                 EventBus.Publish(blurbEvent);
@@ -765,6 +765,9 @@ public class TurnManager : MonoBehaviour
         }
     }
 
+
+    
+
     private void SetupAttackDropdowns()
     {
         attackDropdown.onValueChanged.AddListener(OnAttack1Selected);
@@ -808,7 +811,7 @@ public class TurnManager : MonoBehaviour
                     var enemy = enemies[index]; 
                     if (!enemy.dead && existingOption.text == attack.attackName && bideAttribute >= 1)
                     {
-                        attack.upgradeLevel++;
+                        //attack.upgradeLevel++;
                         if (attack.upgradeLevel > 2) attack.upgradeLevel = 2;
                         found = true;
                         break;
@@ -1164,18 +1167,14 @@ public class TurnManager : MonoBehaviour
     // --- PLAYER ATTACK ROUTINE ---
     private IEnumerator DoBossAttackRoutine(params Enemy[] targetEnemies)
     {
-        Debug.Log("DoBossAttackRoutine started.");
-
         if (!isBattleActive) yield break;
 
-        // Group Attacked Text
         List<string> allTargetNames = new List<string>();
         foreach (var t in targetEnemies)
         {
             if(t != null) allTargetNames.Add(t.characterName);
         }
 
-        // --- NEW: Filter out duplicates so it doesn't say "Swordsman and Swordsman" ---
         List<string> uniqueNames = allTargetNames.Distinct().ToList();
 
         if (uniqueNames.Count > 0)
@@ -1199,7 +1198,6 @@ public class TurnManager : MonoBehaviour
         List<string> paralyzedNames = new List<string>();
         List<string> defeatedNames = new List<string>(); 
 
-        // MOVED THESE OUTSIDE THE LOOP!
         hasIced = false; 
         hasLunged = false;
 
@@ -1208,14 +1206,12 @@ public class TurnManager : MonoBehaviour
             if (!isBattleActive) yield break;
             int currentTargetIndex = enemies.IndexOf(targetEnemy);
             
-            // Cache attack types (Order Independent)
             bool isBurn = combinedAttack.attributes.Contains("Burn");
             bool isIce = combinedAttack.attributes.Contains("Ice");
             bool isPara = combinedAttack.attributes.Contains("Paralysis");
             bool isLunge = combinedAttack.attributes.Contains("Lunge");
             bool isHybridElements = (isBurn && isIce) || (isBurn && isPara) || (isIce && isPara);
 
-            // Reset Popup Color
             targetEnemy.Init(popupPrefab); 
 
             yield return new WaitForSeconds(0.2f);
@@ -1226,16 +1222,15 @@ public class TurnManager : MonoBehaviour
                 heroAniPlayed = true;
             }
 
-            int damage;
-            if (bideAttribute <= 0)
+            int baseDamage = hero.GetDamage();
+            int damage = baseDamage;
+            float upgradeMultiplier = 1.0f;
+            bool isCrit = false;
+
+            if (bideAttribute > 0)
             {
-                damage = hero.GetDamage();
-            }
-            else
-            {
-                float upgradeMultiplier = 1.0f + (combinedAttack.upgradeLevel / 30f);
-                
-                damage = Mathf.RoundToInt(hero.GetDamage() * hero.bideLevel * upgradeMultiplier);
+                upgradeMultiplier = 1.0f + (combinedAttack.upgradeLevel / 30f);
+                damage = Mathf.RoundToInt(baseDamage * hero.bideLevel * upgradeMultiplier);
             }
 
             if (combinedAttack.attributes.Contains("Steady"))
@@ -1248,6 +1243,7 @@ public class TurnManager : MonoBehaviour
 
             if (UnityEngine.Random.value <= heroCritRate)
             {
+                isCrit = true;
                 damage = (int)(damage * critMultiplier);
                 blurbEvent.Set("Critical Hit!");
                 EventBus.Publish(blurbEvent);
@@ -1258,6 +1254,8 @@ public class TurnManager : MonoBehaviour
             {
                 targetEnemy.TakeDamage(damage);
             }
+
+            Debug.Log($"[ATTACK DIAGNOSTIC] Hero -> {targetEnemy.characterName} | Base Dmg: {baseDamage} | Bide Active: {(bideAttribute > 0)} | Bide Multiplier: {hero.bideLevel} | Upgrade Mult: {upgradeMultiplier} | Crit Hit: {isCrit} | Final Outgoing Dmg: {damage}");
 
             if (isBurn)
             {
@@ -1464,16 +1462,13 @@ public class TurnManager : MonoBehaviour
                 EventBus.Publish(blurbEvent);
             }
 
-            // --- HYBRID ELEMENTAL VFX ---
             if (!isLunge && isHybridElements) 
             {
-                // Create a temporary spawn point for all hybrid projectiles (matches standard Burn/Para)
                 Vector3 newPos = hero.transform.position;
                 GameObject tempGameObject = new GameObject();
                 tempGameObject.transform.position = newPos;
                 Destroy(tempGameObject, 5f);
 
-                // Calculate aiming angle based on the target's grid slot
                 float yRot = 0f;
                 switch (currentTargetIndex) 
                 { 
@@ -1532,7 +1527,6 @@ public class TurnManager : MonoBehaviour
             heroCritRate = 0.05f;
         } 
 
-        // Grouped Text Display
         if (paralyzedNames.Count > 0)
         {
             string combinedText = "";
@@ -1566,7 +1560,6 @@ public class TurnManager : MonoBehaviour
 
         heroAniPlayed = false;
         
-        // CHECK IF BATTLE IS ACTIVE BEFORE CONTINUING
         if(isBattleActive) StartCoroutine(StartTurn());
     }
 

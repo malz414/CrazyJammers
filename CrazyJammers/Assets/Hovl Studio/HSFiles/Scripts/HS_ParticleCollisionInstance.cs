@@ -20,22 +20,22 @@ public class HS_ParticleCollisionInstance : MonoBehaviour
         part = GetComponent<ParticleSystem>();
         if (part == null)
         {
-            Debug.LogError("ParticleSystem component not found on the GameObject.");
+         //   Debug.LogError("ParticleSystem component not found on the GameObject.");
         }
     }
 
     void OnParticleCollision(GameObject other)
     {
-        Debug.Log("Particle collision detected with: " + other.name);
+       // Debug.Log("Particle collision detected with: " + other.name);
         int numCollisionEvents = part.GetCollisionEvents(other, collisionEvents);
-        Debug.Log("Number of collision events: " + numCollisionEvents);
+       // Debug.Log("Number of collision events: " + numCollisionEvents);
 
         for (int i = 0; i < numCollisionEvents; i++)
         {
             foreach (var effect in EffectsOnCollision)
             {
                 var instance = Instantiate(effect, collisionEvents[i].intersection + collisionEvents[i].normal * Offset, Quaternion.identity);
-                Debug.Log("Instantiated object initial rotation: " + instance.transform.rotation.eulerAngles);
+               // Debug.Log("Instantiated object initial rotation: " + instance.transform.rotation.eulerAngles);
 
                 if (!UseWorldSpacePosition) instance.transform.parent = transform;
                 if (UseFirePointRotation)
@@ -52,7 +52,7 @@ public class HS_ParticleCollisionInstance : MonoBehaviour
                     instance.transform.rotation *= Quaternion.Euler(rotationOffset);
                 }
 
-                Debug.Log("Instantiated object final rotation: " + instance.transform.rotation.eulerAngles);
+//                Debug.Log("Instantiated object final rotation: " + instance.transform.rotation.eulerAngles);
                 Destroy(instance, DestroyTimeDelay);
             }
         }

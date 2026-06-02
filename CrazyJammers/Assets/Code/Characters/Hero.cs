@@ -13,7 +13,6 @@ public class Hero : Character
     public float originalY;
     public Coroutine lerpCoroutine;
   
-
     protected override void Start()
     {
         base.Start();
@@ -30,6 +29,7 @@ public class Hero : Character
     {
         this.burning = 0;
     }
+
     public void RemoveHeroParalysis()
     {
         paralysisEffect = null;  
@@ -46,39 +46,34 @@ public class Hero : Character
         {
             bideLevel += 0.5f;
             bideUses++;
-            Debug.Log($"Bide used. Current bide level: {bideLevel}");
             return true;
         }
         else
         {
-            Debug.Log("Bide can only be used twice.");
             return false;
         }
     }
 
-    // Method to calculate damage
     public int GetDamage()
     {
         if (currentAttack != null)
         {
             int damage = (currentAttack.GetDamage());
-              return damage;
-              
+            return damage;
         }
         return 0;
     }
     
-
     protected override void Die()
     {
         dead = true;
-        Debug.Log($"{characterName} has been defeated!");
         
         if (lerpCoroutine != null) StopCoroutine(lerpCoroutine);
-        lerpCoroutine = StartCoroutine(LerpYPosition(transform.position.y, transform.position.y - 1f, .5f, .5f)); // sink 2 units down
+        lerpCoroutine = StartCoroutine(LerpYPosition(transform.position.y, transform.position.y - 1f, .5f, .5f)); 
         
         TurnManager.Instance.EndGame(false);
     }
+
     public IEnumerator LerpYPosition(float fromY, float toY, float duration, float delay)
     {
         yield return new WaitForSeconds(delay);
@@ -96,5 +91,4 @@ public class Hero : Character
 
         transform.position = endPos;
     }
-
 }
