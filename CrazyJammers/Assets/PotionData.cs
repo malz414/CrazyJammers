@@ -7,9 +7,11 @@ public class PotionData : MonoBehaviour
     public int Potion = 1;
     public int Panacea = 1;
 
+    private int checkpointPotion;
+    private int checkpointPanacea;
+
     private void Awake()
     {
-       
         if (Instance == null)
         {
             Instance = this;
@@ -21,9 +23,20 @@ public class PotionData : MonoBehaviour
         }
     }
 
+    public void SaveCheckpoint()
+    {
+        checkpointPotion = Potion;
+        checkpointPanacea = Panacea;
+    }
+
+    public void RestoreCheckpoint()
+    {
+        Potion = checkpointPotion;
+        Panacea = checkpointPanacea;
+    }
+
     public void ResetValues()
     {
-        Debug.Log("Values Reset");
         Potion = 1;
         Panacea = 1;
     }

@@ -111,33 +111,50 @@ public class Enemy : Character
     }
 
     public AttackSO PerformRandomAttack()
-    {
-        if (possibleAttacks.Count > 0)
-    {
-        Enemy[] allEnemies = FindObjectsOfType<Enemy>();
-        Debug.Log(allEnemies[1]);
-        bool allEnemiesFullHealth = allEnemies
-            .Where(enemy => !enemy.dead) // Ignore dead enemies
-            .All(enemy => enemy.IsFullHealth());
+{
+    if (possibleAttacks.Count == 0) return null;
 
-        List<AttackSO> validAttacks = allEnemiesFullHealth 
-            ? possibleAttacks.Where(attack => attack.attackName != "Heal" && attack.attackName != "Healing Field" ).ToList() 
-            : possibleAttacks;
+    // 1. Efficiently grab the list of living enemies directly from your TurnManager
+    List<Enemy> activeEnemies = TurnManager.Instance.aliveEnemies.Where(e => !e.dead).ToList();
 
-        if (validAttacks.Count > 0)
+    // 2. Evaluate the board state
+    bool isAnyoneBelow20 = activeEnemies.Any(e => e.currentHealth <= (e.maxHealth * 0.2f));
+    bool allEnemiesFullHealth = activeEnemies.All(e => e.currentHealth >= e.maxHealth);
+
+    // Default to all possible attacks
+    List<AttackSO> validAttacks = new List<AttackSO>(possibleAttacks);
+
+    // 3. Smart AI Filtering based on Attributes (not names)
+    if (isAnyoneBelow20)
+    {
+        // Panic Mode: Try to filter down to ONLY healing moves
+        List<AttackSO> healingAttacks = possibleAttacks.Where(a => a.attributes.Contains("Heal") || a.attributes.Contains("Field")).ToList();
+        
+        // If this enemy actually owns a healing move, restrict their choices to ONLY heals
+        if (healingAttacks.Count > 0)
         {
-      
-            int randomIndex = Random.Range(0, validAttacks.Count);
-            AttackSO chosenAttack = validAttacks[randomIndex];
-            int damage = Mathf.RoundToInt(chosenAttack.GetDamage() * multiplier);
-            attacksUsed.Add(chosenAttack);
-            DoAttackAnimation();
-            return chosenAttack; 
+            validAttacks = healingAttacks; 
         }
-        Debug.LogError($"No available attacks for enemy: {gameObject.name}");
-       
     }
-     return null;
+    else if (allEnemiesFullHealth)
+    {
+        // Chill Mode: Remove healing moves so we don't waste them
+        validAttacks = possibleAttacks.Where(a => !a.attributes.Contains("Heal") && !a.attributes.Contains("Field")).ToList();
+        
+        // Failsafe: Just in case an enemy *only* has healing moves, don't leave the list empty
+        if (validAttacks.Count == 0) validAttacks = possibleAttacks; 
+    }
+
+    // 4. Roll the dice from our intelligently filtered list
+    int randomIndex = Random.Range(0, validAttacks.Count);
+    AttackSO chosenAttack = validAttacks[randomIndex];
+
+    // 5. Execute
+    int damage = Mathf.RoundToInt(chosenAttack.GetDamage() * multiplier);
+    attacksUsed.Add(chosenAttack);
+    DoAttackAnimation();
+    
+    return chosenAttack; 
 }
 
 

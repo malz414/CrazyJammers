@@ -199,6 +199,12 @@ public class TurnManager : MonoBehaviour
     private void Start()
     {
         statusUpdateEvent = new CharacterStatusUpdateEvent();
+        
+        if (PotionData.Instance != null)
+        {
+            PotionData.Instance.SaveCheckpoint();
+        }
+
         SetupAttackDropdowns(); 
     }
 
@@ -1688,7 +1694,14 @@ public class TurnManager : MonoBehaviour
 
     public void ReviveBoss()
     {
+        // Restore inventory to the start-of-match state before reloading
+        if (PotionData.Instance != null)
+        {
+            PotionData.Instance.RestoreCheckpoint();
+        }
+        
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    
         // CrazySDK.Ad.RequestAd(CrazyAdType.Rewarded, () => 
         // {
         //     // ad started
