@@ -3552,11 +3552,11 @@ PrefabInstance:
     - target: {fileID: 5983332039427138553, guid: 8653b2476913f5e43aa2a51916215353, type: 3}
       propertyPath: credits
       value: 
-      objectReference: {fileID: 8300000, guid: 28e9cdd082732944bb2b9ca0803e7f8d, type: 3}
+      objectReference: {fileID: 8300000, guid: 938fe1ca469db8449925a0ed1ba47845, type: 3}
     - target: {fileID: 5983332039427138553, guid: 8653b2476913f5e43aa2a51916215353, type: 3}
       propertyPath: gameOver
       value: 
-      objectReference: {fileID: 8300000, guid: 938fe1ca469db8449925a0ed1ba47845, type: 3}
+      objectReference: {fileID: 8300000, guid: 28e9cdd082732944bb2b9ca0803e7f8d, type: 3}
     - target: {fileID: 5983332039427138553, guid: 8653b2476913f5e43aa2a51916215353, type: 3}
       propertyPath: jingle12
       value: 
