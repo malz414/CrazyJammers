@@ -120,6 +120,7 @@ public class TurnManager : MonoBehaviour
     public List<AttackSO> enemyAttacksByIndex = new List<AttackSO>();
     public List<AttackSO> enemyAttacksByIndexPerm = new List<AttackSO> { null, null, null, null };
     public List<AttackSO> previousTurnMoves;
+    public List<AttackSO> allEncounteredMoves = new List<AttackSO>();
     private List<Enemy> selectedEnemies = new List<Enemy>();
     private List<Enemy> upcomingEnemies = new List<Enemy>();
     
@@ -254,6 +255,7 @@ public class TurnManager : MonoBehaviour
         isBattleActive = true;
         enemies = new List<Enemy>();
         aliveEnemies = new List<Enemy>();
+        allEncounteredMoves.Clear(); 
 
         if (currentGameMode == GameMode.Standard)
         {
@@ -444,6 +446,7 @@ public class TurnManager : MonoBehaviour
         if (!isBattleActive) yield break;
 
         enemyAttacksByIndex.Clear();
+        previousTurnMoves.Clear(); 
         while (enemyAttacksByIndexPerm.Count < enemies.Count)
         {
             enemyAttacksByIndexPerm.Add(null);
@@ -478,9 +481,16 @@ public class TurnManager : MonoBehaviour
             else if (enemy.dead)
             {
                 AttackSO lastUsedAttack = enemyAttacksByIndexPerm[i];
-                if (lastUsedAttack != null && !enemyAttacksByIndex.Contains(lastUsedAttack))
+                if (lastUsedAttack != null)
                 {
-                    enemyAttacksByIndex.Add(lastUsedAttack);
+                    if (!enemyAttacksByIndex.Contains(lastUsedAttack))
+                    {
+                        enemyAttacksByIndex.Add(lastUsedAttack);
+                    }
+                    if (!previousTurnMoves.Contains(lastUsedAttack))
+                    {
+                        previousTurnMoves.Add(lastUsedAttack);
+                    }
                 }
                 continue;
             }
@@ -493,6 +503,10 @@ public class TurnManager : MonoBehaviour
                 blurbEvent.Set($"{enemy.characterName} Used {enemyAttack.attackName}");
                 EventBus.Publish(blurbEvent);
                 enemyAttacksByIndexPerm[i] = enemyAttack;
+                if (!allEncounteredMoves.Contains(enemyAttack))
+                {
+                    allEncounteredMoves.Add(enemyAttack);
+                }
 
                 if (!enemyAttacksByIndex.Contains(enemyAttack)) enemyAttacksByIndex.Add(enemyAttack);
                 if (!previousTurnMoves.Contains(enemyAttack)) previousTurnMoves.Add(enemyAttack);
@@ -624,21 +638,21 @@ public class TurnManager : MonoBehaviour
                     hero.TakeDamage(enemyAttack.GetDamage());
                     hero.TakeDamage(enemyAttack.GetDamage());
                     
-                    if (UnityEngine.Random.value <= .1f && hero.GetParalysisTurnsRemaining() < 1 && hero.burning < 1)
+                    if (UnityEngine.Random.value <= .1f && hero.GetParalysisTurnsRemaining() <= 0 && hero.burning <= 0)
                     {
                         hero.ApplyParalysis(5, true);
                         blurbEvent.Set($"Boss has been paralyzed by {enemyAttack.attackName}!");
                         EventBus.Publish(blurbEvent);
                         usedMove1.text =$"Boss has been paralyzed by {enemyAttack.attackName}!";
                     }
-                    if (UnityEngine.Random.value <= .1f && hero.GetParalysisTurnsRemaining() < 1 && hero.burning < 1)
+                    if (UnityEngine.Random.value <= .1f && hero.GetParalysisTurnsRemaining() <= 0 && hero.burning <= 0)
                     {
                         hero.ApplyParalysis(5, true);
                         blurbEvent.Set($"Boss has been paralyzed by {enemyAttack.attackName}!");
                         usedMove1.text = $"Boss has been paralyzed by {enemyAttack.attackName}!";
                         EventBus.Publish(blurbEvent);
                     }
-                    if (UnityEngine.Random.value <= .1f && hero.GetParalysisTurnsRemaining() < 1 && hero.burning < 1)
+                    if (UnityEngine.Random.value <= .1f && hero.GetParalysisTurnsRemaining() <= 0 && hero.burning <= 0)
                     {
                         hero.ApplyParalysis(5, true);
                         blurbEvent.Set($"Boss has been paralyzed by {enemyAttack.attackName}!");
@@ -664,7 +678,7 @@ public class TurnManager : MonoBehaviour
 
                 if (enemyAttack.attributes.Contains("Burn"))
                 {
-                    if (UnityEngine.Random.value <= .3f && hero.GetParalysisTurnsRemaining() < 1 && hero.burning < 1)
+                    if (UnityEngine.Random.value <= .3f && hero.GetParalysisTurnsRemaining() <= 0 && hero.burning <= 0)
                     {
                         hero.ApplyBurn(10, 3);
                         blurbEvent.Set($"Boss has been burned by {enemyAttack.attackName}!");
@@ -685,7 +699,7 @@ public class TurnManager : MonoBehaviour
 
                 if (enemyAttack.attributes.Contains("Paralysis"))
                 {
-                    if (UnityEngine.Random.value <= 1f && hero.GetParalysisTurnsRemaining() < 1 && hero.burning < 1)
+                    if (UnityEngine.Random.value <= 1f && hero.GetParalysisTurnsRemaining() <= 0 && hero.burning <= 0)
                     {
                         hero.ApplyParalysis(5, false);
                         blurbEvent.Set($"Boss has been paralyzed by {enemyAttack.attackName}!");
@@ -713,6 +727,8 @@ public class TurnManager : MonoBehaviour
         yield return new WaitForSeconds(.5f);
         if (!isBattleActive) yield break;
 
+        hero.StartCoroutine(hero.ResetTransformRoutine(0f));
+
         hero.bideBuff = false;
         hero.UpdateEffects();
 
@@ -722,11 +738,14 @@ public class TurnManager : MonoBehaviour
             hero.TakeDamage((int)(hero.maxHealth*.1));
             
             ApplyEffectWithDelay(burn, hero.transform, 0f, 3.0f);
-                blurbEvent.Set($" Boss is burning for {hero.burning} turns!");
-                EventBus.Publish(blurbEvent);
-                usedMove1.text = $" Boss is burning for {hero.burning} turns!";
-                hero.burning--;
-                yield return new WaitForSeconds(1f);
+            blurbEvent.Set($" Boss is burning for {hero.burning} turns!");
+            EventBus.Publish(blurbEvent);
+            usedMove1.text = $" Boss is burning for {hero.burning} turns!";
+            
+            hero.burning--;
+            if (hero.burning <= 0) hero.burnIcon.SetActive(false); // Add this line!
+            
+            yield return new WaitForSeconds(1f);
             if (hero.currentHealth <= 0)
             {
                 EndGame(false);
@@ -766,6 +785,28 @@ public class TurnManager : MonoBehaviour
                 hero.bideLevel = hero.bideLevelBase;
                 hero.bideUses = 0;
             }
+
+            enemyAttacksByIndex.Clear();
+
+            if (bideAttribute > 0 && hero.bideUses == 2)
+            {
+                enemyAttacksByIndex.AddRange(allEncounteredMoves);
+            }
+            else 
+            {
+                for (int i = 0; i < enemies.Count; i++)
+                {
+                    // REMOVED the !enemies[i].dead check here
+                    if (enemyAttacksByIndexPerm[i] != null) 
+                    {
+                        if (!enemyAttacksByIndex.Contains(enemyAttacksByIndexPerm[i]))
+                        {
+                            enemyAttacksByIndex.Add(enemyAttacksByIndexPerm[i]);
+                        }
+                    }
+                }
+            }
+
             usedMoveGO.SetActive(false);
             if(isBattleActive) ShowAttackSelectionUI();
         }
@@ -796,32 +837,25 @@ public class TurnManager : MonoBehaviour
     {
         List<TMP_Dropdown.OptionData> dropdownOptions = new List<TMP_Dropdown.OptionData>();
         List<string> descriptions = new List<string>();
+        
+        // Use a HashSet or a simple list to track added names to prevent duplicates
+        List<string> addedAttackNames = new List<string>();
 
         for (int i = 0; i < enemyAttacksByIndex.Count; i++)
         {
             var attack = enemyAttacksByIndex[i];
-            bool found = false;
-            
-            if (!found)
+
+            if (!addedAttackNames.Contains(attack.attackName))
             {
                 TMP_Dropdown.OptionData newOption = new TMP_Dropdown.OptionData(attack.attackName);
                 dropdownOptions.Add(newOption);
                 descriptions.Add(attack.attackDescription);
-            }
+                addedAttackNames.Add(attack.attackName);
 
-            foreach (var existingOption in dropdownOptions)
-            {
-                int index = dropdownOptions.IndexOf(existingOption);
-                if (index <= 3)
+                // Handle Bide upgrades
+                if (bideAttribute >= 1)
                 {
-                    var enemy = enemies[index]; 
-                    if (!enemy.dead && existingOption.text == attack.attackName && bideAttribute >= 1)
-                    {
-                        //attack.upgradeLevel++;
-                        if (attack.upgradeLevel > 2) attack.upgradeLevel = 2;
-                        found = true;
-                        break;
-                    }
+                    if (attack.upgradeLevel > 2) attack.upgradeLevel = 2;
                 }
             }
         }
@@ -848,8 +882,8 @@ public class TurnManager : MonoBehaviour
 
         attackOptionsParent.SetActive(true);
         potionOptions.SetActive(true);
-        panaceaAmountText.text = PotionData.Instance.Panacea.ToString();;
-        potionAmountText.text = PotionData.Instance.Potion.ToString();;
+        panaceaAmountText.text = PotionData.Instance.Panacea.ToString();
+        potionAmountText.text = PotionData.Instance.Potion.ToString();
     }
 
     private void AddHoverEvents(TMP_Dropdown dropdown, List<string> descriptions)
@@ -1268,7 +1302,7 @@ public class TurnManager : MonoBehaviour
                 hero.Init(popupPrefab);
                 randomChance = (bideAttribute > 0) ? 0.2f : 0.2f;
 
-                if (UnityEngine.Random.value <= randomChance && targetEnemy.GetParalysisTurnsRemaining() < 1 && targetEnemy.burning < 1)
+                if (UnityEngine.Random.value <= randomChance && targetEnemy.GetParalysisTurnsRemaining() <= 0 && targetEnemy.burning <= 0)
                 {
                     targetEnemy.ApplyBurn(1000, 3);
                     blurbEvent.Set($"{targetEnemy.characterName} was burned!");
@@ -1300,7 +1334,7 @@ public class TurnManager : MonoBehaviour
             {
                 hero.Init(popupPrefab);
 
-                if (UnityEngine.Random.value <= 1f && targetEnemy.GetParalysisTurnsRemaining() < 1 && targetEnemy.burning < 1)
+                if (UnityEngine.Random.value <= 1f && targetEnemy.GetParalysisTurnsRemaining() <= 0 && targetEnemy.burning <= 0)
                 {
                     targetEnemy.ApplyParalysis(5, true);
                     if(!paralyzedNames.Contains(targetEnemy.characterName))
@@ -1409,17 +1443,17 @@ public class TurnManager : MonoBehaviour
                 targetEnemy.TakeDamage(damage);
                 targetEnemy.TakeDamage(damage);
 
-                if (UnityEngine.Random.value <= .1f && hero.GetParalysisTurnsRemaining() < 1 && hero.burning < 1)
+                if (UnityEngine.Random.value <= .1f && targetEnemy.GetParalysisTurnsRemaining() <= 0 && targetEnemy.burning <= 0)
                 {
                     targetEnemy.ApplyParalysis(5, false);
                     if(!paralyzedNames.Contains(targetEnemy.characterName)) paralyzedNames.Add(targetEnemy.characterName);
                 }
-                if (UnityEngine.Random.value <= .1f && hero.GetParalysisTurnsRemaining() < 1 && hero.burning < 1)
+                if (UnityEngine.Random.value <= .1f && targetEnemy.GetParalysisTurnsRemaining() <= 0 && targetEnemy.burning <= 0)
                 {
                     targetEnemy.ApplyParalysis(5, false);
                     if(!paralyzedNames.Contains(targetEnemy.characterName)) paralyzedNames.Add(targetEnemy.characterName);
                 }
-                if (UnityEngine.Random.value <= .1f && hero.GetParalysisTurnsRemaining() < 1 && hero.burning < 1)
+                if (UnityEngine.Random.value <= .1f && targetEnemy.GetParalysisTurnsRemaining() <= 0 && targetEnemy.burning <= 0)
                 {
                     targetEnemy.ApplyParalysis(5, false);
                     if(!paralyzedNames.Contains(targetEnemy.characterName)) paralyzedNames.Add(targetEnemy.characterName);

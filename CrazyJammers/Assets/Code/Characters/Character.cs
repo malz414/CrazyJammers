@@ -207,6 +207,20 @@ public abstract class Character : MonoBehaviour
                 burnIcon.SetActive(false);
             }
         }
+        if (burning <= 0)
+        {
+            burning = 0; // Clamp it to prevent negatives
+            if (burnIcon != null) burnIcon.SetActive(false);
+        }
+
+        paralysisEffect?.CheckForActivation();
+        if(paralysisEffect != null) 
+        {
+            if(!paralysisEffect.IsEffectActive())
+            {
+                RemoveParalysis();
+            }
+        }
 
         paralysisEffect?.CheckForActivation();
         if(paralysisEffect != null) 

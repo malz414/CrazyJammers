@@ -12,11 +12,16 @@ public class Hero : Character
     public bool dead = false;
     public float originalY;
     public Coroutine lerpCoroutine;
+    
+    public Vector3 startPosition;
+    public Quaternion startRotation;
   
     protected override void Start()
     {
         base.Start();
         originalY = transform.position.y;
+        startPosition = transform.position;
+        startRotation = transform.rotation;
         allAttacks = new List<AttackSO>(); 
     }
 
@@ -28,6 +33,7 @@ public class Hero : Character
     public void RemoveHeroBurns()
     {
         this.burning = 0;
+        if (burnIcon != null) burnIcon.SetActive(false);
     }
 
     public void RemoveHeroParalysis()
@@ -48,18 +54,14 @@ public class Hero : Character
             bideUses++;
             return true;
         }
-        else
-        {
-            return false;
-        }
+        return false;
     }
 
     public int GetDamage()
     {
         if (currentAttack != null)
         {
-            int damage = (currentAttack.GetDamage());
-            return damage;
+            return currentAttack.GetDamage();
         }
         return 0;
     }
@@ -90,5 +92,27 @@ public class Hero : Character
         }
 
         transform.position = endPos;
+    }
+
+    public IEnumerator ResetTransformRoutine(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        
+        float time = 0f;
+        float duration = 0.25f;
+        Vector3 currentPos = transform.position;
+        Quaternion currentRot = transform.rotation;
+
+        while (time < duration)
+        {
+            float t = time / duration;
+            transform.position = Vector3.Lerp(currentPos, new Vector3(startPosition.x, transform.position.y, startPosition.z), t);
+            transform.rotation = Quaternion.Lerp(currentRot, startRotation, t);
+            time += Time.deltaTime;
+            yield return null;
+        }
+        
+        transform.position = new Vector3(startPosition.x, transform.position.y, startPosition.z);
+        transform.rotation = startRotation;
     }
 }
