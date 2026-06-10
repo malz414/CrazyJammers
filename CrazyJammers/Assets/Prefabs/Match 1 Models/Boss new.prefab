@@ -103,8 +103,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   characterName: Boss
-  maxHealth: 600
-  currentHealth: 600
+  maxHealth: 700
+  currentHealth: 700
   barrierCount: 0
   burning: 0
   bideBuff: 0
@@ -119,6 +119,8 @@ MonoBehaviour:
   bideUses: 0
   dead: 0
   originalY: 0
+  startPosition: {x: 0, y: 0, z: 0}
+  startRotation: {x: 0, y: 0, z: 0, w: 0}
 --- !u!210 &5653843745834978628
 SortingGroup:
   m_ObjectHideFlags: 0

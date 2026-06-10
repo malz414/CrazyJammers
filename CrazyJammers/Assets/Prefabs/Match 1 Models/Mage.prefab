@@ -2577,11 +2577,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   characterName: Mage
-  maxHealth: 95
+  maxHealth: 75
   currentHealth: 0
   barrierCount: 0
   burning: 0
   bideBuff: 0
+  bideDefenseMultiplier: 0.9
   burnIcon: {fileID: 0}
   paraIcon: {fileID: 0}
   animator: {fileID: 5339149700375281621}
