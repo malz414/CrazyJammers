@@ -34,6 +34,7 @@ public class TurnManager : MonoBehaviour
     private enum Difficulty { Easy, Medium, Hard }
     private Difficulty currentDifficulty = Difficulty.Easy;
     private int totalEnemiesKilled = 0;
+    public int currentTurn = 0;
 
     [Header("Prefabs")]
     [SerializeField] private GameObject knightPrefab;
@@ -252,6 +253,7 @@ public class TurnManager : MonoBehaviour
 
     public void StartBattle()
     {
+        currentTurn = 0; 
         isBattleActive = true;
         enemies = new List<Enemy>();
         aliveEnemies = new List<Enemy>();
@@ -322,7 +324,7 @@ public class TurnManager : MonoBehaviour
     {
         yield return new WaitForSeconds(delay);
         
-        if (!isBattleActive) yield break;
+        if (target == null) yield break; 
 
         Vector3 effectPosition = target.position + new Vector3(xOffset, raiseAmount, zOffset);
 
@@ -378,6 +380,7 @@ public class TurnManager : MonoBehaviour
 
     public IEnumerator StartTurn()
     {
+        currentTurn++; 
         if (!isBattleActive) yield break;
 
         drop1Opened = false;
@@ -678,8 +681,12 @@ public class TurnManager : MonoBehaviour
 
                 if (enemyAttack.attributes.Contains("Burn"))
                 {
-                    if (UnityEngine.Random.value <= .3f && hero.GetParalysisTurnsRemaining() <= 0 && hero.burning <= 0)
+                    bool canInflictStatus = true;
+                    if (isFirstMatch && currentTurn == 1) canInflictStatus = false;
+
+                    if (canInflictStatus && UnityEngine.Random.value <= 1f && hero.GetParalysisTurnsRemaining() <= 0 && hero.burning <= 0)
                     {
+                    
                         hero.ApplyBurn(10, 3);
                         blurbEvent.Set($"Boss has been burned by {enemyAttack.attackName}!");
                         EventBus.Publish(blurbEvent);
@@ -952,6 +959,22 @@ public class TurnManager : MonoBehaviour
 
         int maxTargets = GetMaxTargetsForAttack(combinedAttack.attributes);
         var aliveEnemiesList = enemies.Where(e => !e.dead).ToList();
+        
+        if (aliveEnemiesList.Count == 1 || (IsMultiTargetAttack(combinedAttack.attributes) && maxTargets >= aliveEnemiesList.Count && aliveEnemiesList.Count > 0))
+        {
+            usedMove1.text = $"Boss Used {combinedAttack.attackName}";
+            
+            selectedAttack1 = null;
+            selectedAttack2 = null;
+            attackOptionsParent.SetActive(false);
+            attackOptionsMenu.SetActive(false);
+            potionOptions.SetActive(false);
+
+            if (bossAttackCoroutine != null) StopCoroutine(bossAttackCoroutine);
+            
+            bossAttackCoroutine = StartCoroutine(DoBossAttackRoutine(aliveEnemiesList.ToArray()));
+            return;
+        }
 
         // --- AUTO-EXECUTE LOGIC ---
         if (IsMultiTargetAttack(combinedAttack.attributes) && maxTargets >= aliveEnemiesList.Count && aliveEnemiesList.Count > 0)
@@ -1302,7 +1325,7 @@ public class TurnManager : MonoBehaviour
                 hero.Init(popupPrefab);
                 randomChance = (bideAttribute > 0) ? 0.2f : 0.2f;
 
-                if (UnityEngine.Random.value <= randomChance && targetEnemy.GetParalysisTurnsRemaining() <= 0 && targetEnemy.burning <= 0)
+                if (UnityEngine.Random.value <= 1 && targetEnemy.GetParalysisTurnsRemaining() <= 0 && targetEnemy.burning <= 0)
                 {
                     targetEnemy.ApplyBurn(1000, 3);
                     blurbEvent.Set($"{targetEnemy.characterName} was burned!");
