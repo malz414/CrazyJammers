@@ -1700,17 +1700,6 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 5411230399945051676, guid: edc093f874874f64d9cfa15aa220a370, type: 3}
   m_PrefabInstance: {fileID: 541571726}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1121583287 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4544000393899934637, guid: 5bc48eb34602b7d4b9e3d44d54050c50, type: 3}
-  m_PrefabInstance: {fileID: 1797794550}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 70ef5b7c786648843a4a78f4e7210612, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1135154111
 GameObject:
   m_ObjectHideFlags: 0
@@ -4856,7 +4845,7 @@ PrefabInstance:
     - target: {fileID: 8485419520516605267, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
       propertyPath: bossHUD
       value: 
-      objectReference: {fileID: 1121583287}
+      objectReference: {fileID: 0}
     - target: {fileID: 8485419520516605267, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
       propertyPath: fireHit
       value: 
