@@ -5843,11 +5843,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3618480788438177865, guid: 7ca3c677b08438948a575a0b43574e32, type: 3}
       propertyPath: m_ReferenceResolution.x
-      value: 1128
+      value: 1280
       objectReference: {fileID: 0}
     - target: {fileID: 3618480788438177865, guid: 7ca3c677b08438948a575a0b43574e32, type: 3}
       propertyPath: m_ReferenceResolution.y
-      value: 615
+      value: 720
       objectReference: {fileID: 0}
     - target: {fileID: 4963263049763562003, guid: 7ca3c677b08438948a575a0b43574e32, type: 3}
       propertyPath: m_ChildAlignment
