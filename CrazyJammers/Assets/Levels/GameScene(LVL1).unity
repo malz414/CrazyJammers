@@ -1303,23 +1303,19 @@ PrefabInstance:
       objectReference: {fileID: 1366225628}
     - target: {fileID: 5515708774266857466, guid: edc093f874874f64d9cfa15aa220a370, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5515708774266857466, guid: edc093f874874f64d9cfa15aa220a370, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5515708774266857466, guid: edc093f874874f64d9cfa15aa220a370, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 0
+      value: -11.366
       objectReference: {fileID: 0}
     - target: {fileID: 5515708774266857466, guid: edc093f874874f64d9cfa15aa220a370, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6151341025598711503, guid: edc093f874874f64d9cfa15aa220a370, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 13.482025
       objectReference: {fileID: 0}
     - target: {fileID: 6914971973993580857, guid: edc093f874874f64d9cfa15aa220a370, type: 3}
       propertyPath: m_Name
@@ -1411,11 +1407,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7653246939187157195, guid: edc093f874874f64d9cfa15aa220a370, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7653246939187157195, guid: edc093f874874f64d9cfa15aa220a370, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 0.7595741
       objectReference: {fileID: 0}
     - target: {fileID: 7653246939187157195, guid: edc093f874874f64d9cfa15aa220a370, type: 3}
       propertyPath: m_LocalPosition.y
@@ -1427,7 +1423,7 @@ PrefabInstance:
       objectReference: {fileID: 1366225628}
     - target: {fileID: 8360191824695980655, guid: edc093f874874f64d9cfa15aa220a370, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0.000022888184
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9020955973937712614, guid: edc093f874874f64d9cfa15aa220a370, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
@@ -1442,6 +1438,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: edc093f874874f64d9cfa15aa220a370, type: 3}
+--- !u!1 &565285629 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1737000829447573938, guid: edc093f874874f64d9cfa15aa220a370, type: 3}
+  m_PrefabInstance: {fileID: 541571726}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &624387257 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3073319185535939253, guid: 5bc48eb34602b7d4b9e3d44d54050c50, type: 3}
@@ -2515,10 +2516,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 6820190399619069725, guid: 2c3e321abbbf6f441afb7af56e32e1ea, type: 3}
-      propertyPath: m_ReferenceResolution.x
-      value: 1280
-      objectReference: {fileID: 0}
     - target: {fileID: 8870751976969089566, guid: 2c3e321abbbf6f441afb7af56e32e1ea, type: 3}
       propertyPath: m_Name
       value: Level Up_You Win
@@ -2932,6 +2929,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1587063166 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3565338914650672404, guid: edc093f874874f64d9cfa15aa220a370, type: 3}
+  m_PrefabInstance: {fileID: 541571726}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1947342513}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 70ef5b7c786648843a4a78f4e7210612, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &1658743827 stripped
@@ -4088,6 +4096,11 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &1947342513 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6142692188569864200, guid: edc093f874874f64d9cfa15aa220a370, type: 3}
+  m_PrefabInstance: {fileID: 541571726}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1959827261 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8371277384047029730, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
@@ -4559,7 +4572,7 @@ PrefabInstance:
     - target: {fileID: 609713560712456174, guid: fec496db80a07c640a9a640f4b6a9472, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[2].m_Target
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 1947342513}
     - target: {fileID: 609713560712456174, guid: fec496db80a07c640a9a640f4b6a9472, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[3].m_Target
       value: 
@@ -4631,7 +4644,7 @@ PrefabInstance:
     - target: {fileID: 777251875402700812, guid: fec496db80a07c640a9a640f4b6a9472, type: 3}
       propertyPath: HeroHp
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 1947342513}
     - target: {fileID: 777251875402700812, guid: fec496db80a07c640a9a640f4b6a9472, type: 3}
       propertyPath: enemyHp
       value: 
@@ -4840,7 +4853,7 @@ PrefabInstance:
     - target: {fileID: 8485419520516605267, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
       propertyPath: bossHUD
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 1587063166}
     - target: {fileID: 8485419520516605267, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
       propertyPath: fireHit
       value: 
@@ -5060,7 +5073,7 @@ PrefabInstance:
     - target: {fileID: 8485419520516605267, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
       propertyPath: potionOptions
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 565285629}
     - target: {fileID: 8485419520516605267, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
       propertyPath: attackDropdown
       value: 
@@ -5124,7 +5137,7 @@ PrefabInstance:
     - target: {fileID: 8485419520516605267, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
       propertyPath: attackOptionsParent
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 565285629}
     - target: {fileID: 8485419520516605267, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
       propertyPath: descriptionTextPotion
       value: 
@@ -5850,11 +5863,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3618480788438177865, guid: 7ca3c677b08438948a575a0b43574e32, type: 3}
       propertyPath: m_ReferenceResolution.x
-      value: 1280
+      value: 1128
       objectReference: {fileID: 0}
     - target: {fileID: 3618480788438177865, guid: 7ca3c677b08438948a575a0b43574e32, type: 3}
       propertyPath: m_ReferenceResolution.y
-      value: 720
+      value: 615
       objectReference: {fileID: 0}
     - target: {fileID: 4963263049763562003, guid: 7ca3c677b08438948a575a0b43574e32, type: 3}
       propertyPath: m_ChildAlignment

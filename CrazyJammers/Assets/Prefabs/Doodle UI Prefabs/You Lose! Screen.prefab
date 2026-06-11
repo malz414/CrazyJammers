@@ -1340,8 +1340,6 @@ MonoBehaviour:
   nameText: {fileID: 6632009345844966047}
   hpFill: {fileID: 4550002792644309741}
   hpText: {fileID: 4069239099403747956}
-  burnIcon: {fileID: 0}
-  paraIcon: {fileID: 0}
 --- !u!1 &8621360761907401401
 GameObject:
   m_ObjectHideFlags: 0
@@ -1573,7 +1571,7 @@ MonoBehaviour:
   m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
-  m_ReferenceResolution: {x: 1280, y: 720}
+  m_ReferenceResolution: {x: 1128, y: 615}
   m_ScreenMatchMode: 0
   m_MatchWidthOrHeight: 0
   m_PhysicalUnit: 3
@@ -1626,15 +1624,9 @@ MonoBehaviour:
   enemyQuote: []
   category: 1
   fadeScreen: {fileID: 4510624283243829758}
-  mainMenuScreen: {fileID: 0}
   prologueTextUI: {fileID: 0}
   skipButton: {fileID: 0}
   quoteBoxManager: {fileID: 0}
-  mainMenuManager: {fileID: 0}
-  quoteNum: 0
-  startInstantly: 0
-  FirstMatch: 0
-  mainMenu: 0
 --- !u!1 &9152557591956188979
 GameObject:
   m_ObjectHideFlags: 0

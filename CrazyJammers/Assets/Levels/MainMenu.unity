@@ -3785,11 +3785,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3618480788438177865, guid: 7ca3c677b08438948a575a0b43574e32, type: 3}
       propertyPath: m_ReferenceResolution.x
-      value: 1280
+      value: 1128
       objectReference: {fileID: 0}
     - target: {fileID: 3618480788438177865, guid: 7ca3c677b08438948a575a0b43574e32, type: 3}
       propertyPath: m_ReferenceResolution.y
-      value: 720
+      value: 615
       objectReference: {fileID: 0}
     - target: {fileID: 4963263049763562003, guid: 7ca3c677b08438948a575a0b43574e32, type: 3}
       propertyPath: m_ChildAlignment
