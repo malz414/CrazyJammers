@@ -246,11 +246,6 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 7401487280090963542, guid: 5bc48eb34602b7d4b9e3d44d54050c50, type: 3}
   m_PrefabInstance: {fileID: 1797794550}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &33549267 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 937737625187835821, guid: edc093f874874f64d9cfa15aa220a370, type: 3}
-  m_PrefabInstance: {fileID: 541571726}
-  m_PrefabAsset: {fileID: 0}
 --- !u!114 &109579857 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 9219808376052806037, guid: edc093f874874f64d9cfa15aa220a370, type: 3}
@@ -4636,7 +4631,7 @@ PrefabInstance:
     - target: {fileID: 777251875402700812, guid: fec496db80a07c640a9a640f4b6a9472, type: 3}
       propertyPath: HeroHp
       value: 
-      objectReference: {fileID: 33549267}
+      objectReference: {fileID: 0}
     - target: {fileID: 777251875402700812, guid: fec496db80a07c640a9a640f4b6a9472, type: 3}
       propertyPath: enemyHp
       value: 
