@@ -81,7 +81,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 4d02b133d12e7c943838bec9edd05a22, type: 3}
       propertyPath: m_Name
-      value: Swordsman-1
+      value: NEW Swordsman M3
       objectReference: {fileID: 0}
     - target: {fileID: 5866666021909216657, guid: 4d02b133d12e7c943838bec9edd05a22, type: 3}
       propertyPath: m_Controller
@@ -128,6 +128,7 @@ MonoBehaviour:
   barrierCount: 0
   burning: 0
   bideBuff: 0
+  bideDefenseMultiplier: 0.9
   burnIcon: {fileID: 0}
   paraIcon: {fileID: 0}
   animator: {fileID: 6796376608094082088}

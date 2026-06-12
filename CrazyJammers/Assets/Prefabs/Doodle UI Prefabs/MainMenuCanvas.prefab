@@ -776,11 +776,15 @@ MonoBehaviour:
   enemyQuote: []
   category: 0
   fadeScreen: {fileID: 8796422535731578408}
+  mainMenuScreen: {fileID: 0}
   prologueTextUI: {fileID: 0}
   skipButton: {fileID: 0}
   quoteBoxManager: {fileID: 0}
+  mainMenuManager: {fileID: 0}
   quoteNum: 0
   startInstantly: 0
+  FirstMatch: 0
+  mainMenu: 0
 --- !u!225 &8796422535731578408
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -827,8 +831,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -2.9, y: 37}
-  m_SizeDelta: {x: 1122.2, y: 758.8888}
+  m_AnchoredPosition: {x: 5.529, y: 37}
+  m_SizeDelta: {x: 1182.9534, y: 758.8888}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &337622764489658541
 CanvasRenderer:
