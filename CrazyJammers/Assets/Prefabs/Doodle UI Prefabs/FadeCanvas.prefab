@@ -340,11 +340,15 @@ MonoBehaviour:
   - We traveled across the lands and sea to defeat you once and for all!
   category: 2
   fadeScreen: {fileID: 1177831446253592090}
+  mainMenuScreen: {fileID: 0}
   prologueTextUI: {fileID: 7645943024846056938}
   skipButton: {fileID: 326001223331256996}
   quoteBoxManager: {fileID: 777251875402700812}
+  mainMenuManager: {fileID: 0}
   quoteNum: 0
   startInstantly: 0
+  FirstMatch: 0
+  mainMenu: 0
 --- !u!1 &3796294956148066059
 GameObject:
   m_ObjectHideFlags: 0
@@ -515,7 +519,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 2.3}
+  m_AnchoredPosition: {x: 0, y: 2.2999878}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5222219970726092240
@@ -787,7 +791,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.13, y: 0.05}
   m_AnchorMax: {x: 0.8, y: 0.3}
-  m_AnchoredPosition: {x: 39.48001, y: 0}
+  m_AnchoredPosition: {x: 39.6, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &777251875402700812
