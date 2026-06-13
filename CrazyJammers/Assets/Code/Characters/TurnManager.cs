@@ -1799,7 +1799,7 @@ public class TurnManager : MonoBehaviour
 
         if (playerWon)
         {
-             MusicManager.Instance.PlayMusic(MusicManager.Instance.jingle12);
+             MusicManager.Instance.PlayMusicOnce(MusicManager.Instance.jingle12);
 
             if (SceneManager.GetActiveScene().name == "GameScene(LVL6)")
             {
@@ -1811,7 +1811,7 @@ public class TurnManager : MonoBehaviour
         }
         else
         {
-             MusicManager.Instance.PlayMusic(MusicManager.Instance.gameOver);
+             MusicManager.Instance.PlayMusicOnce(MusicManager.Instance.gameOver);
 
             loseScreen.SetActive(true);
             MainUIParent.SetActive(false);

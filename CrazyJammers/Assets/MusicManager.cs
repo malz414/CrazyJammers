@@ -50,7 +50,6 @@ public class MusicManager : MonoBehaviour
         }
     }
 
-    // 🟢 REPLACED: Now takes the specific AudioClip variable instead of an array index
     public void PlayMusic(AudioClip nextClip)
     {
         if (nextClip == null)
@@ -62,10 +61,24 @@ public class MusicManager : MonoBehaviour
         if (audioSource.clip == nextClip && audioSource.isPlaying)
             return;
 
-        StartCoroutine(FadeToNextSong(nextClip));
+        StartCoroutine(FadeToNextSong(nextClip, true)); // true = looping
     }
 
-    private IEnumerator FadeToNextSong(AudioClip nextClip)
+    public void PlayMusicOnce(AudioClip nextClip)
+    {
+        if (nextClip == null)
+        {
+            Debug.LogWarning("MusicManager: Tried to play a null audio clip!");
+            return;
+        }
+
+        if (audioSource.clip == nextClip && audioSource.isPlaying)
+            return;
+
+        StartCoroutine(FadeToNextSong(nextClip, false)); // false = no looping
+    }
+
+    private IEnumerator FadeToNextSong(AudioClip nextClip, bool shouldLoop)
     {
         float startVolume = audioSource.volume;
 
@@ -81,6 +94,8 @@ public class MusicManager : MonoBehaviour
         }
 
         audioSource.clip = nextClip;
+        
+        audioSource.loop = shouldLoop;
 
         nextClip.LoadAudioData(); 
         while (nextClip.loadState != AudioDataLoadState.Loaded)
