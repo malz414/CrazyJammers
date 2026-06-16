@@ -2,6 +2,8 @@ using Code.Utility.Events;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using EasyTransition; 
+
 
 public class MainMenuManager : MonoBehaviour
 {
@@ -9,6 +11,8 @@ public class MainMenuManager : MonoBehaviour
     private bool gameStarted = false;
 
     [SerializeField] private GameObject CreditsObj;
+        public TransitionSettings sequenceTransition;
+
 
     public void StartGame()
     {
@@ -26,19 +30,22 @@ public class MainMenuManager : MonoBehaviour
     {
         MusicManager.Instance.PlayMusic(MusicManager.Instance.credits);
 
-        SceneManager.LoadScene("CreditsScene");
+        TransitionManager.Instance().Transition("CreditsScene", sequenceTransition, 0f);
     }
     public void HideCredits()
     {
 
-         SceneManager.LoadScene("GameScene(LVL1)");
+        TransitionManager.Instance().Transition("GameScene(LVL1)", sequenceTransition, 0f);
+
     }
      public void HideCreditsReal()
     {
         MusicManager.Instance.PlayMusic(MusicManager.Instance.midnightMasquerade);
 
-         SceneManager.LoadScene("MainMenu");
+        SceneManager.LoadScene("MainMenu");
+
     }
+
 
     private IEnumerator DoStartGameRoutine()
     {
@@ -50,7 +57,7 @@ public class MainMenuManager : MonoBehaviour
     }
     public void ResetLevel()
     {
-         SceneManager.LoadScene("MainMenu");
+        TransitionManager.Instance().Transition("MainMenu", sequenceTransition, 0f);
     }
 
 }

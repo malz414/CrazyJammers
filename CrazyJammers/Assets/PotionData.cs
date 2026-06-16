@@ -1,4 +1,6 @@
 using UnityEngine;
+using EasyTransition; 
+
 
 public class PotionData : MonoBehaviour
 {
@@ -9,6 +11,8 @@ public class PotionData : MonoBehaviour
 
     private int checkpointPotion;
     private int checkpointPanacea;
+    public TransitionSettings sequenceTransition;
+
 
     private void Awake()
     {

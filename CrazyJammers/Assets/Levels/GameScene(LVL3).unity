@@ -4649,6 +4649,10 @@ PrefabInstance:
       propertyPath: startInstantly
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 1143346409140994859, guid: fec496db80a07c640a9a640f4b6a9472, type: 3}
+      propertyPath: sequenceTransition
+      value: 
+      objectReference: {fileID: 11400000, guid: b577ec7af0d48c34a9d31ce17f830a8d, type: 2}
     - target: {fileID: 1171021709324416019, guid: fec496db80a07c640a9a640f4b6a9472, type: 3}
       propertyPath: m_Color.a
       value: 0.56078434
@@ -5111,6 +5115,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1749445735}
     - target: {fileID: 8485419520516605267, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
+      propertyPath: sequenceTransition
+      value: 
+      objectReference: {fileID: 11400000, guid: b577ec7af0d48c34a9d31ce17f830a8d, type: 2}
+    - target: {fileID: 8485419520516605267, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
       propertyPath: targetingHUDParent
       value: 
       objectReference: {fileID: 1116943186}
@@ -5353,6 +5361,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 99f9acfec7adc8f4195b0c319f01650e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  sequenceTransition: {fileID: 11400000, guid: b577ec7af0d48c34a9d31ce17f830a8d, type: 2}
 --- !u!1001 &4595462578611509028
 PrefabInstance:
   m_ObjectHideFlags: 0

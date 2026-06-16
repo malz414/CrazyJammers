@@ -1,5 +1,7 @@
 using UnityEngine;
 using System.Collections;
+using EasyTransition; 
+
 
 public class MusicManager : MonoBehaviour
 {
@@ -20,10 +22,13 @@ public class MusicManager : MonoBehaviour
     public AudioClip gameOver;
     
     public AudioClip credits;
+    
 
     [Header("Settings")]
     public float fadeDuration = 1.0f; 
     public float maxVolume = 1.0f;
+    public TransitionSettings sequenceTransition;
+
 
     private void Awake()
     {
@@ -62,6 +67,13 @@ public class MusicManager : MonoBehaviour
             return;
 
         StartCoroutine(FadeToNextSong(nextClip, true)); // true = looping
+    }
+    public void HideCreditsReal()
+    {
+        MusicManager.Instance.PlayMusic(MusicManager.Instance.midnightMasquerade);
+
+        TransitionManager.Instance().Transition("MainMenu", sequenceTransition, 0f);
+
     }
 
     public void PlayMusicOnce(AudioClip nextClip)

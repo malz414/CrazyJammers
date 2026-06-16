@@ -810,6 +810,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   CreditsObj: {fileID: 6847950686931015813}
+  sequenceTransition: {fileID: 11400000, guid: b577ec7af0d48c34a9d31ce17f830a8d, type: 2}
 --- !u!114 &5414239702138750884
 MonoBehaviour:
   m_ObjectHideFlags: 0

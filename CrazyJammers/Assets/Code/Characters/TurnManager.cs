@@ -10,9 +10,13 @@ using System.Linq;
 using static System.Math;
 //using CrazyGames;
 using UnityEngine.SceneManagement;
+using EasyTransition; 
+
 
 public class TurnManager : MonoBehaviour
 {
+    public TransitionSettings sequenceTransition;
+
     public enum GameMode
     {
         Standard,
@@ -114,6 +118,7 @@ public class TurnManager : MonoBehaviour
     [SerializeField] private DamageNumber popupPrefabfire;
     [SerializeField] private DamageNumber popupPrefabgreen;
     [SerializeField] GameObject[] listOfObjectToDeactivateAtStartOfBattle;
+
 
     // Logic Variables
     public List<Enemy> aliveEnemies = new List<Enemy>();
@@ -1756,8 +1761,8 @@ public class TurnManager : MonoBehaviour
         {
             PotionData.Instance.RestoreCheckpoint();
         }
-        
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        int currentIndex = SceneManager.GetActiveScene().buildIndex;
+        TransitionManager.Instance().Transition(currentIndex, sequenceTransition, 0f);
     
         // CrazySDK.Ad.RequestAd(CrazyAdType.Rewarded, () => 
         // {
@@ -1821,4 +1826,5 @@ public class TurnManager : MonoBehaviour
             }
         }
     }
+    
 }

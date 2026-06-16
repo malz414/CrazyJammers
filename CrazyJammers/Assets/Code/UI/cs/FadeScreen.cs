@@ -5,7 +5,7 @@ using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-
+using EasyTransition; 
 
 public class FadeOutEvent : IBusEvent
 {
@@ -46,6 +46,7 @@ public class FadeScreen : MonoBehaviour
     public bool startInstantly;
     public bool FirstMatch;
     public bool mainMenu = false;
+    public TransitionSettings sequenceTransition;
 
 
 
@@ -71,7 +72,7 @@ public class FadeScreen : MonoBehaviour
             LeanTween.alphaCanvas(fadeScreen, 0, 0);
             MusicManager.Instance.PlayMusic(MusicManager.Instance.prologueMusic2);
             
-                quoteBoxManager.SetQuoteBox(enemyQuote[quoteNum]);
+            quoteBoxManager.SetQuoteBox(enemyQuote[quoteNum]);
             
             
             
@@ -103,8 +104,7 @@ public class FadeScreen : MonoBehaviour
     }
     public void ShowIntro()
     {
-                    StartCoroutine(RunIntroSequence()); //
-
+        StartCoroutine(RunIntroSequence()); //
     }
 
     private IEnumerator TypeText(string textToType)
@@ -128,21 +128,21 @@ public class FadeScreen : MonoBehaviour
     }
     private IEnumerator RunIntroSequence()
 {   
-    fadeScreen.alpha = 1;
-    skipButton.SetActive(true);
-    mainMenuScreen.interactable = false;
-    mainMenuScreen.blocksRaycasts = false;
-    LeanTween.alphaCanvas(mainMenuScreen, 0, FADE_OUT_TIME);
-    
-    
-    // Call the typewriter coroutine instead of setting text directly
-    yield return StartCoroutine(TypeText(introText[0]));
-    
-    // Wait for the user to read or for the timer to finish
-    yield return new WaitForSeconds(5f); 
-    
-    LeanTween.alphaCanvas(fadeScreen, 0, FADE_OUT_TIME);
-    mainMenuManager.HideCredits();
+        skipButton.SetActive(true);
+        mainMenuScreen.interactable = false;
+        mainMenuScreen.blocksRaycasts = false;
+        
+        // Instantly hide the main menu (since the transition handles the visual flair now)
+        mainMenuScreen.alpha = 0; 
+        
+        yield return StartCoroutine(TypeText(introText[0]));
+        
+        yield return new WaitForSeconds(5f); 
+        
+        // Trigger the in-scene transition to reveal the next state
+        // 0f is the start delay before the transition begins
+        
+        mainMenuManager.HideCredits();
 }
 
 
