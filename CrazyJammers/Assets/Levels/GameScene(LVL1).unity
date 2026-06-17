@@ -132,6 +132,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2192215838066566232, guid: 263d454bbece65547ba258ce22da98b2, type: 3}
+      propertyPath: rectangle
+      value: 
+      objectReference: {fileID: 11400000, guid: 5d42ad7319df4a8439d74d82f30a60cc, type: 2}
+    - target: {fileID: 2192215838066566232, guid: 263d454bbece65547ba258ce22da98b2, type: 3}
+      propertyPath: sequenceTransition
+      value: 
+      objectReference: {fileID: 11400000, guid: 013263c83b6a84c4d95beaa8bd163ac8, type: 2}
     - target: {fileID: 2234834183014354756, guid: 263d454bbece65547ba258ce22da98b2, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
@@ -3068,7 +3076,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3bb84b9801d302a448833f1fb2f6166c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  transition: {fileID: 11400000, guid: b577ec7af0d48c34a9d31ce17f830a8d, type: 2}
+  transition: {fileID: 11400000, guid: 5d42ad7319df4a8439d74d82f30a60cc, type: 2}
   startDelay: 0
 --- !u!114 &1627878164
 MonoBehaviour:
@@ -5173,6 +5181,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 3017430761128806937, guid: 4e97cbef76c1e2a4e998cdfa15fa7946, type: 3}
     - target: {fileID: 8485419520516605267, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
+      propertyPath: endGameDelay
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8485419520516605267, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
       propertyPath: fireLungeHit
       value: 
       objectReference: {fileID: 6400084191083594748, guid: 877267a6d8c7c9b48b0fbbe4f0eeaca7, type: 3}
@@ -5279,7 +5291,7 @@ PrefabInstance:
     - target: {fileID: 8485419520516605267, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
       propertyPath: sequenceTransition
       value: 
-      objectReference: {fileID: 11400000, guid: b577ec7af0d48c34a9d31ce17f830a8d, type: 2}
+      objectReference: {fileID: 11400000, guid: 013263c83b6a84c4d95beaa8bd163ac8, type: 2}
     - target: {fileID: 8485419520516605267, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
       propertyPath: targetingHUDParent
       value: 
@@ -5523,7 +5535,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 99f9acfec7adc8f4195b0c319f01650e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sequenceTransition: {fileID: 11400000, guid: b577ec7af0d48c34a9d31ce17f830a8d, type: 2}
+  sequenceTransition: {fileID: 11400000, guid: 5d42ad7319df4a8439d74d82f30a60cc, type: 2}
 --- !u!1001 &4595462578611509028
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5612,6 +5624,10 @@ PrefabInstance:
       propertyPath: midnightMasquerade
       value: 
       objectReference: {fileID: 8300000, guid: 938fe1ca469db8449925a0ed1ba47845, type: 3}
+    - target: {fileID: 5983332039427138553, guid: 8653b2476913f5e43aa2a51916215353, type: 3}
+      propertyPath: sequenceTransition
+      value: 
+      objectReference: {fileID: 11400000, guid: 9710edcf009d00943af961dd2a7ca7d3, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

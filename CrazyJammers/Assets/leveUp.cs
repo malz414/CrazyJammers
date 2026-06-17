@@ -25,7 +25,7 @@ public class levelUp : MonoBehaviour
             PotionData.Instance.Potion++;
             PotionData.Instance.Panacea++;
         }
-                TransitionManager.Instance().Transition(scene, MusicManager.Instance.sequenceTransition, 0f);
+        TransitionManager.Instance().Transition(scene, MusicManager.Instance.sequenceTransition, 0f);
 
     }
 }

@@ -188,7 +188,7 @@ public class TurnManager : MonoBehaviour
     public bool isFirstMatch = false;
 
     [Tooltip("Time in seconds to wait before showing the win/lose screen.")]
-    public float endGameDelay = 3.0f; 
+    public float endGameDelay = 2.0f; 
     private bool isBattleActive = false; // Controls if effects/turns should continue
 
     private void Awake()
@@ -1799,6 +1799,7 @@ public class TurnManager : MonoBehaviour
 
     private IEnumerator DoEndGameRoutine(bool playerWon)
     {
+        TransitionManager.Instance().Transition(sequenceTransition, 1f);
         yield return new WaitForSeconds(endGameDelay);
        
 

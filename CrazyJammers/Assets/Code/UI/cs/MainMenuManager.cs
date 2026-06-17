@@ -12,6 +12,8 @@ public class MainMenuManager : MonoBehaviour
 
     [SerializeField] private GameObject CreditsObj;
         public TransitionSettings sequenceTransition;
+        public TransitionSettings rectangle;
+
 
 
     public void StartGame()

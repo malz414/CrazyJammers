@@ -51,9 +51,15 @@ namespace EasyTransition
         /// <param name="startDelay">The delay before the transition starts.</param>
         public void Transition(TransitionSettings transition, float startDelay)
         {
-            if (transition == null || runningTransition)
+            
+            if (transition == null )
             {
                 Debug.LogError("You have to assing a transition.");
+                return;
+            }
+            if ( runningTransition  )
+            {
+                Debug.LogError("transition running runningTransition.");
                 return;
             }
 
@@ -69,12 +75,17 @@ namespace EasyTransition
         /// <param name="startDelay">The delay before the transition starts.</param>
         public void Transition(string sceneName, TransitionSettings transition, float startDelay)
         {
-            if (transition == null || runningTransition)
+            
+            if (transition == null )
             {
                 Debug.LogError("You have to assing a transition.");
                 return;
             }
-
+            if ( runningTransition  )
+            {
+                Debug.LogError("transition running runningTransition.");
+                return;
+            }
             runningTransition = true;
             StartCoroutine(Timer(sceneName, startDelay, transition));
         }
@@ -87,9 +98,14 @@ namespace EasyTransition
         /// <param name="startDelay">The delay before the transition starts.</param>
         public void Transition(int sceneIndex, TransitionSettings transition, float startDelay)
         {
-            if (transition == null || runningTransition)
+            if (transition == null )
             {
                 Debug.LogError("You have to assing a transition.");
+                return;
+            }
+            if ( runningTransition  )
+            {
+                Debug.LogError("transition running runningTransition.");
                 return;
             }
 
@@ -129,6 +145,7 @@ namespace EasyTransition
             yield return new WaitForSecondsRealtime(transitionSettings.destroyTime);
 
             onTransitionEnd?.Invoke();
+            runningTransition = false;
         }
 
         IEnumerator Timer(int sceneIndex, float startDelay, TransitionSettings transitionSettings)
@@ -153,6 +170,7 @@ namespace EasyTransition
             yield return new WaitForSecondsRealtime(transitionSettings.destroyTime);
 
             onTransitionEnd?.Invoke();
+            runningTransition = false;
         }
 
         IEnumerator Timer(float delay, TransitionSettings transitionSettings)
