@@ -110,6 +110,7 @@ public class TurnManager : MonoBehaviour
     [SerializeField] GameObject potionOptions;
     [SerializeField] GameObject targetingHUDParent;
     [SerializeField] GameObject winScreen;
+    [SerializeField] GameObject thankScreen;
     [SerializeField] GameObject loseScreen;
     [SerializeField] CharacterHUD[] enemyHUDs;
     [SerializeField] CharacterHUD bossHUD;
@@ -184,6 +185,7 @@ public class TurnManager : MonoBehaviour
     
     public AttackSO selectedAttack1;
     public AttackSO selectedAttack2;
+    private List<AttackSO> currentlyDisplayedAttacks = new List<AttackSO>();
 
     public bool isFirstMatch = false;
 
@@ -831,6 +833,19 @@ public class TurnManager : MonoBehaviour
     {
         attackDropdown.onValueChanged.AddListener(OnAttack1Selected);
         attackDropdown2.onValueChanged.AddListener(OnAttack2Selected);
+
+        // Hook into the dropdowns to detect when they are clicked open
+        AddDropdownOpenListener(attackDropdown);
+        AddDropdownOpenListener(attackDropdown2);
+    }
+    private void AddDropdownOpenListener(TMP_Dropdown dropdown)
+    {
+        EventTrigger trigger = dropdown.gameObject.GetComponent<EventTrigger>();
+        if (trigger == null) trigger = dropdown.gameObject.AddComponent<EventTrigger>();
+
+        EventTrigger.Entry entry = new EventTrigger.Entry { eventID = EventTriggerType.PointerClick };
+        entry.callback.AddListener((_) => { StartCoroutine(OnDropdownOpened(dropdown)); });
+        trigger.triggers.Add(entry);
     }
 
     private void OnAttack1Selected(int index)
@@ -848,10 +863,10 @@ public class TurnManager : MonoBehaviour
     private void ShowAttackSelectionUI()
     {
         List<TMP_Dropdown.OptionData> dropdownOptions = new List<TMP_Dropdown.OptionData>();
-        List<string> descriptions = new List<string>();
-        
-        // Use a HashSet or a simple list to track added names to prevent duplicates
         List<string> addedAttackNames = new List<string>();
+
+        // Clear out the tracking list for the new turn
+        currentlyDisplayedAttacks.Clear();
 
         for (int i = 0; i < enemyAttacksByIndex.Count; i++)
         {
@@ -861,13 +876,15 @@ public class TurnManager : MonoBehaviour
             {
                 TMP_Dropdown.OptionData newOption = new TMP_Dropdown.OptionData(attack.attackName);
                 dropdownOptions.Add(newOption);
-                descriptions.Add(attack.attackDescription);
                 addedAttackNames.Add(attack.attackName);
+                
+                currentlyDisplayedAttacks.Add(attack);
 
-                // Handle Bide upgrades
                 if (bideAttribute >= 1)
                 {
-                    if (attack.upgradeLevel > 2) attack.upgradeLevel = 2;
+                    attack.upgradeLevel += 1; 
+                    
+                    if (attack.upgradeLevel > 3) attack.upgradeLevel = 3; 
                 }
             }
         }
@@ -877,15 +894,12 @@ public class TurnManager : MonoBehaviour
         attackDropdown.AddOptions(dropdownOptions);
         attackDropdown2.AddOptions(dropdownOptions);
 
-        AddHoverEvents(attackDropdown, descriptions);
-        AddHoverEvents(attackDropdown2, descriptions);
-
+        // Set default values
         if (enemyAttacksByIndex.Count > 0)
         {
             attackDropdown.value = 0;
             OnAttack1Selected(0);
         }
-
         if (enemyAttacksByIndex.Count > 1)
         {
             attackDropdown2.value = 1;
@@ -896,6 +910,53 @@ public class TurnManager : MonoBehaviour
         potionOptions.SetActive(true);
         panaceaAmountText.text = PotionData.Instance.Panacea.ToString();
         potionAmountText.text = PotionData.Instance.Potion.ToString();
+    }
+    private IEnumerator OnDropdownOpened(TMP_Dropdown dropdown)
+    {
+        Transform dropdownContent = null;
+        for (int i = 0; i < 10; i++) 
+        {
+            dropdownContent = dropdown.transform.Find("Dropdown List/Viewport/Content");
+            if (dropdownContent != null) break;
+            yield return null;
+        }
+
+        if (dropdownContent == null) yield break;
+
+        yield return null;
+
+        int optionIndex = 0;
+
+        foreach (Transform child in dropdownContent)
+        {
+            if (child.name.StartsWith("Item") && optionIndex < currentlyDisplayedAttacks.Count)
+            {
+                AttackSO attack = currentlyDisplayedAttacks[optionIndex];
+
+                Transform arrow1 = child.Find("Item Bide Level 1");
+                Transform arrow2 = child.Find("Item Bide Level 2");
+                Transform arrow3 = child.Find("Item Bide Level 3");
+
+                if (arrow1 != null) arrow1.gameObject.SetActive(attack.upgradeLevel >= 1);
+                if (arrow2 != null) arrow2.gameObject.SetActive(attack.upgradeLevel >= 2);
+                if (arrow3 != null) arrow3.gameObject.SetActive(attack.upgradeLevel >= 3);
+
+                EventTrigger trigger = child.gameObject.GetComponent<EventTrigger>();
+                if (trigger == null) trigger = child.gameObject.AddComponent<EventTrigger>();
+                trigger.triggers.Clear();
+
+                string desc = attack.attackDescription; 
+                EventTrigger.Entry pointerEnterEntry = new EventTrigger.Entry { eventID = EventTriggerType.PointerEnter };
+                pointerEnterEntry.callback.AddListener((_) => ShowDescription(desc));
+                trigger.triggers.Add(pointerEnterEntry);
+
+                EventTrigger.Entry pointerExitEntry = new EventTrigger.Entry { eventID = EventTriggerType.PointerExit };
+                pointerExitEntry.callback.AddListener((_) => HideDescription());
+                trigger.triggers.Add(pointerExitEntry);
+
+                optionIndex++;
+            }
+        }
     }
 
     private void AddHoverEvents(TMP_Dropdown dropdown, List<string> descriptions)
@@ -1799,24 +1860,21 @@ public class TurnManager : MonoBehaviour
 
     private IEnumerator DoEndGameRoutine(bool playerWon)
     {
-        TransitionManager.Instance().Transition(sequenceTransition, 1f);
-        yield return new WaitForSeconds(endGameDelay);
+        
        
 
         if (playerWon)
         {
              MusicManager.Instance.PlayMusicOnce(MusicManager.Instance.jingle12);
 
-            if (SceneManager.GetActiveScene().name == "GameScene(LVL6)")
-            {
-                //Todo Make a congrats you win scene?
-            }
-            else
-                winScreen.SetActive(true);
+            yield return new WaitForSeconds(endGameDelay);
+            winScreen.SetActive(true);
             MainUIParent.SetActive(false);
         }
         else
         {
+            TransitionManager.Instance().Transition(sequenceTransition, 1f);
+            yield return new WaitForSeconds(endGameDelay);
              MusicManager.Instance.PlayMusicOnce(MusicManager.Instance.gameOver);
 
             loseScreen.SetActive(true);
@@ -1827,5 +1885,17 @@ public class TurnManager : MonoBehaviour
             }
         }
     }
+
     
+    private IEnumerator ShowYouWin()
+    {
+        TransitionManager.Instance().Transition(sequenceTransition, 1f);
+        yield return new WaitForSeconds(endGameDelay);
+        thankScreen.SetActive(true);
+        
+    }
+    public void showWin()
+    {
+        StartCoroutine(ShowYouWin());
+    }
 }

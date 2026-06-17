@@ -1595,16 +1595,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   audioSource: {fileID: 361505357}
-  songs:
-  - {fileID: 8300000, guid: 815c55158b779f54fa3fde8d2890e1a0, type: 3}
-  - {fileID: 8300000, guid: 71aa091a8891624409c76b05fe21ca75, type: 3}
-  - {fileID: 8300000, guid: 0401639d2c9cb034db9d5e7737827b98, type: 3}
-  - {fileID: 8300000, guid: 36315d3c6bfadad488ce34ac4e3bd714, type: 3}
-  - {fileID: 8300000, guid: 92db0d63c94487a4a9a571b04d24eb6f, type: 3}
-  - {fileID: 8300000, guid: 8715b2c56e4c553499d1e1059aaee693, type: 3}
-  - {fileID: 8300000, guid: 3c9d1ebbe59dfeb468e34d5775cf770c, type: 3}
+  battleMusic: {fileID: 0}
+  preMatchMusic: {fileID: 0}
+  prologueMusic: {fileID: 0}
+  prologueMusicHalf: {fileID: 0}
+  prologueMusic2: {fileID: 0}
+  midnightMasquerade: {fileID: 0}
+  jingle12: {fileID: 0}
+  gameOver: {fileID: 0}
+  credits: {fileID: 0}
   fadeDuration: 0.1
   maxVolume: 1
+  sequenceTransition: {fileID: 0}
 --- !u!4 &359049607
 Transform:
   m_ObjectHideFlags: 0
@@ -3209,6 +3211,14 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 2192215838066566232, guid: bdca80ec484d2484880037cea5c59fba, type: 3}
+      propertyPath: rectangle
+      value: 
+      objectReference: {fileID: 11400000, guid: 5d42ad7319df4a8439d74d82f30a60cc, type: 2}
+    - target: {fileID: 2192215838066566232, guid: bdca80ec484d2484880037cea5c59fba, type: 3}
+      propertyPath: sequenceTransition
+      value: 
+      objectReference: {fileID: 11400000, guid: 013263c83b6a84c4d95beaa8bd163ac8, type: 2}
     - target: {fileID: 3106818309668337980, guid: bdca80ec484d2484880037cea5c59fba, type: 3}
       propertyPath: m_Name
       value: CreditsObj
@@ -4598,6 +4608,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Potion: 1
   Panacea: 1
+  sequenceTransition: {fileID: 0}
 --- !u!4 &1658743828
 Transform:
   m_ObjectHideFlags: 0
@@ -7568,6 +7579,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 99f9acfec7adc8f4195b0c319f01650e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  sequenceTransition: {fileID: 0}
 --- !u!1001 &9075993967696190981
 PrefabInstance:
   m_ObjectHideFlags: 0

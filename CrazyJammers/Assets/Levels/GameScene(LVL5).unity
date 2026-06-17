@@ -2350,6 +2350,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1182249694}
   m_CullTransparentMesh: 1
+--- !u!1 &1192298388 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 532820404995201048, guid: 30cd43739cee4f549a2210f0f31d1e62, type: 3}
+  m_PrefabInstance: {fileID: 7381479870494660113}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &1204392224 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 5356158318326236529, guid: edc093f874874f64d9cfa15aa220a370, type: 3}
@@ -5196,7 +5201,7 @@ PrefabInstance:
     - target: {fileID: 8485419520516605267, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
       propertyPath: winScreen
       value: 
-      objectReference: {fileID: 282190824}
+      objectReference: {fileID: 1192298388}
     - target: {fileID: 8485419520516605267, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
       propertyPath: zapAttack
       value: 
@@ -5273,6 +5278,10 @@ PrefabInstance:
       propertyPath: slashCrater
       value: 
       objectReference: {fileID: 1363568557217188, guid: cef319f72165f7d45828440bad9618e1, type: 3}
+    - target: {fileID: 8485419520516605267, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
+      propertyPath: thankScreen
+      value: 
+      objectReference: {fileID: 282190824}
     - target: {fileID: 8485419520516605267, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
       propertyPath: MainUIParent
       value: 
@@ -5932,9 +5941,21 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8682172288566515016, guid: 30cd43739cee4f549a2210f0f31d1e62, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8682172288566515016, guid: 30cd43739cee4f549a2210f0f31d1e62, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 4516859454160448763}
+      objectReference: {fileID: 1366225628}
+    - target: {fileID: 8682172288566515016, guid: 30cd43739cee4f549a2210f0f31d1e62, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: showWin
+      objectReference: {fileID: 0}
+    - target: {fileID: 8682172288566515016, guid: 30cd43739cee4f549a2210f0f31d1e62, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: TurnManager, Assembly-CSharp
+      objectReference: {fileID: 0}
     - target: {fileID: 8682172288566515016, guid: 30cd43739cee4f549a2210f0f31d1e62, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_StringArgument
       value: GameScene(LVL6)
