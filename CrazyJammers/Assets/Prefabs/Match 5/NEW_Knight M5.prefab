@@ -161,8 +161,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   characterName: Knight
-  maxHealth: 203
-  currentHealth: 203
+  maxHealth: 1
+  currentHealth: 1
   barrierCount: 0
   burning: 0
   bideBuff: 0

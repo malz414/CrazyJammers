@@ -2575,7 +2575,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   characterName: Mage
-  maxHealth: 189
+  maxHealth: 1
   currentHealth: 0
   barrierCount: 0
   burning: 0

@@ -1870,7 +1870,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   characterName: Archer
-  maxHealth: 191
+  maxHealth: 1
   currentHealth: 0
   barrierCount: 0
   burning: 0

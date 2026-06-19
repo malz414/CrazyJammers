@@ -129,7 +129,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   characterName: Cleric
-  maxHealth: 197
+  maxHealth: 1
   currentHealth: 0
   barrierCount: 0
   burning: 0
