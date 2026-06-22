@@ -127,7 +127,7 @@ public class FadeScreen : MonoBehaviour
         }
     }
     private IEnumerator RunIntroSequence()
-{   
+{       TransitionManager.Instance().Transition(sequenceTransition, 1f);
         skipButton.SetActive(true);
         mainMenuScreen.interactable = false;
         mainMenuScreen.blocksRaycasts = false;

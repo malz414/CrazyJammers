@@ -1686,6 +1686,15 @@ public class TurnManager : MonoBehaviour
             usedMove1.text = combinedText;
             usedMoveGO.SetActive(true);
         }
+        foreach (var attack in attacksReset)
+        {
+            if (attack != null) attack.upgradeLevel = 0;
+        }
+
+        bideAttribute = 0;
+        hero.bideLevel = hero.bideLevelBase;
+        hero.bideUses = 0;
+        hero.bideBuff = false;
 
         heroAniPlayed = false;
         
