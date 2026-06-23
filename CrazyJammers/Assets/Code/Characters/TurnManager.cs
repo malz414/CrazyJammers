@@ -1870,7 +1870,8 @@ public class TurnManager : MonoBehaviour
     private IEnumerator DoEndGameRoutine(bool playerWon)
     {
         
-       
+       yield return new WaitForSeconds(1f);
+
 
         if (playerWon)
         {
