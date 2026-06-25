@@ -1610,17 +1610,17 @@ public class TurnManager : MonoBehaviour
                 if (isIce && isBurn)
                 {
                     ApplyEffectWithDelay(iceBurnAttack, tempGameObject.transform, 0f, 3.0f, true, 1.5f, yRot);
-                    ApplyEffectWithDelay(iceBurnHit, targetEnemy.transform, 0.2f, 4.0f, null, 0.5f, null, null, 0.78f, 0f);
+                    ApplyEffectWithDelay(iceBurnHit, targetEnemy.transform, 0.4f, 4.0f, null, 0.5f, null, null, 0.78f, 0f);
                 }
                 else if (isIce && isPara)
                 {
                     ApplyEffectWithDelay(iceParaAttack, tempGameObject.transform, 0f, 3.0f, true, 1.5f, yRot);
-                    ApplyEffectWithDelay(iceParaHit, targetEnemy.transform, 0.2f, 4.0f, null, 0.5f, null, null, 0.78f, 0f);
+                    ApplyEffectWithDelay(iceParaHit, targetEnemy.transform, 0.4f, 4.0f, null, 0.5f, null, null, 0.78f, 0f);
                 }
                 else if (isBurn && isPara)
                 {
                     ApplyEffectWithDelay(arrowBurnAttack, tempGameObject.transform, 0f, 3.0f, true, 1.5f, yRot);
-                    ApplyEffectWithDelay(arrowBurnHit, targetEnemy.transform, .5f, 3.0f);
+                    ApplyEffectWithDelay(arrowBurnHit, targetEnemy.transform, .5f, 3.0f, null, 0.5f, null, null, 0.78f, 0f);
                 }
             }
 
