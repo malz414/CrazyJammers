@@ -4907,7 +4907,7 @@ MonoBehaviour:
   bounceForce: 15
   speed: 20
   accuracy: 95
-  fireRate: 2
+  fireRate: 1
   muzzlePrefab: {fileID: 1227067792111776, guid: 2039dabbd631d6b4cae329fe6a3d0d17, type: 3}
   hitPrefab: {fileID: 1958568899816826, guid: 4fcb631c169299641bef29d2afc2847d, type: 3}
   trails:

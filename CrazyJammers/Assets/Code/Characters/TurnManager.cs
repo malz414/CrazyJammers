@@ -1598,13 +1598,13 @@ public class TurnManager : MonoBehaviour
                 tempGameObject.transform.position = newPos;
                 Destroy(tempGameObject, 5f);
 
-                float yRot = 0f;
+                float yRot = -90f;
                 switch (currentTargetIndex) 
                 { 
-                    case 0: yRot = 115f; break; 
-                    case 1: yRot = 95f; break; 
-                    case 2: yRot = 75f; break; 
-                    case 3: yRot = 60f; break; 
+                    case 0: yRot = 15f; break; 
+                    case 1: yRot = 0f; break; 
+                    case 2: yRot = -15f; break; 
+                    case 3: yRot = -25f; break; 
                 }
 
                 if (isIce && isBurn)
