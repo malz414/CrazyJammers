@@ -604,7 +604,7 @@ public class TurnManager : MonoBehaviour
                         case 2: yRotationOffset = -90f; break;
                         case 3: yRotationOffset = -110f; break;
                     }
-                    ApplyEffectWithDelay(iceAttack, enemy.transform, 0f, 3.0f, null, 2f, yRotationOffset);
+                    ApplyEffectWithDelay(iceAttack, enemy.transform, 0f, .20f, null, 2f, yRotationOffset);
                     ApplyEffectWithDelay(iceHit, hero.transform, .2f, 3.5f, null, 2f,null, null, 0.7f);
 
                 }
@@ -728,7 +728,7 @@ public class TurnManager : MonoBehaviour
                         case 2: yRotationOffset = -90f; break;
                         case 3: yRotationOffset = -110f; break;
                     }
-                    ApplyEffectWithDelay(arrowAttack1, enemy.transform, 0f, 3.0f, null, 1.5f, yRotationOffset);
+                    ApplyEffectWithDelay(arrowAttack1, enemy.transform, 0f, .40f, null, 1.5f, yRotationOffset);
                     ApplyEffectWithDelay(arrowHit, hero.transform, .5f, 3.0f);
                 }
 
@@ -1607,20 +1607,20 @@ public class TurnManager : MonoBehaviour
                     case 3: yRot = -25f; break; 
                 }
 
-                if (isIce && isBurn)
+                    if (isIce && isBurn)
                 {
-                    ApplyEffectWithDelay(iceBurnAttack, tempGameObject.transform, 0f, 3.0f, true, 1.5f, yRot);
-                    ApplyEffectWithDelay(iceBurnHit, targetEnemy.transform, 0.4f, 4.0f, null, 0.5f, null, null, 0.78f, 0f);
+                    ApplyEffectWithDelay(iceBurnAttack, tempGameObject.transform, 0f, .40f, true, 1.5f, yRot);
+                    ApplyEffectWithDelay(iceBurnHit, targetEnemy.transform, 0.2f, 4.0f, null, 0.5f, null, null, 0.78f, 0f);
                 }
                 else if (isIce && isPara)
                 {
-                    ApplyEffectWithDelay(iceParaAttack, tempGameObject.transform, 0f, 3.0f, true, 1.5f, yRot);
-                    ApplyEffectWithDelay(iceParaHit, targetEnemy.transform, 0.4f, 4.0f, null, 0.5f, null, null, 0.78f, 0f);
+                    ApplyEffectWithDelay(iceParaAttack, tempGameObject.transform, 0f, .50f, true, 1.5f, yRot);
+                    ApplyEffectWithDelay(iceParaHit, targetEnemy.transform, 0.2f, 4.0f, null, 0.5f, null, null, 0.78f, 0f);
                 }
                 else if (isBurn && isPara)
                 {
-                    ApplyEffectWithDelay(arrowBurnAttack, tempGameObject.transform, 0f, 3.0f, true, 1.5f, yRot);
-                    ApplyEffectWithDelay(arrowBurnHit, targetEnemy.transform, .5f, 3.0f, null, 0.5f, null, null, 0.78f, 0f);
+                    ApplyEffectWithDelay(arrowBurnAttack, tempGameObject.transform, 0f, .50f, true, 1.5f, yRot);
+                    ApplyEffectWithDelay(arrowBurnHit, targetEnemy.transform, .5f, 3.0f);
                 }
             }
 
