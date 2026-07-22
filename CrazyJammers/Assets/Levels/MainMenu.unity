@@ -1440,6 +1440,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 0}
     - target: {fileID: 2192215838066566232, guid: bdca80ec484d2484880037cea5c59fba, type: 3}
+      propertyPath: CreditsObj
+      value: 
+      objectReference: {fileID: 6362276222689236033, guid: 46302d20aff5a7a41abf720f9d43192e, type: 3}
+    - target: {fileID: 2192215838066566232, guid: bdca80ec484d2484880037cea5c59fba, type: 3}
       propertyPath: sequenceTransition
       value: 
       objectReference: {fileID: 11400000, guid: 013263c83b6a84c4d95beaa8bd163ac8, type: 2}
