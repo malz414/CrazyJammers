@@ -773,6 +773,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 11400000, guid: 5d42ad7319df4a8439d74d82f30a60cc, type: 2}
     - target: {fileID: 2192215838066566232, guid: 2f52127b350c3d347bf41bb4998677b9, type: 3}
+      propertyPath: CreditsObj
+      value: 
+      objectReference: {fileID: 6362276222689236033, guid: 46302d20aff5a7a41abf720f9d43192e, type: 3}
+    - target: {fileID: 2192215838066566232, guid: 2f52127b350c3d347bf41bb4998677b9, type: 3}
       propertyPath: sequenceTransition
       value: 
       objectReference: {fileID: 11400000, guid: 013263c83b6a84c4d95beaa8bd163ac8, type: 2}
@@ -2027,6 +2031,10 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 2192215838066566232, guid: bdca80ec484d2484880037cea5c59fba, type: 3}
+      propertyPath: CreditsObj
+      value: 
+      objectReference: {fileID: 6362276222689236033, guid: 46302d20aff5a7a41abf720f9d43192e, type: 3}
     - target: {fileID: 3106818309668337980, guid: bdca80ec484d2484880037cea5c59fba, type: 3}
       propertyPath: m_Name
       value: CreditsObj
