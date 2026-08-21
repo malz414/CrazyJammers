@@ -1,6 +1,8 @@
 using UnityEngine;
 using System.Collections;
 using EasyTransition; 
+using UnityEngine.SceneManagement;
+
 
 
 public class train : MonoBehaviour
@@ -19,8 +21,11 @@ public class train : MonoBehaviour
     
     public void HideCreditsReal()
     {
-        MusicManager.Instance.PlayMusic(MusicManager.Instance.midnightMasquerade);
         TransitionManager.Instance().Transition("MainMenu", sequenceTransition, 0f);
+    }
+      public void ShowCredits()
+    {
+        TransitionManager.Instance().Transition("CreditsScene", sequenceTransition, 0f);
     }
 
 

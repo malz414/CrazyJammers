@@ -8,7 +8,7 @@ using UnityEngine.EventSystems;
 using DamageNumbersPro;
 using System.Linq;
 using static System.Math;
-//using CrazyGames;
+using CrazyGames;
 using UnityEngine.SceneManagement;
 using EasyTransition; 
 
@@ -191,8 +191,8 @@ public class TurnManager : MonoBehaviour
 
     [Tooltip("Time in seconds to wait before showing the win/lose screen.")]
     public float endGameDelay = 2.0f; 
-    private bool isBattleActive = false; // Controls if effects/turns should continue
-
+    private bool isBattleActive = false;
+    private bool isEndingGame = false;
     private void Awake()
     {
         if (Instance == null)
@@ -260,6 +260,7 @@ public class TurnManager : MonoBehaviour
 
     public void StartBattle()
     {
+        isEndingGame = false;
         currentTurn = 0; 
         isBattleActive = true;
         enemies = new List<Enemy>();
@@ -320,6 +321,7 @@ public class TurnManager : MonoBehaviour
         MainUIParent.SetActive(true);
         enemyAttacksUsed = new List<AttackSO>();
         blurbEvent = new GameplayBlurbEvent();
+        CrazySDK.Game.GameplayStart();
     }
 
     private void ApplyEffectWithDelay(GameObject effectPrefab, Transform target, float delay, float effectDuration, bool? xRotationEffect = null, float raiseAmount = 0f, float? yRotationOffset = null, bool? standUpright = null, float xOffset = 0f, float zOffset = 0f) 
@@ -1819,77 +1821,110 @@ public class TurnManager : MonoBehaviour
 
     public void EndGame(bool playerWon)
     {
-        isBattleActive = false; // Stop all ongoing effects/logic immediately
+        // 1. Prevent EndGame from running multiple times in the same frame
+        if (isEndingGame) return;
+        isEndingGame = true;
+
+        isBattleActive = false; // Stops turn logic
+        StopAllCoroutines();
+        
+        // 2. Hide combat UI menus immediately so the player can't click attacks during the delay
+        if (attackOptionsParent != null) attackOptionsParent.SetActive(false);
+        if (potionOptions != null) potionOptions.SetActive(false);
+        if (itemOptions != null) itemOptions.SetActive(false);
+        if (targetingHUDParent != null) targetingHUDParent.SetActive(false);
+
         Debug.Log(playerWon ? "You won!" : "Game Over.");
         StartCoroutine(DoEndGameRoutine(playerWon));
     }
 
     public void ReviveBoss()
     {
-        // Restore inventory to the start-of-match state before reloading
         if (PotionData.Instance != null)
         {
             PotionData.Instance.RestoreCheckpoint();
         }
-        int currentIndex = SceneManager.GetActiveScene().buildIndex;
-        TransitionManager.Instance().Transition(currentIndex, sequenceTransition, 0f);
-    
-        // CrazySDK.Ad.RequestAd(CrazyAdType.Rewarded, () => 
-        // {
-        //     // ad started
-        // }, (error) =>
-        // {
-        //     // ad error
-        // }, () =>
-        // {
-        //      hero.currentHealth = hero.maxHealth;
-        //      hero.animator.SetTrigger("Revive");
-        //      revived = true;
-        //      GameObject boss = GameObject.FindGameObjectWithTag("Boss");
-        //      if (boss != null)
-        //      {
-        //          Hero hero = boss.GetComponent<Hero>();
-        //          if (hero != null)
-        //          {
-        //              if (hero.lerpCoroutine != null) StopCoroutine(hero.lerpCoroutine);
-        //              hero.lerpCoroutine = StartCoroutine(hero.LerpYPosition(boss.transform.position.y, hero.originalY, .21f, .5f));
-        //          }
-        //      }
 
-        //      isBattleActive = true; // Restart logic
+        // -> UNCOMMENT & ACTIVATE REWARDED AD CALL:
+        CrazySDK.Ad.RequestAd(CrazyAdType.Rewarded, () => 
+        {
+            // Ad started - audio should mute automatically if handled by SDK
+        }, 
+        (error) =>
+        {
+            Debug.LogWarning($"Rewarded ad failed or was cancelled: {error}");
+            // Optional: Show a brief message to the player that the ad wasn't completed
+        }, 
+        () =>
+        {
+            // Ad completed successfully -> Revive the boss
+            hero.currentHealth = hero.maxHealth;
+            hero.animator.SetTrigger("Revive");
+            revived = true;
+            
+            GameObject boss = GameObject.FindGameObjectWithTag("Boss");
+            if (boss != null)
+            {
+                Hero heroComp = boss.GetComponent<Hero>();
+                if (heroComp != null)
+                {
+                    if (heroComp.lerpCoroutine != null) StopCoroutine(heroComp.lerpCoroutine);
+                    heroComp.lerpCoroutine = StartCoroutine(heroComp.LerpYPosition(boss.transform.position.y, heroComp.originalY, .21f, .5f));
+                }
+            }
+            isEndingGame = false;
+            isBattleActive = true;
+            ApplyEffectWithDelay(bideVFX, hero.transform, 0f, 2.0f, true, 0f, null, false);
+            StartCoroutine(StartTurn());
+            loseScreen.SetActive(false);
+            MainUIParent.SetActive(true);
 
-        //      ApplyEffectWithDelay(bideVFX, hero.transform, 0f, 2.0f,true,0f, null, false);
-        //      StartCoroutine(StartTurn());
-        //      loseScreen.SetActive(false);
-        //      MainUIParent.SetActive(true);
-        //      CrazySDK.Game.GameplayStart();
-        // });
+            // -> IMPORTANT: Notify SDK that gameplay has resumed after revive
+            CrazySDK.Game.GameplayStart();
+        });
     }
     
 
     private IEnumerator DoEndGameRoutine(bool playerWon)
     {
-        
-       yield return new WaitForSeconds(1f);
-
+        yield return new WaitForSeconds(1f);
 
         if (playerWon)
         {
-             MusicManager.Instance.PlayMusicOnce(MusicManager.Instance.jingle12);
+            // 4. Save Endless Mode unlock
+            PlayerPrefs.SetInt("EndlessModeUnlocked", 1);
+            PlayerPrefs.Save();
+
+            if (MusicManager.Instance != null)
+            {
+                MusicManager.Instance.PlayMusicOnce(MusicManager.Instance.jingle12);
+            }
 
             yield return new WaitForSeconds(endGameDelay);
+            
+            // 5. Show Win Screen and hide gameplay HUD
             winScreen.SetActive(true);
             MainUIParent.SetActive(false);
         }
         else
         {
-            TransitionManager.Instance().Transition(sequenceTransition, 1f);
-            yield return new WaitForSeconds(endGameDelay);
-             MusicManager.Instance.PlayMusicOnce(MusicManager.Instance.gameOver);
+            if (TransitionManager.Instance() != null)
+            {
+                TransitionManager.Instance().Transition(sequenceTransition, 1f);
+            }
 
+            yield return new WaitForSeconds(endGameDelay);
+
+            if (MusicManager.Instance != null)
+            {
+                MusicManager.Instance.PlayMusicOnce(MusicManager.Instance.gameOver);
+            }
+
+            // 6. Show Lose Screen and hide gameplay HUD
             loseScreen.SetActive(true);
             MainUIParent.SetActive(false);
-            if (revived)
+
+            if (revived && reviveButton != null)
             {
                 reviveButton.SetActive(false);
             }
@@ -1901,6 +1936,8 @@ public class TurnManager : MonoBehaviour
     {
         TransitionManager.Instance().Transition(sequenceTransition, 1f);
         yield return new WaitForSeconds(endGameDelay);
+        PlayerPrefs.SetInt("EndlessModeUnlocked", 1);
+        PlayerPrefs.Save();
         thankScreen.SetActive(true);
         
     }
@@ -1908,4 +1945,13 @@ public class TurnManager : MonoBehaviour
     {
         StartCoroutine(ShowYouWin());
     }
+    private void OnDestroy()
+{
+    if (attackDropdown != null) attackDropdown.onValueChanged.RemoveAllListeners();
+    if (attackDropdown2 != null) attackDropdown2.onValueChanged.RemoveAllListeners();
+
+    StopAllCoroutines();
+    
+    
+}
 }

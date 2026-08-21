@@ -16,15 +16,14 @@ public class PotionData : MonoBehaviour
 
     private void Awake()
     {
-        if (Instance == null)
-        {
-            Instance = this;
-            DontDestroyOnLoad(gameObject); 
-        }
-        else
+        if (Instance != null && Instance != this)
         {
             Destroy(gameObject); 
+            return; // -> Ensures no further initialization runs on the duplicate
         }
+
+        Instance = this;
+        DontDestroyOnLoad(gameObject);
     }
 
     public void SaveCheckpoint()
