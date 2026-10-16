@@ -32,19 +32,16 @@ public class MusicManager : MonoBehaviour
 
     private void Awake()
     {
-        if (Instance == null)
-        {
-            Instance = this;
-            DontDestroyOnLoad(gameObject);
-        }
-        else
+        if (Instance != null && Instance != this)
         {
             if (audioSource != null) audioSource.Stop(); 
-            
             gameObject.SetActive(false); 
-            
             Destroy(gameObject); 
+            return;
         }
+
+        Instance = this;
+        DontDestroyOnLoad(gameObject);
     }
 
     private void Start()
@@ -66,6 +63,7 @@ public class MusicManager : MonoBehaviour
         if (audioSource.clip == nextClip && audioSource.isPlaying)
             return;
 
+        StopAllCoroutines();
         StartCoroutine(FadeToNextSong(nextClip, true)); // true = looping
     }
     public void HideCreditsReal()
@@ -87,11 +85,27 @@ public class MusicManager : MonoBehaviour
         if (audioSource.clip == nextClip && audioSource.isPlaying)
             return;
 
+        StopAllCoroutines();
         StartCoroutine(FadeToNextSong(nextClip, false)); // false = no looping
     }
 
     private IEnumerator FadeToNextSong(AudioClip nextClip, bool shouldLoop)
     {
+        if (nextClip.loadState != AudioDataLoadState.Loaded)
+        {
+            nextClip.LoadAudioData();
+            while (nextClip.loadState != AudioDataLoadState.Loaded && nextClip.loadState != AudioDataLoadState.Failed)
+            {
+                yield return null;
+            }
+        }
+
+        if (nextClip.loadState == AudioDataLoadState.Failed)
+        {
+            Debug.LogError($"MusicManager: Failed to load audio data for {nextClip.name}");
+            yield break;
+        }
+
         float startVolume = audioSource.volume;
 
         if (audioSource.isPlaying)
@@ -99,21 +113,14 @@ public class MusicManager : MonoBehaviour
             for (float t = 0; t < fadeDuration; t += Time.deltaTime)
             {
                 audioSource.volume = Mathf.Lerp(startVolume, 0, t / fadeDuration);
-                yield return null; 
+                yield return null;
             }
             audioSource.volume = 0;
             audioSource.Stop();
         }
 
         audioSource.clip = nextClip;
-        
         audioSource.loop = shouldLoop;
-
-        nextClip.LoadAudioData(); 
-        while (nextClip.loadState != AudioDataLoadState.Loaded)
-        {
-            yield return null; 
-        }
         audioSource.Play();
 
         for (float t = 0; t < fadeDuration; t += Time.deltaTime)

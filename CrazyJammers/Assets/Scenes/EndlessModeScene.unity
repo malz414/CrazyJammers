@@ -2616,7 +2616,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5833526138698229305, guid: bdca80ec484d2484880037cea5c59fba, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5931781137087685039, guid: bdca80ec484d2484880037cea5c59fba, type: 3}
       propertyPath: m_AnchoredPosition.x
@@ -3824,6 +3824,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Potion: 1
   Panacea: 1
+  sequenceTransition: {fileID: 0}
 --- !u!4 &1658743828
 Transform:
   m_ObjectHideFlags: 0
@@ -5958,9 +5959,17 @@ PrefabInstance:
       value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     - target: {fileID: 1143346409140994859, guid: fec496db80a07c640a9a640f4b6a9472, type: 3}
+      propertyPath: mainMenu
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1143346409140994859, guid: fec496db80a07c640a9a640f4b6a9472, type: 3}
       propertyPath: skipButton
       value: 
       objectReference: {fileID: 1815146222}
+    - target: {fileID: 1143346409140994859, guid: fec496db80a07c640a9a640f4b6a9472, type: 3}
+      propertyPath: startInstantly
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1143346409140994859, guid: fec496db80a07c640a9a640f4b6a9472, type: 3}
       propertyPath: 'introText.Array.data[0]'
       value: "Once upon a time, there was a creature who could mimic and repurpose
@@ -6637,6 +6646,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 99f9acfec7adc8f4195b0c319f01650e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  sequenceTransition: {fileID: 0}
 --- !u!1001 &9075993967696190981
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6784,6 +6794,10 @@ PrefabInstance:
     - target: {fileID: 4963263049763562003, guid: 7ca3c677b08438948a575a0b43574e32, type: 3}
       propertyPath: m_ChildAlignment
       value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 5378092296731033009, guid: 7ca3c677b08438948a575a0b43574e32, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5969278094427440886, guid: 7ca3c677b08438948a575a0b43574e32, type: 3}
       propertyPath: m_IsActive

@@ -26,8 +26,6 @@ MonoBehaviour:
     m_path: Assets/Scenes/GameScene.unity
   - m_enabled: 0
     m_path: Assets/Scenes/NewLevels/Level2.unity
-  - m_enabled: 0
-    m_path: Assets/Scenes/ENDLESS.unity
   - m_enabled: 1
     m_path: Assets/Scenes/CreditsScene.unity
   m_ScriptingDefines: []

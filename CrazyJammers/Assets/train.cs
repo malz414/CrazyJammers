@@ -1,6 +1,10 @@
 using UnityEngine;
 using System.Collections;
 using EasyTransition; 
+using UnityEngine.SceneManagement;
+using CrazyGames;
+
+
 
 
 public class train : MonoBehaviour
@@ -19,8 +23,21 @@ public class train : MonoBehaviour
     
     public void HideCreditsReal()
     {
-        MusicManager.Instance.PlayMusic(MusicManager.Instance.midnightMasquerade);
+        if (CrazySDK.IsAvailable)
+        {
+            CrazySDK.Game.GameplayStop();
+        }
+
         TransitionManager.Instance().Transition("MainMenu", sequenceTransition, 0f);
+    }
+      public void ShowCredits()
+    {
+          if (CrazySDK.IsAvailable)
+        {
+            CrazySDK.Game.GameplayStop();
+        }
+
+        TransitionManager.Instance().Transition("CreditsScene", sequenceTransition, 0f);
     }
 
 

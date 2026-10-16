@@ -25,5 +25,9 @@ public class GameplayBlurbManager : MonoBehaviour
         blurb.Init(blurbText);
 
     }
+    private void OnDestroy()
+    {
+        EventBus.Unsubscribe<GameplayBlurbEvent>(OnGameplayBlurb);
+    }
 
 }

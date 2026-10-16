@@ -5,7 +5,7 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 0
+  - enabled: 1
     path: Assets/CrazySDK/Demo/LoadingScene.unity
     guid: d34c3ed37bb0fd745b38d55bc61e21c8
   - enabled: 1
@@ -35,5 +35,14 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/CreditsScene.unity
     guid: 6cc7558b3dbe59b4db77c0be19d94af5
+  - enabled: 1
+    path: Assets/Scenes/EndlessModeScene.unity
+    guid: 42e8510302be0754293d5371efa358a3
+  - enabled: 0
+    path: Assets/Scenes/CreditsSceneNew.unity
+    guid: 6b20a4f1d15ba9642a790833d5a17693
+  - enabled: 0
+    path: Assets/Levels/MainMenuNew.unity
+    guid: a68f5c9999f96de40b428b03d66aaf4c
   m_configObjects: {}
   m_UseUCBPForAssetBundles: 0
