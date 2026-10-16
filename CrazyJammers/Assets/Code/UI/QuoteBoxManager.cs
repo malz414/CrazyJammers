@@ -24,28 +24,31 @@ public class QuoteBoxManager : MonoBehaviour
     }
 
     private IEnumerator setQuote(string quote)
+{
+    // Safety check!
+    if (TurnManager.Instance != null)
     {
         TurnManager.Instance.StartBattle();
-        yield return new WaitForSeconds(1.0f);
-        quoteBox.SetActive(true);
-        quoteText.text = quote;
-    }   
+    }
+    
+    yield return new WaitForSeconds(1.0f);
+    quoteBox.SetActive(true);
+    quoteText.text = quote;
+}   
 
-    public void Next()
+public void Next()
+{
+    if (TurnManager.Instance != null)
     {
         TurnManager.Instance.SetUpBattle();
-        MusicManager.Instance.PlayMusic(MusicManager.Instance.battleMusic);
-
-        if(enemyHp != null)
-            {
-                enemyHp.SetActive(true);
-            }
-            if(HeroHp != null)
-            {
-                HeroHp.SetActive(true);
-            }
-        quoteBox.transform.parent.parent.gameObject.SetActive(false);
-        quoteText.text = "";
-        //CrazySDK.Game.GameplayStart();
     }
+    
+    MusicManager.Instance.PlayMusic(MusicManager.Instance.battleMusic);
+
+    if(enemyHp != null) enemyHp.SetActive(true);
+    if(HeroHp != null) HeroHp.SetActive(true);
+    
+    quoteBox.transform.parent.parent.gameObject.SetActive(false);
+    quoteText.text = "";
+}
 }

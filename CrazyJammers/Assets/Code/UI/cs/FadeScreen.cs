@@ -63,31 +63,23 @@ public class FadeScreen : MonoBehaviour
         
     }
     void Start()
+{
+    // Don't run battle setup logic if we are just in the Main Menu!
+    if(startInstantly && !mainMenu) 
     {
-        if(startInstantly)
-        {
-
-            if (skipped) return;
-            skipped=true;
-            LeanTween.alphaCanvas(fadeScreen, 0, 0);
-            MusicManager.Instance.PlayMusic(MusicManager.Instance.prologueMusic2);
-            
-            quoteBoxManager.SetQuoteBox(enemyQuote[quoteNum]);
-            
-            
-            
-            
-
-        }
-        if(FirstMatch)
-        {
-
-            StartCoroutine(RunIntroSequence()); //
-        }
-
+        if (skipped) return;
+        skipped = true;
+        LeanTween.alphaCanvas(fadeScreen, 0, 0);
+        MusicManager.Instance.PlayMusic(MusicManager.Instance.prologueMusic2);
         
-        
+        quoteBoxManager.SetQuoteBox(enemyQuote[quoteNum]);
     }
+
+    if(FirstMatch)
+    {
+        StartCoroutine(RunIntroSequence());
+    }
+}
 
     public void SkipToGame()
     {

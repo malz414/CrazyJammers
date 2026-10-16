@@ -89,7 +89,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: e7d545731a2608943a4860aaaa8b387c, type: 3}
       propertyPath: m_Name
-      value: Archer M3
+      value: Archer M4
       objectReference: {fileID: 0}
     - target: {fileID: 3006199462227732396, guid: e7d545731a2608943a4860aaaa8b387c, type: 3}
       propertyPath: m_IsActive
@@ -143,11 +143,17 @@ MonoBehaviour:
   barrierCount: 0
   burning: 0
   bideBuff: 0
+  bideDefenseMultiplier: 0.9
+  burnIcon: {fileID: 0}
+  paraIcon: {fileID: 0}
   animator: {fileID: 2209448704372366197}
   possibleAttacks:
   - {fileID: 11400000, guid: 27cfda9b1a1637746985ceb311c3760c, type: 2}
   attacksUsed: []
   dead: 0
+  walkSpeed: 2
+  multiplier: 1
+  enemyType: 
   TargetingIndicator: {fileID: 5432857158359824680}
 --- !u!95 &2209448704372366197
 Animator:

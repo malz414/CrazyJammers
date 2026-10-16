@@ -85,5 +85,9 @@ public class CharacterHUD : MonoBehaviour
     {
         this.character2.OnMouseOverr();
     }
+    private void OnDestroy()
+    {
+        EventBus.Unsubscribe<CharacterStatusUpdateEvent>(OnStatusUpdate);
+    }
 
 }

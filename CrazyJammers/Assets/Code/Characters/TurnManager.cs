@@ -8,7 +8,9 @@ using UnityEngine.EventSystems;
 using DamageNumbersPro;
 using System.Linq;
 using static System.Math;
+#if USE_CRAZYGAMES
 using CrazyGames;
+#endif
 using UnityEngine.SceneManagement;
 using EasyTransition; 
 
@@ -215,6 +217,11 @@ public class TurnManager : MonoBehaviour
         }
 
         SetupAttackDropdowns(); 
+        if (currentGameMode == GameMode.Standard)
+        {
+            PlayerPrefs.SetString("SavedLevel", SceneManager.GetActiveScene().name);
+            PlayerPrefs.Save();
+        }
     }
 
     private GameObject GetNextEnemyFromCurrentDifficulty(List<Enemy> upcoming = null)
@@ -321,7 +328,10 @@ public class TurnManager : MonoBehaviour
         MainUIParent.SetActive(true);
         enemyAttacksUsed = new List<AttackSO>();
         blurbEvent = new GameplayBlurbEvent();
+        #if USE_CRAZYGAMES
         CrazySDK.Game.GameplayStart();
+        #endif
+        
     }
 
     private void ApplyEffectWithDelay(GameObject effectPrefab, Transform target, float delay, float effectDuration, bool? xRotationEffect = null, float raiseAmount = 0f, float? yRotationOffset = null, bool? standUpright = null, float xOffset = 0f, float zOffset = 0f) 
@@ -1838,14 +1848,14 @@ public class TurnManager : MonoBehaviour
         StartCoroutine(DoEndGameRoutine(playerWon));
     }
 
-    public void ReviveBoss()
+   public void ReviveBoss()
     {
         if (PotionData.Instance != null)
         {
             PotionData.Instance.RestoreCheckpoint();
         }
 
-        // -> UNCOMMENT & ACTIVATE REWARDED AD CALL:
+#if USE_CRAZYGAMES
         CrazySDK.Ad.RequestAd(CrazyAdType.Rewarded, () => 
         {
             // Ad started - audio should mute automatically if handled by SDK
@@ -1858,43 +1868,48 @@ public class TurnManager : MonoBehaviour
         () =>
         {
             // Ad completed successfully -> Revive the boss
-            hero.currentHealth = hero.maxHealth;
-            hero.animator.SetTrigger("Revive");
-            revived = true;
+            PerformRevival();
             
-            GameObject boss = GameObject.FindGameObjectWithTag("Boss");
-            if (boss != null)
-            {
-                Hero heroComp = boss.GetComponent<Hero>();
-                if (heroComp != null)
-                {
-                    if (heroComp.lerpCoroutine != null) StopCoroutine(heroComp.lerpCoroutine);
-                    heroComp.lerpCoroutine = StartCoroutine(heroComp.LerpYPosition(boss.transform.position.y, heroComp.originalY, .21f, .5f));
-                }
-            }
-            isEndingGame = false;
-            isBattleActive = true;
-            ApplyEffectWithDelay(bideVFX, hero.transform, 0f, 2.0f, true, 0f, null, false);
-            StartCoroutine(StartTurn());
-            loseScreen.SetActive(false);
-            MainUIParent.SetActive(true);
-
-            // -> IMPORTANT: Notify SDK that gameplay has resumed after revive
+            // Notify SDK that gameplay has resumed after revive
             CrazySDK.Game.GameplayStart();
         });
+#else
+        // Fallback for when the SDK is disabled (e.g. testing in the Unity Editor)
+        PerformRevival();
+#endif
     }
-    
 
+    // Extracted the actual gameplay logic into a reusable helper method
+    private void PerformRevival()
+    {
+        hero.currentHealth = hero.maxHealth;
+        hero.animator.SetTrigger("Revive");
+        revived = true;
+        
+        GameObject boss = GameObject.FindGameObjectWithTag("Boss");
+        if (boss != null)
+        {
+            Hero heroComp = boss.GetComponent<Hero>();
+            if (heroComp != null)
+            {
+                if (heroComp.lerpCoroutine != null) StopCoroutine(heroComp.lerpCoroutine);
+                heroComp.lerpCoroutine = StartCoroutine(heroComp.LerpYPosition(boss.transform.position.y, heroComp.originalY, .21f, .5f));
+            }
+        }
+        isEndingGame = false;
+        isBattleActive = true;
+        ApplyEffectWithDelay(bideVFX, hero.transform, 0f, 2.0f, true, 0f, null, false);
+        StartCoroutine(StartTurn());
+        loseScreen.SetActive(false);
+        MainUIParent.SetActive(true);
+    }
     private IEnumerator DoEndGameRoutine(bool playerWon)
     {
         yield return new WaitForSeconds(1f);
 
         if (playerWon)
         {
-            // 4. Save Endless Mode unlock
-            PlayerPrefs.SetInt("EndlessModeUnlocked", 1);
-            PlayerPrefs.Save();
-
+          
             if (MusicManager.Instance != null)
             {
                 MusicManager.Instance.PlayMusicOnce(MusicManager.Instance.jingle12);
@@ -1946,12 +1961,24 @@ public class TurnManager : MonoBehaviour
         StartCoroutine(ShowYouWin());
     }
     private void OnDestroy()
-{
-    if (attackDropdown != null) attackDropdown.onValueChanged.RemoveAllListeners();
-    if (attackDropdown2 != null) attackDropdown2.onValueChanged.RemoveAllListeners();
+    {
+        // 1. Safely remove ONLY your specific listeners, keeping TMP internal logic intact
+        if (attackDropdown != null) attackDropdown.onValueChanged.RemoveListener(OnAttack1Selected);
+        if (attackDropdown2 != null) attackDropdown2.onValueChanged.RemoveListener(OnAttack2Selected);
 
-    StopAllCoroutines();
-    
-    
-}
+        // 2. Wipe the dynamic hover/click EventTriggers you created in code
+        if (attackDropdown != null)
+        {
+            EventTrigger trigger1 = attackDropdown.GetComponent<EventTrigger>();
+            if (trigger1 != null) trigger1.triggers.Clear();
+        }
+        
+        if (attackDropdown2 != null)
+        {
+            EventTrigger trigger2 = attackDropdown2.GetComponent<EventTrigger>();
+            if (trigger2 != null) trigger2.triggers.Clear();
+        }
+
+        StopAllCoroutines();
+    }
 }
