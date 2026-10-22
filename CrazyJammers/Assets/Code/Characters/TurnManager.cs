@@ -12,8 +12,7 @@ using static System.Math;
 using CrazyGames;
 #endif
 using UnityEngine.SceneManagement;
-using EasyTransition; 
-
+using EasyTransition;
 
 public class TurnManager : MonoBehaviour
 {
@@ -25,21 +24,92 @@ public class TurnManager : MonoBehaviour
         Endless
     }
 
+    // --- NEW ENDLESS WAVE FRAMEWORK DATA STRUCTURES ---
+    [System.Serializable]
+    public class EnemyPool
+    {
+        [Tooltip("Unique name for this category (e.g., Easy, Medium, Hard, Maddening).")]
+        public string poolName;
+        [Tooltip("Enemy prefabs belonging to this difficulty category.")]
+        public List<GameObject> enemyPrefabs = new List<GameObject>();
+    }
+
+    [System.Serializable]
+    public class WavePoolRule
+    {
+        [Tooltip("Must match a Pool Name defined in Enemy Pools.")]
+        public string poolName;
+        [Tooltip("How many enemies must die in THIS wave before this pool becomes active (0 = active from start of wave).")]
+        public int startAfterKillsInWave = 0;
+        [Tooltip("Optional: Stop drawing from this pool after X kills in this wave (-1 = stays active for the rest of the wave).")]
+        public int stopAfterKillsInWave = -1;
+    }
+
+    [System.Serializable]
+    public class WaveConfig
+    {
+        [Tooltip("Optional label for organization in the Inspector (e.g., 'Wave 1 - Easy Only').")]
+        public string waveLabel;
+        [Tooltip("Pools that can appear during this wave and when they unlock.")]
+        public List<WavePoolRule> poolRules = new List<WavePoolRule>();
+    }
+
     public GameMode currentGameMode = GameMode.Standard;
     public static TurnManager Instance { get; private set; }
 
-    [Header("Enemies")]
+    [Header("Legacy Enemy Lists (Auto-migrated if custom pools are empty)")]
     [SerializeField] private List<GameObject> easyEnemies;
     [SerializeField] private List<GameObject> mediumEnemies;
     [SerializeField] private List<GameObject> hardEnemies;
-    
+
+    [Header("Endless Mode - Custom Pools & Waves")]
+    [Tooltip("Define as many enemy categories/pools as you want (Easy, Medium, Hard, Maddening, etc.).")]
+    [SerializeField] private List<EnemyPool> enemyPools = new List<EnemyPool>();
+    [Tooltip("Configure specific waves in order (Element 0 = Wave 1, Element 1 = Wave 2, etc.).")]
+    [SerializeField] private List<WaveConfig> waveConfigs = new List<WaveConfig>();
+
+    [Header("Endless Mode - Wave & Automation Settings")]
+    [Tooltip("Total enemies per wave (Default: 12). Only 4 are fightable at once.")]
+    public int enemiesPerWave = 12;
+    [Tooltip("Break time in seconds between waves (Default: 1.0s).")]
+    public float waveBreakDuration = 1.0f;
+    [Tooltip("Wave number where waves become completely automated to the highest difficulty (e.g., 100).")]
+    public int automateToHighestDifficultyWave = 100;
+    [Tooltip("Name of the highest difficulty pool for automation (e.g., 'Maddening'). If blank, uses the last pool in Enemy Pools.")]
+    public string highestDifficultyPoolName = "Maddening";
+
+    [Header("Endless Mode - Run-In Animation Settings")]
+    [Tooltip("Offset from the spawn point where newly spawned enemies start running from.")]
+    public Vector3 spawnRunInOffset = new Vector3(-4f, 0f, 0f);
+    [Tooltip("How long enemies take to run in at the start of a wave.")]
+    public float waveSpawnRunDuration = 0.5f;
+    [Tooltip("How quickly a replacement enemy runs up when an enemy dies mid-wave.")]
+    public float replacementRunDuration = 0.2f;
+    [Tooltip("Animator bool or trigger parameter name for the running animation.")]
+    public string runAnimParameter = "Run";
+    [Tooltip("Duration of the dying enemy fade-out animation.")]
+    public float enemyFadeOutDuration = 0.5f;
+
+    [Header("Endless Mode - Scoring & UI")]
+    public int scorePerDefeat = 100;
+    public int scorePerWaveBonus = 1000;
+    public int currentScore = 0;
+    public int currentGald => currentScore / 4;
+    public int currentWave = 1;
+    [SerializeField] private TextMeshProUGUI waveText;
+    [SerializeField] private TextMeshProUGUI scoreText;
+    [SerializeField] private TextMeshProUGUI galdText;
+
+    // Runtime Wave Tracking
+    private int enemiesSpawnedInCurrentWave = 0;
+    private int enemiesKilledInCurrentWave = 0;
+    private int totalEnemiesKilled = 0;
+    private int pendingReplacementsCount = 0;
+    private bool isWaveTransitioning = false;
+
     private List<Enemy> enemies;
     public Hero hero;
     private string attackNamesText;
-
-    private enum Difficulty { Easy, Medium, Hard }
-    private Difficulty currentDifficulty = Difficulty.Easy;
-    private int totalEnemiesKilled = 0;
     public int currentTurn = 0;
 
     [Header("Prefabs")]
@@ -122,7 +192,6 @@ public class TurnManager : MonoBehaviour
     [SerializeField] private DamageNumber popupPrefabgreen;
     [SerializeField] GameObject[] listOfObjectToDeactivateAtStartOfBattle;
 
-
     // Logic Variables
     public List<Enemy> aliveEnemies = new List<Enemy>();
     private List<Enemy> deadEnemies = new List<Enemy>();
@@ -195,6 +264,7 @@ public class TurnManager : MonoBehaviour
     public float endGameDelay = 2.0f; 
     private bool isBattleActive = false;
     private bool isEndingGame = false;
+
     private void Awake()
     {
         if (Instance == null)
@@ -204,7 +274,10 @@ public class TurnManager : MonoBehaviour
         else
         {
             Destroy(gameObject);
+            return;
         }
+
+        EnsureDefaultPoolsInitialized();
     }
 
     private void Start()
@@ -224,32 +297,138 @@ public class TurnManager : MonoBehaviour
         }
     }
 
-    private GameObject GetNextEnemyFromCurrentDifficulty(List<Enemy> upcoming = null)
+    /// <summary>
+    /// Ensures legacy easy/medium/hard lists are migrated into the new custom EnemyPool system if none are configured yet.
+    /// </summary>
+    private void EnsureDefaultPoolsInitialized()
     {
-        List<GameObject> pool;
-        switch (currentDifficulty)
+        if (enemyPools == null) enemyPools = new List<EnemyPool>();
+
+        if (enemyPools.Count == 0)
         {
-            case Difficulty.Medium: pool = mediumEnemies; break;
-            case Difficulty.Hard: pool = hardEnemies; break;
-            default: pool = easyEnemies; break;
+            if (easyEnemies != null && easyEnemies.Count > 0)
+                enemyPools.Add(new EnemyPool { poolName = "Easy", enemyPrefabs = new List<GameObject>(easyEnemies) });
+            if (mediumEnemies != null && mediumEnemies.Count > 0)
+                enemyPools.Add(new EnemyPool { poolName = "Medium", enemyPrefabs = new List<GameObject>(mediumEnemies) });
+            if (hardEnemies != null && hardEnemies.Count > 0)
+                enemyPools.Add(new EnemyPool { poolName = "Hard", enemyPrefabs = new List<GameObject>(hardEnemies) });
         }
 
-        var existingNames = aliveEnemies.Select(e => e.characterName).ToList();
-        
-        // Filter out enemies that are already alive
-        List<GameObject> available = pool.Where(prefab => {
-             Enemy meta = prefab.GetComponent<Enemy>();
-             return meta != null && !existingNames.Contains(meta.characterName);
-        }).ToList();
-
-        if (available.Count == 0) return pool[Random.Range(0, pool.Count)];
-        return available[Random.Range(0, available.Count)];
+        if (waveConfigs == null) waveConfigs = new List<WaveConfig>();
+        if (waveConfigs.Count == 0 && enemyPools.Count > 0)
+        {
+            // Default Wave 1 fallback if waveConfigs is left empty in the Inspector
+            WaveConfig defaultWave1 = new WaveConfig
+            {
+                waveLabel = "Wave 1 (Default)",
+                poolRules = new List<WavePoolRule>
+                {
+                    new WavePoolRule { poolName = enemyPools[0].poolName, startAfterKillsInWave = 0, stopAfterKillsInWave = -1 }
+                }
+            };
+            waveConfigs.Add(defaultWave1);
+        }
     }
 
-    private GameObject GetNextEnemyFromCurrentDifficulty(Difficulty fallback)
+    // --- NEW ENDLESS POOL & WAVE SELECTION LOGIC ---
+    private List<GameObject> GetEligiblePrefabsForCurrentState()
     {
-        currentDifficulty = fallback;
-        return GetNextEnemyFromCurrentDifficulty();
+        EnsureDefaultPoolsInitialized();
+        List<GameObject> combinedPool = new List<GameObject>();
+
+        // 1. Check if we've reached the automation wave threshold (e.g. Wave 100+)
+        if (currentWave >= automateToHighestDifficultyWave)
+        {
+            EnemyPool highestPool = enemyPools.FirstOrDefault(p =>
+                string.Equals(p.poolName, highestDifficultyPoolName, System.StringComparison.OrdinalIgnoreCase));
+
+            if (highestPool == null && enemyPools.Count > 0)
+            {
+                highestPool = enemyPools[enemyPools.Count - 1];
+            }
+
+            if (highestPool != null && highestPool.enemyPrefabs != null)
+            {
+                combinedPool.AddRange(highestPool.enemyPrefabs);
+            }
+        }
+        else if (waveConfigs != null && waveConfigs.Count > 0)
+        {
+            // 2. Use the configured WaveConfig for the current wave (clamped to the last configured wave if exceeded before automation)
+            int configIndex = Mathf.Clamp(currentWave - 1, 0, waveConfigs.Count - 1);
+            WaveConfig activeConfig = waveConfigs[configIndex];
+
+            if (activeConfig != null && activeConfig.poolRules != null)
+            {
+                foreach (var rule in activeConfig.poolRules)
+                {
+                    bool started = enemiesKilledInCurrentWave >= rule.startAfterKillsInWave;
+                    bool notStopped = rule.stopAfterKillsInWave < 0 || enemiesKilledInCurrentWave < rule.stopAfterKillsInWave;
+
+                    if (started && notStopped)
+                    {
+                        EnemyPool matchingPool = enemyPools.FirstOrDefault(p =>
+                            string.Equals(p.poolName, rule.poolName, System.StringComparison.OrdinalIgnoreCase));
+
+                        if (matchingPool != null && matchingPool.enemyPrefabs != null)
+                        {
+                            combinedPool.AddRange(matchingPool.enemyPrefabs);
+                        }
+                    }
+                }
+            }
+        }
+
+        // Fallback if no rules matched the current kill count in the wave
+        if (combinedPool.Count == 0 && enemyPools.Count > 0)
+        {
+            combinedPool.AddRange(enemyPools[0].enemyPrefabs);
+        }
+
+        return combinedPool.Where(p => p != null).Distinct().ToList();
+    }
+
+    private GameObject GetNextEnemyForCurrentWave(List<string> extraExcludedNames = null)
+    {
+        List<GameObject> candidatePrefabs = GetEligiblePrefabsForCurrentState();
+        if (candidatePrefabs.Count == 0) return null;
+
+        var existingNames = aliveEnemies
+            .Where(e => e != null && !e.dead)
+            .Select(e => e.characterName)
+            .ToList();
+
+        if (extraExcludedNames != null)
+        {
+            existingNames.AddRange(extraExcludedNames);
+        }
+
+        // Filter out enemies that are already active on the field so individual draws remain unique when possible
+        List<GameObject> available = candidatePrefabs.Where(prefab =>
+        {
+            Enemy meta = prefab.GetComponent<Enemy>();
+            return meta != null && !existingNames.Contains(meta.characterName);
+        }).ToList();
+
+        if (available.Count == 0)
+        {
+            return candidatePrefabs[UnityEngine.Random.Range(0, candidatePrefabs.Count)];
+        }
+
+        return available[UnityEngine.Random.Range(0, available.Count)];
+    }
+
+    private void AddScore(int points)
+    {
+        currentScore += points;
+        UpdateEndlessScoreUI();
+    }
+
+    private void UpdateEndlessScoreUI()
+    {
+        if (waveText != null) waveText.text = $"Wave {currentWave}";
+        if (scoreText != null) scoreText.text = $"Score: {currentScore}";
+        if (galdText != null) galdText.text = $"Gald: {currentGald}";
     }
 
     public IEnumerator MoveBackToPosition(Transform target, Vector3 startPos, float duration)
@@ -258,11 +437,12 @@ public class TurnManager : MonoBehaviour
         Vector3 currentPos = target.position;
         while (elapsed < duration)
         {
+            if (target == null) yield break;
             elapsed += Time.deltaTime;
             target.position = Vector3.Lerp(currentPos, startPos, elapsed / duration);
             yield return null;
         }
-        target.position = startPos;
+        if (target != null) target.position = startPos;
     }
 
     public void StartBattle()
@@ -270,9 +450,17 @@ public class TurnManager : MonoBehaviour
         isEndingGame = false;
         currentTurn = 0; 
         isBattleActive = true;
-        enemies = new List<Enemy>();
+        enemies = new List<Enemy> { null, null, null, null };
         aliveEnemies = new List<Enemy>();
-        allEncounteredMoves.Clear(); 
+        allEncounteredMoves.Clear();
+
+        totalEnemiesKilled = 0;
+        currentScore = 0;
+        currentWave = 1;
+        enemiesSpawnedInCurrentWave = 0;
+        enemiesKilledInCurrentWave = 0;
+        pendingReplacementsCount = 0;
+        isWaveTransitioning = false;
 
         if (currentGameMode == GameMode.Standard)
         {
@@ -281,32 +469,27 @@ public class TurnManager : MonoBehaviour
             GameObject mageObj = SpawnPrefabAtPosition(magePrefab, enemySpawns[2]);
             GameObject archerObj = SpawnPrefabAtPosition(archerPrefab, enemySpawns[3]);
 
-            enemies.Add(knightObj.GetComponent<Enemy>());
-            enemies.Add(swordsmanObj.GetComponent<Enemy>());
-            enemies.Add(mageObj.GetComponent<Enemy>());
-            enemies.Add(archerObj.GetComponent<Enemy>());
+            enemies[0] = knightObj.GetComponent<Enemy>();
+            enemies[1] = swordsmanObj.GetComponent<Enemy>();
+            enemies[2] = mageObj.GetComponent<Enemy>();
+            enemies[3] = archerObj.GetComponent<Enemy>();
+
+            for (int i = 0; i < enemies.Count; i++)
+            {
+                enemies[i].Init(popupPrefab);
+                enemyHUDs[i].Init(enemies[i]);
+                aliveEnemies.Add(enemies[i]);
+            }
         }
         else // Endless mode
         {
-            List<GameObject> initialEnemies = GetUniqueRandomEnemiesFromPool(easyEnemies, 4);
-            for (int i = 0; i < 4; i++)
-            {
-                GameObject enemyObj = SpawnPrefabAtPosition(initialEnemies[i], enemySpawns[i]);
-                enemies.Add(enemyObj.GetComponent<Enemy>());
-            }
-        }
-
-        for (int i = 0; i < enemies.Count; i++)
-        {
-            enemies[i].Init(popupPrefab);
-            enemyHUDs[i].Init(enemies[i]);
-            aliveEnemies.Add(enemies[i]);
+            UpdateEndlessScoreUI();
+            SpawnInitialWaveEnemies(instant: false);
         }
 
         foreach (var attack in attacksReset)
         {
             attack.upgradeLevel = 0;
-//            Debug.Log($"Attack: {attack.attackName}, Upgrade Level: {attack.upgradeLevel}");
         }
 
         targetingMode = false;
@@ -331,7 +514,80 @@ public class TurnManager : MonoBehaviour
         #if USE_CRAZYGAMES
         CrazySDK.Game.GameplayStart();
         #endif
-        
+    }
+
+    private void SpawnInitialWaveEnemies(bool instant)
+    {
+        int slotsToSpawn = Mathf.Min(4, enemiesPerWave - enemiesSpawnedInCurrentWave);
+        List<string> chosenNames = new List<string>();
+
+        for (int i = 0; i < slotsToSpawn; i++)
+        {
+            GameObject prefab = GetNextEnemyForCurrentWave(chosenNames);
+            if (prefab == null) continue;
+
+            Enemy meta = prefab.GetComponent<Enemy>();
+            if (meta != null) chosenNames.Add(meta.characterName);
+
+            enemiesSpawnedInCurrentWave++;
+            float runDuration = instant ? 0f : waveSpawnRunDuration;
+            StartCoroutine(SpawnAndRunInRoutine(prefab, i, runDuration));
+        }
+    }
+
+    private IEnumerator SpawnAndRunInRoutine(GameObject prefab, int spawnIndex, float runDuration)
+    {
+        Transform spawnPoint = enemySpawns[spawnIndex];
+        Vector3 targetPos = spawnPoint.position;
+        Vector3 startPos = runDuration > 0f ? targetPos + spawnRunInOffset : targetPos;
+
+        GameObject enemyObj = SpawnPrefabAtPosition(prefab, spawnPoint);
+        enemyObj.transform.position = startPos;
+
+        Enemy newEnemy = enemyObj.GetComponent<Enemy>();
+        newEnemy.Init(popupPrefab);
+
+        enemies[spawnIndex] = newEnemy;
+        if (!aliveEnemies.Contains(newEnemy)) aliveEnemies.Add(newEnemy);
+        enemyHUDs[spawnIndex].Init(newEnemy);
+
+        if (runDuration > 0f)
+        {
+            Animator anim = enemyObj.GetComponentInChildren<Animator>();
+            SetRunningAnimation(anim, true);
+
+            float elapsed = 0f;
+            while (elapsed < runDuration)
+            {
+                if (enemyObj == null) yield break;
+                elapsed += Time.deltaTime;
+                enemyObj.transform.position = Vector3.Lerp(startPos, targetPos, elapsed / runDuration);
+                yield return null;
+            }
+
+            if (enemyObj != null)
+            {
+                enemyObj.transform.position = targetPos;
+                SetRunningAnimation(anim, false);
+            }
+        }
+    }
+
+    private void SetRunningAnimation(Animator anim, bool isRunning)
+    {
+        if (anim == null || string.IsNullOrEmpty(runAnimParameter)) return;
+
+        foreach (AnimatorControllerParameter param in anim.parameters)
+        {
+            if (param.name == runAnimParameter)
+            {
+                if (param.type == AnimatorControllerParameterType.Bool)
+                    anim.SetBool(runAnimParameter, isRunning);
+                else if (param.type == AnimatorControllerParameterType.Trigger && isRunning)
+                    anim.SetTrigger(runAnimParameter);
+                break;
+            }
+        }
     }
 
     private void ApplyEffectWithDelay(GameObject effectPrefab, Transform target, float delay, float effectDuration, bool? xRotationEffect = null, float raiseAmount = 0f, float? yRotationOffset = null, bool? standUpright = null, float xOffset = 0f, float zOffset = 0f) 
@@ -399,6 +655,12 @@ public class TurnManager : MonoBehaviour
 
     public IEnumerator StartTurn()
     {
+        // Wait if enemies are currently regenerating or transitioning between waves
+        if (currentGameMode == GameMode.Endless)
+        {
+            yield return new WaitUntil(() => pendingReplacementsCount == 0 && !isWaveTransitioning);
+        }
+
         currentTurn++; 
         if (!isBattleActive) yield break;
 
@@ -409,17 +671,19 @@ public class TurnManager : MonoBehaviour
 
         if (!isBattleActive) yield break;
 
-        foreach (var enemy in enemies)
+        for (int i = 0; i < enemies.Count; i++)
         {
             if (!isBattleActive) break;
+
+            var enemy = enemies[i];
+            if (enemy == null || enemy.dead) continue;
 
             usedMoveGO.SetActive(true);
             if (enemy.burning > 0)
             {
                 enemy.Init(popupPrefabfire);
-                enemy.TakeDamage((int)(enemy.maxHealth*.1));
+                enemy.TakeDamage((int)(enemy.maxHealth * .1));
                 
-            
                 ApplyEffectWithDelay(burn, enemy.transform, 0f, 3.0f);
                 if (enemy.currentHealth <= 0)
                 {
@@ -437,26 +701,33 @@ public class TurnManager : MonoBehaviour
                     EventBus.Publish(blurbEvent);
                     usedMove1.text = $"{enemy.characterName} is burning for {enemy.burning} turns!";
                     enemy.burning--;
-                    if(enemy.burning<=0) enemy.burnIcon.SetActive(true);
+                    if (enemy.burning <= 0) enemy.burnIcon.SetActive(true);
                     yield return new WaitForSeconds(1f);
-                    
                 }
-                
             }
+        }
+
+        // If a burn death triggered a replacement or wave break, wait for it to finish
+        if (currentGameMode == GameMode.Endless)
+        {
+            yield return new WaitUntil(() => pendingReplacementsCount == 0 && !isWaveTransitioning);
         }
 
         foreach (var enemy in enemies)
         {
-            enemy.UpdateEffects();
+            if (enemy != null && !enemy.dead)
+            {
+                enemy.UpdateEffects();
+            }
         }
     
-        if(hero.currentHealth <= 0) 
+        if (hero.currentHealth <= 0) 
         {
             EndGame(false);
             yield return null;
         }
             
-        if(isBattleActive) StartCoroutine(DoTurnRoutine());
+        if (isBattleActive) StartCoroutine(DoTurnRoutine());
     }
 
     private IEnumerator DoTurnRoutine()
@@ -481,26 +752,8 @@ public class TurnManager : MonoBehaviour
             if (!isBattleActive) break;
 
             Enemy enemy = enemies[i];
-            enemy.Init(popupPrefab);
-            hero.Init(popupPrefab);
 
-            if (!enemy.CanAct() && !enemy.dead)
-            {
-                AttackSO skippedAttack = enemyAttacksByIndexPerm[i];
-                if(skippedAttack != null && !enemyAttacksByIndex.Contains(skippedAttack))
-                {
-                     enemyAttacksByIndex.Add(skippedAttack);
-                }
-
-                blurbEvent.Set($"{enemy.characterName} is paralyzed and cannot act this turn!");
-                EventBus.Publish(blurbEvent);
-                usedMove1.text = $"{enemy.characterName} is paralyzed and cannot act this turn!";
-                usedMoveGO.SetActive(true);              
-                ApplyEffectWithDelay(paralysisVFX, enemy.transform, 0f, 3.0f);
-                yield return new WaitForSeconds(1f);
-                continue;
-            }
-            else if (enemy.dead)
+            if (enemy == null || enemy.dead)
             {
                 AttackSO lastUsedAttack = enemyAttacksByIndexPerm[i];
                 if (lastUsedAttack != null)
@@ -514,6 +767,26 @@ public class TurnManager : MonoBehaviour
                         previousTurnMoves.Add(lastUsedAttack);
                     }
                 }
+                continue;
+            }
+
+            enemy.Init(popupPrefab);
+            hero.Init(popupPrefab);
+
+            if (!enemy.CanAct())
+            {
+                AttackSO skippedAttack = enemyAttacksByIndexPerm[i];
+                if (skippedAttack != null && !enemyAttacksByIndex.Contains(skippedAttack))
+                {
+                     enemyAttacksByIndex.Add(skippedAttack);
+                }
+
+                blurbEvent.Set($"{enemy.characterName} is paralyzed and cannot act this turn!");
+                EventBus.Publish(blurbEvent);
+                usedMove1.text = $"{enemy.characterName} is paralyzed and cannot act this turn!";
+                usedMoveGO.SetActive(true);              
+                ApplyEffectWithDelay(paralysisVFX, enemy.transform, 0f, 3.0f);
+                yield return new WaitForSeconds(1f);
                 continue;
             }
             else
@@ -564,11 +837,11 @@ public class TurnManager : MonoBehaviour
                 {
                     foreach (var enemyHeal in enemies)
                     {
+                        if (enemyHeal == null || enemyHeal.dead || enemyHeal.currentHealth <= 0) continue;
                         enemyHeal.Init(popupPrefabgreen);
-                        if(enemyHeal.currentHealth <= 0) continue;
                         
-                        enemyHeal.HealDamage((int)(enemy.maxHealth*0.2));
-                        if(enemyHeal.currentHealth >= enemyHeal.maxHealth) enemyHeal.currentHealth = enemyHeal.maxHealth;
+                        enemyHeal.HealDamage((int)(enemy.maxHealth * 0.2));
+                        if (enemyHeal.currentHealth >= enemyHeal.maxHealth) enemyHeal.currentHealth = enemyHeal.maxHealth;
 
                         enemyHeal.RemoveBurns();
                         enemyHeal.RemoveParalysis();
@@ -586,11 +859,11 @@ public class TurnManager : MonoBehaviour
 
                 if (enemyAttack.attributes.Contains("Heal"))
                 {
-                    var enemyHeal = enemies.Where(e => e.currentHealth > 0).OrderBy(e => e.currentHealth).FirstOrDefault(); 
+                    var enemyHeal = enemies.Where(e => e != null && !e.dead && e.currentHealth > 0).OrderBy(e => e.currentHealth).FirstOrDefault(); 
                     if (enemyHeal != null)
                     {
                         enemyHeal.Init(popupPrefabgreen);
-                        enemyHeal.HealDamage((int)(enemy.maxHealth*0.2));
+                        enemyHeal.HealDamage((int)(enemy.maxHealth * 0.2));
                         if (enemyHeal.currentHealth > enemyHeal.maxHealth) enemyHeal.currentHealth = enemyHeal.maxHealth;
                         
                         ApplyEffectWithDelay(heal, enemyHeal.transform, 0f, 2.0f);
@@ -617,8 +890,7 @@ public class TurnManager : MonoBehaviour
                         case 3: yRotationOffset = -110f; break;
                     }
                     ApplyEffectWithDelay(iceAttack, enemy.transform, 0f, .20f, null, 2f, yRotationOffset);
-                    ApplyEffectWithDelay(iceHit, hero.transform, .2f, 3.5f, null, 2f,null, null, 0.7f);
-
+                    ApplyEffectWithDelay(iceHit, hero.transform, .2f, 3.5f, null, 2f, null, null, 0.7f);
                 }
 
                 if (enemyAttack.attributes.Contains("Lunge"))
@@ -648,7 +920,7 @@ public class TurnManager : MonoBehaviour
                     ApplyEffectWithDelay(SteadyHit, hero.transform, .5f, 3.0f);
                     for (int j = 0; j < 10; j++)
                     {
-                        hero.StartCoroutine(hero.CallDoHitRoutine(enemyAttack.GetDamage()/10, .1f, hero.gameObject));
+                        hero.StartCoroutine(hero.CallDoHitRoutine(enemyAttack.GetDamage() / 10, .1f, hero.gameObject));
                         yield return new WaitForSeconds(.1f);
                     }
                     hero.StartCoroutine(MoveBackToPosition(hero.transform, originalPos, 0.2f));
@@ -665,7 +937,7 @@ public class TurnManager : MonoBehaviour
                         hero.ApplyParalysis(5, true);
                         blurbEvent.Set($"Boss has been paralyzed by {enemyAttack.attackName}!");
                         EventBus.Publish(blurbEvent);
-                        usedMove1.text =$"Boss has been paralyzed by {enemyAttack.attackName}!";
+                        usedMove1.text = $"Boss has been paralyzed by {enemyAttack.attackName}!";
                     }
                     if (UnityEngine.Random.value <= .1f && hero.GetParalysisTurnsRemaining() <= 0 && hero.burning <= 0)
                     {
@@ -705,11 +977,10 @@ public class TurnManager : MonoBehaviour
 
                     if (canInflictStatus && UnityEngine.Random.value <= 1f && hero.GetParalysisTurnsRemaining() <= 0 && hero.burning <= 0)
                     {
-                    
                         hero.ApplyBurn(10, 3);
                         blurbEvent.Set($"Boss has been burned by {enemyAttack.attackName}!");
                         EventBus.Publish(blurbEvent);
-                        usedMove1.text =$"Boss has been burned by {enemyAttack.attackName}!";
+                        usedMove1.text = $"Boss has been burned by {enemyAttack.attackName}!";
                     }
                     float yRotationOffset = -90f;
                     switch (i)
@@ -746,7 +1017,7 @@ public class TurnManager : MonoBehaviour
 
                 yield return new WaitForSeconds(1.5f);
 
-                if(hero.currentHealth <= 0) yield break;
+                if (hero.currentHealth <= 0) yield break;
             }
         }
 
@@ -761,7 +1032,7 @@ public class TurnManager : MonoBehaviour
         if (hero.burning > 0)
         { 
             hero.Init(popupPrefabfire);
-            hero.TakeDamage((int)(hero.maxHealth*.1));
+            hero.TakeDamage((int)(hero.maxHealth * .1));
             
             ApplyEffectWithDelay(burn, hero.transform, 0f, 3.0f);
             blurbEvent.Set($" Boss is burning for {hero.burning} turns!");
@@ -769,7 +1040,7 @@ public class TurnManager : MonoBehaviour
             usedMove1.text = $" Boss is burning for {hero.burning} turns!";
             
             hero.burning--;
-            if (hero.burning <= 0) hero.burnIcon.SetActive(false); // Add this line!
+            if (hero.burning <= 0) hero.burnIcon.SetActive(false);
             
             yield return new WaitForSeconds(1f);
             if (hero.currentHealth <= 0)
@@ -801,7 +1072,7 @@ public class TurnManager : MonoBehaviour
             yield return new WaitForSeconds(1f);
             usedMove1.text = "";
             usedMoveGO.SetActive(false);
-            if(isBattleActive) StartCoroutine(StartTurn());
+            if (isBattleActive) StartCoroutine(StartTurn());
         }
         else 
         {
@@ -822,7 +1093,6 @@ public class TurnManager : MonoBehaviour
             {
                 for (int i = 0; i < enemies.Count; i++)
                 {
-                    // REMOVED the !enemies[i].dead check here
                     if (enemyAttacksByIndexPerm[i] != null) 
                     {
                         if (!enemyAttacksByIndex.Contains(enemyAttacksByIndexPerm[i]))
@@ -834,22 +1104,19 @@ public class TurnManager : MonoBehaviour
             }
 
             usedMoveGO.SetActive(false);
-            if(isBattleActive) ShowAttackSelectionUI();
+            if (isBattleActive) ShowAttackSelectionUI();
         }
     }
-
-
-    
 
     private void SetupAttackDropdowns()
     {
         attackDropdown.onValueChanged.AddListener(OnAttack1Selected);
         attackDropdown2.onValueChanged.AddListener(OnAttack2Selected);
 
-        // Hook into the dropdowns to detect when they are clicked open
         AddDropdownOpenListener(attackDropdown);
         AddDropdownOpenListener(attackDropdown2);
     }
+
     private void AddDropdownOpenListener(TMP_Dropdown dropdown)
     {
         EventTrigger trigger = dropdown.gameObject.GetComponent<EventTrigger>();
@@ -877,7 +1144,6 @@ public class TurnManager : MonoBehaviour
         List<TMP_Dropdown.OptionData> dropdownOptions = new List<TMP_Dropdown.OptionData>();
         List<string> addedAttackNames = new List<string>();
 
-        // Clear out the tracking list for the new turn
         currentlyDisplayedAttacks.Clear();
 
         for (int i = 0; i < enemyAttacksByIndex.Count; i++)
@@ -895,7 +1161,6 @@ public class TurnManager : MonoBehaviour
                 if (bideAttribute >= 1)
                 {
                     attack.upgradeLevel += 1; 
-                    
                     if (attack.upgradeLevel > 3) attack.upgradeLevel = 3; 
                 }
             }
@@ -906,7 +1171,6 @@ public class TurnManager : MonoBehaviour
         attackDropdown.AddOptions(dropdownOptions);
         attackDropdown2.AddOptions(dropdownOptions);
 
-        // Set default values
         if (enemyAttacksByIndex.Count > 0)
         {
             attackDropdown.value = 0;
@@ -923,6 +1187,7 @@ public class TurnManager : MonoBehaviour
         panaceaAmountText.text = PotionData.Instance.Panacea.ToString();
         potionAmountText.text = PotionData.Instance.Potion.ToString();
     }
+
     private IEnumerator OnDropdownOpened(TMP_Dropdown dropdown)
     {
         Transform dropdownContent = null;
@@ -971,39 +1236,6 @@ public class TurnManager : MonoBehaviour
         }
     }
 
-    private void AddHoverEvents(TMP_Dropdown dropdown, List<string> descriptions)
-    {
-        Transform dropdownContent = dropdown.transform.Find("Dropdown List/Viewport/Content");
-        if (dropdownContent == null) return;
-
-        var optionObjects = dropdownContent.GetComponentsInChildren<Transform>(true);
-        int optionIndex = 0;
-
-        foreach (Transform option in optionObjects)
-        {
-            if (option.gameObject.name.Contains("Label") || option.gameObject.name.Contains("Background") || option.gameObject.name.Contains("Spacer"))
-                continue;
-
-            if (optionIndex < descriptions.Count)
-            {
-                string description = descriptions[optionIndex];
-                EventTrigger trigger = option.gameObject.GetComponent<EventTrigger>();
-                if (trigger == null) trigger = option.gameObject.AddComponent<EventTrigger>();
-                
-                trigger.triggers.Clear();
-
-                EventTrigger.Entry pointerEnterEntry = new EventTrigger.Entry { eventID = EventTriggerType.PointerEnter };
-                pointerEnterEntry.callback.AddListener((_) => ShowDescription(description));
-                trigger.triggers.Add(pointerEnterEntry);
-
-                EventTrigger.Entry pointerExitEntry = new EventTrigger.Entry { eventID = EventTriggerType.PointerExit };
-                pointerExitEntry.callback.AddListener((_) => HideDescription());
-                trigger.triggers.Add(pointerExitEntry);
-            }
-            optionIndex++;
-        }
-    }
-
     private void ShowDescription(string description)
     {
         if (descriptionText != null) descriptionText.text = description;
@@ -1036,7 +1268,7 @@ public class TurnManager : MonoBehaviour
         hero.CombineAttacks(selectedAttack1, selectedAttack2);
 
         int maxTargets = GetMaxTargetsForAttack(combinedAttack.attributes);
-        var aliveEnemiesList = enemies.Where(e => !e.dead).ToList();
+        var aliveEnemiesList = enemies.Where(e => e != null && !e.dead).ToList();
         
         if (aliveEnemiesList.Count == 1 || (IsMultiTargetAttack(combinedAttack.attributes) && maxTargets >= aliveEnemiesList.Count && aliveEnemiesList.Count > 0))
         {
@@ -1054,25 +1286,6 @@ public class TurnManager : MonoBehaviour
             return;
         }
 
-        // --- AUTO-EXECUTE LOGIC ---
-        if (IsMultiTargetAttack(combinedAttack.attributes) && maxTargets >= aliveEnemiesList.Count && aliveEnemiesList.Count > 0)
-        {
-            usedMove1.text = $"Boss Used {combinedAttack.attackName}";
-            
-            selectedAttack1 = null;
-            selectedAttack2 = null;
-            attackOptionsParent.SetActive(false);
-            attackOptionsMenu.SetActive(false);
-            potionOptions.SetActive(false);
-
-            if (bossAttackCoroutine != null) StopCoroutine(bossAttackCoroutine);
-            
-            // Pass the alive enemies directly (no more duplicates)
-            bossAttackCoroutine = StartCoroutine(DoBossAttackRoutine(aliveEnemiesList.ToArray()));
-            return;
-        }
-
-        // --- STANDARD MANUAL TARGETING ---
         if (maxTargets > 1 && IsMultiTargetAttack(combinedAttack.attributes))
         {
             usedMove1.text = $"Select {maxTargets} targets";
@@ -1091,7 +1304,7 @@ public class TurnManager : MonoBehaviour
         targetingHUDParent.SetActive(true);
         
         targetingMode = true;
-        selectingEnemies = false; // Reset to ensure clean selection state
+        selectingEnemies = false;
         selectedEnemies.Clear();
     }
 
@@ -1176,7 +1389,6 @@ public class TurnManager : MonoBehaviour
 
         if (PotionData.Instance.Panacea > 0)
         {
-            // Check if hero has any status effects to remove (burning or paralysis)
             bool hasStatus = hero.burning > 0 || hero.paralysisEffect != null;
 
             if (!hasStatus)
@@ -1219,7 +1431,7 @@ public class TurnManager : MonoBehaviour
 
     public void SelectEnemyToAttack(Enemy enemy)
     {
-        if (!targetingMode) return;
+        if (!targetingMode || enemy == null || enemy.dead) return;
 
         int maxTargets = GetMaxTargetsForAttack(combinedAttack.attributes);
 
@@ -1235,18 +1447,17 @@ public class TurnManager : MonoBehaviour
             bossAttackCoroutine = StartCoroutine(DoBossAttackRoutine(enemy));
             usedMove1.text = ($"Boss Used {combinedAttack.attackName}");
             
-             for (int i = 0; i < enemies.Count; i++)
+            for (int i = 0; i < enemies.Count; i++)
+            {
+                if (enemies[i] == enemy)
                 {
-                    if (enemies[i] == enemy)
-                    {
-                        selectedEnemyNum = i;
-                        break;
-                    }
+                    selectedEnemyNum = i;
+                    break;
                 }
+            }
         }
         else
         {
-            // Manual selection when there are MORE enemies alive than max targets
             if (!selectingEnemies)
             {
                 selectedEnemies.Clear();
@@ -1255,7 +1466,6 @@ public class TurnManager : MonoBehaviour
                 EventBus.Publish(blurbEvent);
             }
 
-            // Put this block back to prevent picking the same enemy twice
             if (selectedEnemies.Contains(enemy))
             {
                 blurbEvent.Set("Enemy already selected! Choose a different enemy.");
@@ -1264,18 +1474,14 @@ public class TurnManager : MonoBehaviour
             }
 
             selectedEnemies.Add(enemy);
-            
-            // Keeps the main text stable
             usedMove1.text = $"Select {maxTargets} targets"; 
-            
-            // Gives the player a nice visual update of how many they have clicked
             blurbEvent.Set($"Selected: {enemy.characterName} ({selectedEnemies.Count}/{maxTargets})"); 
             EventBus.Publish(blurbEvent);
 
             if (selectedEnemies.Count == maxTargets)
             {
                 usedMove1.text = ($"Boss Used {combinedAttack.attackName}");
-                 for (int i = 0; i < enemies.Count; i++)
+                for (int i = 0; i < enemies.Count; i++)
                 {
                     if (enemies[i] == selectedEnemies[0])
                     {
@@ -1313,7 +1519,7 @@ public class TurnManager : MonoBehaviour
         List<string> allTargetNames = new List<string>();
         foreach (var t in targetEnemies)
         {
-            if(t != null) allTargetNames.Add(t.characterName);
+            if (t != null) allTargetNames.Add(t.characterName);
         }
 
         List<string> uniqueNames = allTargetNames.Distinct().ToList();
@@ -1345,6 +1551,8 @@ public class TurnManager : MonoBehaviour
         foreach (var targetEnemy in targetEnemies)
         {
             if (!isBattleActive) yield break;
+            if (targetEnemy == null) continue;
+
             int currentTargetIndex = enemies.IndexOf(targetEnemy);
             
             bool isBurn = combinedAttack.attributes.Contains("Burn");
@@ -1425,7 +1633,7 @@ public class TurnManager : MonoBehaviour
                     Vector3 newPosition = hero.transform.position;
                     GameObject tempGameObject = new GameObject();
                     tempGameObject.transform.position = newPosition;
-                    Quaternion customRot = Quaternion.Euler(0, yRotationOffset, 0);
+                    Destroy(tempGameObject, 5f);
                     ApplyEffectWithDelay(fireAttack, tempGameObject.transform, 0f, 3.0f, true, 1.5f, yRotationOffset);
                     ApplyEffectWithDelay(fireHit, targetEnemy.transform, 0.5f, 3.0f);
                 }
@@ -1438,7 +1646,7 @@ public class TurnManager : MonoBehaviour
                 if (UnityEngine.Random.value <= 1f && targetEnemy.GetParalysisTurnsRemaining() <= 0 && targetEnemy.burning <= 0)
                 {
                     targetEnemy.ApplyParalysis(5, true);
-                    if(!paralyzedNames.Contains(targetEnemy.characterName))
+                    if (!paralyzedNames.Contains(targetEnemy.characterName))
                     {
                         paralyzedNames.Add(targetEnemy.characterName);
                     }
@@ -1516,25 +1724,17 @@ public class TurnManager : MonoBehaviour
                 ApplyEffectWithDelay(panaceaVFX, hero.transform, 0f, 3.0f);
             }
 
-            if (targetEnemy.currentHealth <= 0)
-            {
-                if(!defeatedNames.Contains(targetEnemy.characterName))
-                {
-                    defeatedNames.Add(targetEnemy.characterName);
-                }
-                RemoveEnemy(targetEnemy);
-            }
-
             if (combinedAttack.attributes.Contains("Slash"))
             {
                 hero.Init(popupPrefab);
                 Vector3 newPosition = targetEnemy.transform.position;
                 newPosition.y += 3f;
-                Transform tempTransform = new GameObject().transform;
-                tempTransform.position = newPosition;
+                GameObject tempObj = new GameObject();
+                tempObj.transform.position = newPosition;
+                Destroy(tempObj, 5f);
 
                 ApplyEffectWithDelay(slashAttack, hero.transform, 0f, 3.0f, null, 1.5f); 
-                ApplyEffectWithDelay(slashHit, tempTransform, .5f, 3.0f);
+                ApplyEffectWithDelay(slashHit, tempObj.transform, .5f, 3.0f);
                 ApplyEffectWithDelay(slashCrater, targetEnemy.transform, .8f, 3.0f);
             }
 
@@ -1547,17 +1747,17 @@ public class TurnManager : MonoBehaviour
                 if (UnityEngine.Random.value <= .1f && targetEnemy.GetParalysisTurnsRemaining() <= 0 && targetEnemy.burning <= 0)
                 {
                     targetEnemy.ApplyParalysis(5, false);
-                    if(!paralyzedNames.Contains(targetEnemy.characterName)) paralyzedNames.Add(targetEnemy.characterName);
+                    if (!paralyzedNames.Contains(targetEnemy.characterName)) paralyzedNames.Add(targetEnemy.characterName);
                 }
                 if (UnityEngine.Random.value <= .1f && targetEnemy.GetParalysisTurnsRemaining() <= 0 && targetEnemy.burning <= 0)
                 {
                     targetEnemy.ApplyParalysis(5, false);
-                    if(!paralyzedNames.Contains(targetEnemy.characterName)) paralyzedNames.Add(targetEnemy.characterName);
+                    if (!paralyzedNames.Contains(targetEnemy.characterName)) paralyzedNames.Add(targetEnemy.characterName);
                 }
                 if (UnityEngine.Random.value <= .1f && targetEnemy.GetParalysisTurnsRemaining() <= 0 && targetEnemy.burning <= 0)
                 {
                     targetEnemy.ApplyParalysis(5, false);
-                    if(!paralyzedNames.Contains(targetEnemy.characterName)) paralyzedNames.Add(targetEnemy.characterName);
+                    if (!paralyzedNames.Contains(targetEnemy.characterName)) paralyzedNames.Add(targetEnemy.characterName);
                 }
 
                 float yRotationOffset = 0f;
@@ -1569,9 +1769,6 @@ public class TurnManager : MonoBehaviour
                     case 3: yRotationOffset = 70f; break;
                 }
 
-                Vector3 newPosition = hero.transform.position;
-                GameObject tempGameObject = new GameObject();
-                tempGameObject.transform.position = newPosition;
                 ApplyEffectWithDelay(tripleAttack, hero.transform, 0f, 3.0f, null, 0f, yRotationOffset, null);
                 ApplyEffectWithDelay(tripleHit, targetEnemy.transform, .5f, 3.0f, null, 1.5f);
             }
@@ -1619,7 +1816,7 @@ public class TurnManager : MonoBehaviour
                     case 3: yRot = -25f; break; 
                 }
 
-                    if (isIce && isBurn)
+                if (isIce && isBurn)
                 {
                     ApplyEffectWithDelay(iceBurnAttack, tempGameObject.transform, 0f, .40f, true, 1.5f, yRot);
                     ApplyEffectWithDelay(iceBurnHit, targetEnemy.transform, 0.2f, 4.0f, null, 0.5f, null, null, 0.78f, 0f);
@@ -1665,6 +1862,16 @@ public class TurnManager : MonoBehaviour
                 ApplyEffectWithDelay(currentLungeHit, targetEnemy.transform, .5f, 3.0f);
             }
 
+            // Check death AFTER all multi-hit damage (such as Triple) has resolved
+            if (targetEnemy.currentHealth <= 0 && !targetEnemy.dead)
+            {
+                if (!defeatedNames.Contains(targetEnemy.characterName))
+                {
+                    defeatedNames.Add(targetEnemy.characterName);
+                }
+                RemoveEnemy(targetEnemy);
+            }
+
             heroCritRate = 0.05f;
         } 
 
@@ -1698,6 +1905,7 @@ public class TurnManager : MonoBehaviour
             usedMove1.text = combinedText;
             usedMoveGO.SetActive(true);
         }
+
         foreach (var attack in attacksReset)
         {
             if (attack != null) attack.upgradeLevel = 0;
@@ -1710,11 +1918,14 @@ public class TurnManager : MonoBehaviour
 
         heroAniPlayed = false;
         
-        if(isBattleActive) StartCoroutine(StartTurn());
+        if (isBattleActive) StartCoroutine(StartTurn());
     }
 
+    // --- ENDLESS ENEMY REMOVAL, REGENERATION & WAVE PROGRESSION ---
     public void RemoveEnemy(Enemy enemy)
     {
+        if (enemy == null || enemy.dead) return;
+
         enemy.dead = true;
         enemy.RemoveParalysis();
         enemy.RemoveBurns();
@@ -1722,21 +1933,43 @@ public class TurnManager : MonoBehaviour
         if (currentGameMode == GameMode.Endless)
         {
             totalEnemiesKilled++;
-            if (totalEnemiesKilled % 4 == 0) IncreaseDifficulty();
+            enemiesKilledInCurrentWave++;
+
+            // +100 Score per defeat (Gald updates automatically as 1/4 of score)
+            AddScore(scorePerDefeat);
 
             int spawnIndex = enemies.IndexOf(enemy);
-            if (spawnIndex < 0) return;
-
-            enemies[spawnIndex] = null;
+            if (spawnIndex >= 0)
+            {
+                enemies[spawnIndex] = null;
+            }
             aliveEnemies.Remove(enemy);
-            StartCoroutine(ReplaceEnemyAfterDelay(enemy, spawnIndex));
+
+            // Fade out the dying enemy
+            StartCoroutine(FadeOut(enemy.gameObject));
+
+            // Check if there are still enemies left to spawn in this 12-enemy wave
+            if (enemiesSpawnedInCurrentWave < enemiesPerWave && spawnIndex >= 0)
+            {
+                enemiesSpawnedInCurrentWave++;
+                pendingReplacementsCount++;
+                StartCoroutine(ReplaceEnemyAfterDelay(spawnIndex));
+            }
+            else if (enemiesKilledInCurrentWave >= enemiesPerWave)
+            {
+                // All 12 enemies in this wave have been defeated!
+                if (!isWaveTransitioning)
+                {
+                    StartCoroutine(CompleteWaveAndStartNextRoutine());
+                }
+            }
         }
         else // Standard mode
         {
             enemiesDead = 0;
             foreach (var body in enemies)
             {
-                if (body.dead) enemiesDead++;
+                if (body != null && body.dead) enemiesDead++;
             }
 
             if (enemiesDead == 4)
@@ -1746,109 +1979,123 @@ public class TurnManager : MonoBehaviour
         }
     }
 
-    private IEnumerator ReplaceEnemyAfterDelay(Enemy deadEnemy, int spawnIndex)
+    private IEnumerator ReplaceEnemyAfterDelay(int spawnIndex)
     {
-        var spawnPoint = enemySpawns[spawnIndex];
-        StartCoroutine(FadeOut(deadEnemy.gameObject));
-        Destroy(deadEnemy.gameObject, 1f);
+        // Wait for the dying enemy's fade out animation before running the new enemy in
+        yield return new WaitForSeconds(enemyFadeOutDuration);
 
-        yield return new WaitForSeconds(1f);
-
-        if (!isBattleActive) yield break;
-
-        var newPrefab = GetNextEnemyFromCurrentDifficulty(upcomingEnemies);
-        if (newPrefab == null) yield break;
-
-        GameObject newObj = SpawnPrefabAtPosition(newPrefab, spawnPoint);
-        var newEnemy = newObj.GetComponent<Enemy>();
-        newEnemy.Init(popupPrefab);
-
-        enemies[spawnIndex] = newEnemy;
-        aliveEnemies.Add(newEnemy);
-        enemyHUDs[spawnIndex].Init(newEnemy);
-    }
-
-    private void IncreaseDifficulty()
-    {
-        if (currentDifficulty == Difficulty.Easy)
+        if (!isBattleActive)
         {
-            currentDifficulty = Difficulty.Medium;
-            ReplaceEasyEnemiesWith(mediumEnemies);
-            Debug.Log("Difficulty increased to Medium!");
+            pendingReplacementsCount = Mathf.Max(0, pendingReplacementsCount - 1);
+            yield break;
         }
-        else if (currentDifficulty == Difficulty.Medium)
+
+        GameObject newPrefab = GetNextEnemyForCurrentWave();
+        if (newPrefab != null)
         {
-            currentDifficulty = Difficulty.Hard;
-            ReplaceEasyEnemiesWith(hardEnemies);
-            Debug.Log("Difficulty increased to Hard!");
+            // Newly generated enemy runs up very quickly in its place
+            yield return StartCoroutine(SpawnAndRunInRoutine(newPrefab, spawnIndex, replacementRunDuration));
         }
+
+        pendingReplacementsCount = Mathf.Max(0, pendingReplacementsCount - 1);
     }
 
-    private void ReplaceEasyEnemiesWith(List<GameObject> newList)
+    private IEnumerator CompleteWaveAndStartNextRoutine()
     {
-        easyEnemies = new List<GameObject>(newList);
-    }
+        isWaveTransitioning = true;
 
-    private List<GameObject> GetUniqueRandomEnemiesFromPool(List<GameObject> pool, int count)
-    {
-        List<GameObject> shuffled = new List<GameObject>(pool);
-        for (int i = 0; i < shuffled.Count; i++)
+        // Wait for the final enemy's fade-out to complete
+        yield return new WaitForSeconds(enemyFadeOutDuration);
+
+        if (!isBattleActive)
         {
-            GameObject temp = shuffled[i];
-            int randomIndex = Random.Range(i, shuffled.Count);
-            shuffled[i] = shuffled[randomIndex];
-            shuffled[randomIndex] = temp;
+            isWaveTransitioning = false;
+            yield break;
         }
-        return shuffled.Take(count).ToList();
-    }
-    
-    // --- RESTORED Wrapper for compatibility ---
-    private GameObject GetRandomEnemyPrefab(Enemy deadEnemy)
-    {
-        return GetNextEnemyFromCurrentDifficulty();
+
+        // +1000 Wave Completion Bonus Score (Gald is 1/4 of score)
+        AddScore(scorePerWaveBonus);
+
+        blurbEvent.Set($"Wave {currentWave} Complete! +{scorePerWaveBonus} Score!");
+        EventBus.Publish(blurbEvent);
+        if (usedMove1 != null) usedMove1.text = $"Wave {currentWave} Complete!";
+        if (usedMoveGO != null) usedMoveGO.SetActive(true);
+
+        // Hook for every set of 5 waves (Ad for special items - placeholder for future implementation)
+        if (currentWave % 5 == 0)
+        {
+            OnFiveWaveMilestoneReached(currentWave);
+        }
+
+        // Configurable 1-second break between waves
+        yield return new WaitForSeconds(waveBreakDuration);
+
+        if (!isBattleActive)
+        {
+            isWaveTransitioning = false;
+            yield break;
+        }
+
+        // Advance to next wave and reset wave counters
+        currentWave++;
+        enemiesSpawnedInCurrentWave = 0;
+        enemiesKilledInCurrentWave = 0;
+        UpdateEndlessScoreUI();
+
+        blurbEvent.Set($"Wave {currentWave} Starting!");
+        EventBus.Publish(blurbEvent);
+        if (usedMove1 != null) usedMove1.text = $"Wave {currentWave}";
+
+        // Spawn the initial 4 enemies of the new wave with their running animation
+        SpawnInitialWaveEnemies(instant: false);
+        yield return new WaitForSeconds(waveSpawnRunDuration);
+
+        isWaveTransitioning = false;
     }
 
-    private int GetDeadEnemySpawnIndex(Enemy deadEnemy)
+    /// <summary>
+    /// Placeholder hook called after every 5th wave (Wave 5, 10, 15, etc.) for special ad items.
+    /// </summary>
+    protected virtual void OnFiveWaveMilestoneReached(int completedWave)
     {
-        return enemies.IndexOf(deadEnemy); 
+        Debug.Log($"[Endless Mode] Completed Wave {completedWave} (5-Wave Set). Special item ad option can be triggered here later.");
     }
 
     private IEnumerator FadeOut(GameObject enemy)
     {
-        yield return new WaitForSeconds(.5f);
-        float duration = 1f;
+        if (enemy == null) yield break;
+        float duration = enemyFadeOutDuration;
         float time = 0f;
         Vector3 initialScale = enemy.transform.localScale;
 
         while (time < duration)
         {
+            if (enemy == null) yield break;
             enemy.transform.localScale = Vector3.Lerp(initialScale, Vector3.zero, time / duration);
             time += Time.deltaTime;
             yield return null;
         }
-        Destroy(enemy);
+        if (enemy != null) Destroy(enemy);
     }
 
     public void EndGame(bool playerWon)
     {
-        // 1. Prevent EndGame from running multiple times in the same frame
         if (isEndingGame) return;
         isEndingGame = true;
 
-        isBattleActive = false; // Stops turn logic
+        isBattleActive = false;
         StopAllCoroutines();
         
-        // 2. Hide combat UI menus immediately so the player can't click attacks during the delay
         if (attackOptionsParent != null) attackOptionsParent.SetActive(false);
         if (potionOptions != null) potionOptions.SetActive(false);
         if (itemOptions != null) itemOptions.SetActive(false);
         if (targetingHUDParent != null) targetingHUDParent.SetActive(false);
 
-        Debug.Log(playerWon ? "You won!" : "Game Over.");
+        Debug.Log(playerWon ? $"You won! Score: {currentScore}, Gald: {currentGald}" : $"Game Over. Final Score: {currentScore}, Gald: {currentGald}");
         StartCoroutine(DoEndGameRoutine(playerWon));
     }
 
-   public void ReviveBoss()
+    public void ReviveBoss()
     {
         if (PotionData.Instance != null)
         {
@@ -1858,28 +2105,21 @@ public class TurnManager : MonoBehaviour
 #if USE_CRAZYGAMES
         CrazySDK.Ad.RequestAd(CrazyAdType.Rewarded, () => 
         {
-            // Ad started - audio should mute automatically if handled by SDK
         }, 
         (error) =>
         {
             Debug.LogWarning($"Rewarded ad failed or was cancelled: {error}");
-            // Optional: Show a brief message to the player that the ad wasn't completed
         }, 
         () =>
         {
-            // Ad completed successfully -> Revive the boss
             PerformRevival();
-            
-            // Notify SDK that gameplay has resumed after revive
             CrazySDK.Game.GameplayStart();
         });
 #else
-        // Fallback for when the SDK is disabled (e.g. testing in the Unity Editor)
         PerformRevival();
 #endif
     }
 
-    // Extracted the actual gameplay logic into a reusable helper method
     private void PerformRevival()
     {
         hero.currentHealth = hero.maxHealth;
@@ -1903,13 +2143,13 @@ public class TurnManager : MonoBehaviour
         loseScreen.SetActive(false);
         MainUIParent.SetActive(true);
     }
+
     private IEnumerator DoEndGameRoutine(bool playerWon)
     {
         yield return new WaitForSeconds(1f);
 
         if (playerWon)
         {
-          
             if (MusicManager.Instance != null)
             {
                 MusicManager.Instance.PlayMusicOnce(MusicManager.Instance.jingle12);
@@ -1917,7 +2157,6 @@ public class TurnManager : MonoBehaviour
 
             yield return new WaitForSeconds(endGameDelay);
             
-            // 5. Show Win Screen and hide gameplay HUD
             winScreen.SetActive(true);
             MainUIParent.SetActive(false);
         }
@@ -1935,7 +2174,6 @@ public class TurnManager : MonoBehaviour
                 MusicManager.Instance.PlayMusicOnce(MusicManager.Instance.gameOver);
             }
 
-            // 6. Show Lose Screen and hide gameplay HUD
             loseScreen.SetActive(true);
             MainUIParent.SetActive(false);
 
@@ -1946,7 +2184,6 @@ public class TurnManager : MonoBehaviour
         }
     }
 
-    
     private IEnumerator ShowYouWin()
     {
         TransitionManager.Instance().Transition(sequenceTransition, 1f);
@@ -1954,19 +2191,18 @@ public class TurnManager : MonoBehaviour
         PlayerPrefs.SetInt("EndlessModeUnlocked", 1);
         PlayerPrefs.Save();
         thankScreen.SetActive(true);
-        
     }
+
     public void showWin()
     {
         StartCoroutine(ShowYouWin());
     }
+
     private void OnDestroy()
     {
-        // 1. Safely remove ONLY your specific listeners, keeping TMP internal logic intact
         if (attackDropdown != null) attackDropdown.onValueChanged.RemoveListener(OnAttack1Selected);
         if (attackDropdown2 != null) attackDropdown2.onValueChanged.RemoveListener(OnAttack2Selected);
 
-        // 2. Wipe the dynamic hover/click EventTriggers you created in code
         if (attackDropdown != null)
         {
             EventTrigger trigger1 = attackDropdown.GetComponent<EventTrigger>();
