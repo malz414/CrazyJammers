@@ -426,9 +426,9 @@ public class TurnManager : MonoBehaviour
 
     private void UpdateEndlessScoreUI()
     {
-        if (waveText != null) waveText.text = $"Wave {currentWave}";
-        if (scoreText != null) scoreText.text = $"Score: {currentScore}";
-        if (galdText != null) galdText.text = $"Gald: {currentGald}";
+        if (waveText != null) waveText.text = $" {currentWave}";
+        if (scoreText != null) scoreText.text = $" {currentScore}";
+        if (galdText != null) galdText.text = $" {currentGald}";
     }
 
     public IEnumerator MoveBackToPosition(Transform target, Vector3 startPos, float duration)
@@ -461,6 +461,8 @@ public class TurnManager : MonoBehaviour
         enemiesKilledInCurrentWave = 0;
         pendingReplacementsCount = 0;
         isWaveTransitioning = false;
+        if (loseScreen != null) loseScreen.SetActive(false);
+    
 
         if (currentGameMode == GameMode.Standard)
         {
@@ -633,7 +635,8 @@ public class TurnManager : MonoBehaviour
     }
 
     public void SetUpBattle()
-    {
+    {    if (bossHUD != null) bossHUD.gameObject.SetActive(true);
+
         StartCoroutine(DoBattleStartRoutine());
     }
 
@@ -1368,9 +1371,10 @@ public class TurnManager : MonoBehaviour
             EventBus.Publish(blurbEvent);
             usedMove1.text = "Potion Used";
             PotionData.Instance.Potion--;
-            attackOptionsParent.SetActive(false);
-            potionOptions.SetActive(false);
-            itemOptions.SetActive(false);
+            if (attackOptionsParent != null) attackOptionsParent.SetActive(false);
+            if (attackOptionsMenu != null) attackOptionsMenu.SetActive(false); // Fixes the glitch
+            if (potionOptions != null) potionOptions.SetActive(false);
+            if (itemOptions != null) itemOptions.SetActive(false);
             
             ApplyEffectWithDelay(potionVFX, hero.transform, 0f, 2.0f);
             EventBus.Publish(statusUpdateEvent);
@@ -1415,9 +1419,10 @@ public class TurnManager : MonoBehaviour
             EventBus.Publish(blurbEvent);
             usedMove1.text = "Status Cured";
             PotionData.Instance.Panacea--;
-            attackOptionsParent.SetActive(false);
-            potionOptions.SetActive(false);
-            itemOptions.SetActive(false);
+            if (attackOptionsParent != null) attackOptionsParent.SetActive(false);
+            if (attackOptionsMenu != null) attackOptionsMenu.SetActive(false); // Fixes the glitch
+            if (potionOptions != null) potionOptions.SetActive(false);
+            if (itemOptions != null) itemOptions.SetActive(false);
 
             ApplyEffectWithDelay(panaceaVFX, hero.transform, 0f, 2.0f);
             StartCoroutine(StartTurn());
@@ -2216,5 +2221,12 @@ public class TurnManager : MonoBehaviour
         }
 
         StopAllCoroutines();
+    }
+    public void OnBackFromItemsClicked()
+    {
+        // Shuts down the item menu and ensures the main battle options stay visible
+        if (itemOptions != null) itemOptions.SetActive(false);
+        if (attackOptionsParent != null) attackOptionsParent.SetActive(true);
+        if (potionOptions != null) potionOptions.SetActive(true);
     }
 }
