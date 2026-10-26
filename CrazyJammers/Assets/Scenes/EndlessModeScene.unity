@@ -5458,7 +5458,7 @@ PrefabInstance:
     - target: {fileID: 8485419520516605267, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
       propertyPath: bossPrefab
       value: 
-      objectReference: {fileID: 2932479530311384160, guid: f8b0445d176b4fc4a93dfdba6b6ec6fa, type: 3}
+      objectReference: {fileID: 2932479530311384160, guid: 9ba8b7a547d724b4991f940148341785, type: 3}
     - target: {fileID: 8485419520516605267, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
       propertyPath: fireAttack
       value: 
