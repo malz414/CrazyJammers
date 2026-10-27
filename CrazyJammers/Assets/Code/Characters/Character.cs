@@ -37,6 +37,24 @@ public abstract class Character : MonoBehaviour
     public void Init(DamageNumber popupPrefab)
     {
         this.popupPrefab = popupPrefab;
+        
+    }
+    public void ResetOnSpawn()
+    {
+        currentHealth = maxHealth;
+        barrierCount = 0;
+        burning = 0;
+        bideBuff = false;
+        
+        if (burnIcon != null) burnIcon.SetActive(false);
+        if (paraIcon != null) paraIcon.SetActive(false);
+        activeBurns.Clear();
+        paralysisEffect = null;
+
+        if (statusUpdateEvent == null) statusUpdateEvent = new CharacterStatusUpdateEvent();
+        if (blurbEvent == null) blurbEvent = new GameplayBlurbEvent();
+        
+        EventBus.Publish(statusUpdateEvent);
     }
 
     public virtual void TakeDamage(int damage)
@@ -170,6 +188,9 @@ public abstract class Character : MonoBehaviour
     public void DoDeathAnimation()
     {
         animator.SetTrigger("Die");
+        
+        if (burnIcon != null) burnIcon.SetActive(false);
+        if (paraIcon != null) paraIcon.SetActive(false);
     }
 
     protected abstract void Die();

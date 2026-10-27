@@ -480,6 +480,8 @@ public class TurnManager : MonoBehaviour
             {
                 enemies[i].Init(popupPrefab);
                 enemyHUDs[i].Init(enemies[i]);
+                enemies[i].ResetOnSpawn();
+
                 aliveEnemies.Add(enemies[i]);
             }
         }
@@ -504,6 +506,7 @@ public class TurnManager : MonoBehaviour
         hero.Init(popupPrefab);
         
         bossHUD.Init(hero);
+        hero.ResetOnSpawn();     
 
         foreach (var obj in listOfObjectToDeactivateAtStartOfBattle)
         {
@@ -548,11 +551,11 @@ public class TurnManager : MonoBehaviour
 
         Enemy newEnemy = enemyObj.GetComponent<Enemy>();
         newEnemy.Init(popupPrefab);
-
         enemies[spawnIndex] = newEnemy;
         if (!aliveEnemies.Contains(newEnemy)) aliveEnemies.Add(newEnemy);
-        enemyHUDs[spawnIndex].Init(newEnemy);
-
+        
+        enemyHUDs[spawnIndex].Init(newEnemy); // 1. Link the HUD first
+        newEnemy.ResetOnSpawn();
         if (runDuration > 0f)
         {
             Animator anim = enemyObj.GetComponentInChildren<Animator>();
@@ -1868,7 +1871,7 @@ public class TurnManager : MonoBehaviour
             }
 
             // Check death AFTER all multi-hit damage (such as Triple) has resolved
-            if (targetEnemy.currentHealth <= 0 && !targetEnemy.dead)
+            if (targetEnemy.currentHealth <= 0)
             {
                 if (!defeatedNames.Contains(targetEnemy.characterName))
                 {
@@ -1929,7 +1932,7 @@ public class TurnManager : MonoBehaviour
     // --- ENDLESS ENEMY REMOVAL, REGENERATION & WAVE PROGRESSION ---
     public void RemoveEnemy(Enemy enemy)
     {
-        if (enemy == null || enemy.dead) return;
+        if (enemy == null || !aliveEnemies.Contains(enemy)) return;
 
         enemy.dead = true;
         enemy.RemoveParalysis();
@@ -1986,8 +1989,7 @@ public class TurnManager : MonoBehaviour
 
     private IEnumerator ReplaceEnemyAfterDelay(int spawnIndex)
     {
-        // Wait for the dying enemy's fade out animation before running the new enemy in
-        yield return new WaitForSeconds(enemyFadeOutDuration);
+        yield return new WaitForSeconds(1.5f + enemyFadeOutDuration);
 
         if (!isBattleActive)
         {
@@ -1998,7 +2000,6 @@ public class TurnManager : MonoBehaviour
         GameObject newPrefab = GetNextEnemyForCurrentWave();
         if (newPrefab != null)
         {
-            // Newly generated enemy runs up very quickly in its place
             yield return StartCoroutine(SpawnAndRunInRoutine(newPrefab, spawnIndex, replacementRunDuration));
         }
 
@@ -2009,8 +2010,7 @@ public class TurnManager : MonoBehaviour
     {
         isWaveTransitioning = true;
 
-        // Wait for the final enemy's fade-out to complete
-        yield return new WaitForSeconds(enemyFadeOutDuration);
+        yield return new WaitForSeconds(1.5f + enemyFadeOutDuration);
 
         if (!isBattleActive)
         {
@@ -2018,7 +2018,6 @@ public class TurnManager : MonoBehaviour
             yield break;
         }
 
-        // +1000 Wave Completion Bonus Score (Gald is 1/4 of score)
         AddScore(scorePerWaveBonus);
 
         blurbEvent.Set($"Wave {currentWave} Complete! +{scorePerWaveBonus} Score!");
@@ -2069,6 +2068,9 @@ public class TurnManager : MonoBehaviour
     private IEnumerator FadeOut(GameObject enemy)
     {
         if (enemy == null) yield break;
+        
+        yield return new WaitForSeconds(1.5f); 
+        
         float duration = enemyFadeOutDuration;
         float time = 0f;
         Vector3 initialScale = enemy.transform.localScale;
