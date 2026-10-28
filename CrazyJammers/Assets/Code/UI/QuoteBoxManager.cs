@@ -10,6 +10,7 @@ public class QuoteBoxManager : MonoBehaviour
     public GameObject enemyHp = null;
     public GameObject HeroHp = null;
     public GameObject WaveUI = null;
+    public GameObject soulMeterContainer = null; 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {   
@@ -49,7 +50,8 @@ public void Next()
     if(enemyHp != null) enemyHp.SetActive(true);
     if(HeroHp != null) HeroHp.SetActive(true);
     if(WaveUI != null) WaveUI.SetActive(true);
-    
+    if (soulMeterContainer != null) soulMeterContainer.SetActive(true);
+
     quoteBox.transform.parent.parent.gameObject.SetActive(false);
     quoteText.text = "";
 }

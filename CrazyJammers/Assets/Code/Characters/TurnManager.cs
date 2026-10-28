@@ -99,6 +99,26 @@ public class TurnManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI waveText;
     [SerializeField] private TextMeshProUGUI scoreText;
     [SerializeField] private TextMeshProUGUI galdText;
+    [Header("Endless Mode - Soul Meter & Ultimate")]
+    [Tooltip("Total Soul Shards needed to charge the Ultimate (Default: 6).")]
+    public int maxSoulShards = 6;
+    [Tooltip("Current Soul Shards (Starts at 6 in Endless Mode).")]
+    public int currentSoulShards = 6;
+    [Tooltip("The parent GameObject holding the Soul Meter UI (hidden in Standard Mode).")]
+    [SerializeField] private GameObject soulMeterContainer;
+    [Tooltip("The clickable button for the Soul Meter (only interactable at 6/6 on your turn).")]
+    [SerializeField] private Button soulMeterButton;
+    [Tooltip("Drag your 6 individual pie-slice GameObjects here in order (Slice 1 to Slice 6).")]
+    [SerializeField] private GameObject[] soulShardPieces;
+    [Tooltip("Optional: If using a single Radial Fill image instead of 6 objects.")]
+    [SerializeField] private Image soulMeterRadialFill;
+    [Tooltip("Optional: Text displaying '0/6' or 'ULTIMATE ATTACK'.")]
+    [SerializeField] private TextMeshProUGUI soulMeterText;
+    [Tooltip("Optional: Glow or highlight object that turns on when at 6/6.")]
+    [SerializeField] private GameObject ultimateReadyGlow;
+    [Tooltip("Placeholder VFX for the Ultimate Attack (if empty, uses fire + slash crater VFX).")]
+    [SerializeField] private GameObject ultimateAttackVFX;
+    private bool isExecutingUltimate = false;
 
     // Runtime Wave Tracking
     private int enemiesSpawnedInCurrentWave = 0;
@@ -292,6 +312,7 @@ public class TurnManager : MonoBehaviour
         SetupAttackDropdowns(); 
         if (currentGameMode == GameMode.Standard)
         {
+            
             PlayerPrefs.SetString("SavedLevel", SceneManager.GetActiveScene().name);
             PlayerPrefs.Save();
         }
@@ -466,6 +487,7 @@ public class TurnManager : MonoBehaviour
 
         if (currentGameMode == GameMode.Standard)
         {
+            if (soulMeterContainer != null) soulMeterContainer.SetActive(false);
             GameObject knightObj = SpawnPrefabAtPosition(knightPrefab, enemySpawns[0]);
             GameObject swordsmanObj = SpawnPrefabAtPosition(swordsmanPrefab, enemySpawns[1]);
             GameObject mageObj = SpawnPrefabAtPosition(magePrefab, enemySpawns[2]);
@@ -487,6 +509,9 @@ public class TurnManager : MonoBehaviour
         }
         else // Endless mode
         {
+            isExecutingUltimate = false;
+            currentSoulShards = maxSoulShards;
+            UpdateSoulMeterUI(isPlayerTurn: false);
             UpdateEndlessScoreUI();
             SpawnInitialWaveEnemies(instant: false);
         }
@@ -661,6 +686,7 @@ public class TurnManager : MonoBehaviour
 
     public IEnumerator StartTurn()
     {
+        UpdateSoulMeterUI(isPlayerTurn: false);
         // Wait if enemies are currently regenerating or transitioning between waves
         if (currentGameMode == GameMode.Endless)
         {
@@ -804,10 +830,12 @@ public class TurnManager : MonoBehaviour
                 blurbEvent.Set($"{enemy.characterName} Used {enemyAttack.attackName}");
                 EventBus.Publish(blurbEvent);
                 enemyAttacksByIndexPerm[i] = enemyAttack;
-                if (!allEncounteredMoves.Contains(enemyAttack))
+                
+                if (allEncounteredMoves.Contains(enemyAttack))
                 {
-                    allEncounteredMoves.Add(enemyAttack);
+                    allEncounteredMoves.Remove(enemyAttack);
                 }
+                allEncounteredMoves.Insert(0, enemyAttack);
 
                 if (!enemyAttacksByIndex.Contains(enemyAttack)) enemyAttacksByIndex.Add(enemyAttack);
                 if (!previousTurnMoves.Contains(enemyAttack)) previousTurnMoves.Add(enemyAttack);
@@ -1107,6 +1135,16 @@ public class TurnManager : MonoBehaviour
                         }
                     }
                 }
+
+                foreach (var pastMove in allEncounteredMoves)
+                {
+                    if (enemyAttacksByIndex.Count >= 4) break; 
+
+                    if (!enemyAttacksByIndex.Contains(pastMove))
+                    {
+                        enemyAttacksByIndex.Add(pastMove);
+                    }
+                }
             }
 
             usedMoveGO.SetActive(false);
@@ -1192,6 +1230,7 @@ public class TurnManager : MonoBehaviour
         potionOptions.SetActive(true);
         panaceaAmountText.text = PotionData.Instance.Panacea.ToString();
         potionAmountText.text = PotionData.Instance.Potion.ToString();
+        if (currentGameMode == GameMode.Endless) UpdateSoulMeterUI(isPlayerTurn: true);
     }
 
     private IEnumerator OnDropdownOpened(TMP_Dropdown dropdown)
@@ -1206,7 +1245,7 @@ public class TurnManager : MonoBehaviour
 
         if (dropdownContent == null) yield break;
 
-        yield return null;
+        yield return new WaitForEndOfFrame();
 
         int optionIndex = 0;
 
@@ -1228,9 +1267,11 @@ public class TurnManager : MonoBehaviour
                 if (trigger == null) trigger = child.gameObject.AddComponent<EventTrigger>();
                 trigger.triggers.Clear();
 
-                string desc = attack.attackDescription; 
+                // Create a strict local variable to prevent the closure from grabbing the wrong description
+                string localDesc = attack.attackDescription; 
+                
                 EventTrigger.Entry pointerEnterEntry = new EventTrigger.Entry { eventID = EventTriggerType.PointerEnter };
-                pointerEnterEntry.callback.AddListener((_) => ShowDescription(desc));
+                pointerEnterEntry.callback.AddListener((_) => ShowDescription(localDesc));
                 trigger.triggers.Add(pointerEnterEntry);
 
                 EventTrigger.Entry pointerExitEntry = new EventTrigger.Entry { eventID = EventTriggerType.PointerExit };
@@ -1242,18 +1283,19 @@ public class TurnManager : MonoBehaviour
         }
     }
 
-    private void ShowDescription(string description)
+    public void ShowDescription(string description)
     {
         if (descriptionText != null) descriptionText.text = description;
     }
 
-    private void HideDescription()
+    public void HideDescription()
     {
         descriptionText.text = "Select a move";
     }
 
     public void OnConfirmButtonClicked()
     {
+        UpdateSoulMeterUI(isPlayerTurn: false);
         usedMoveGO.SetActive(true);
         if (selectedAttack1 == null || selectedAttack2 == null)
         {
@@ -1323,12 +1365,14 @@ public class TurnManager : MonoBehaviour
 
     public void OnBideButtonClicked()
     {
+        
         if (!isBattleActive) return;
 
         bool bideSuccessful = hero.UseBide();
 
         if (bideSuccessful)
         {
+            UpdateSoulMeterUI(isPlayerTurn: false);
             ApplyEffectWithDelay(bideVFX, hero.transform, 0f, 2.0f, true, 0f, null, false);
             bideAttribute = 2;
             attackOptionsParent.SetActive(false);
@@ -1347,6 +1391,7 @@ public class TurnManager : MonoBehaviour
 
         if (PotionData.Instance.Potion > 0)
         {
+            
             if (hero.currentHealth >= hero.maxHealth)
             {
                 descriptionTextPotion.text = "Hero Health Full.";
@@ -1373,6 +1418,7 @@ public class TurnManager : MonoBehaviour
             blurbEvent.Set($"Potion Used: Health Restored!");
             EventBus.Publish(blurbEvent);
             usedMove1.text = "Potion Used";
+            UpdateSoulMeterUI(isPlayerTurn: false);
             PotionData.Instance.Potion--;
             if (attackOptionsParent != null) attackOptionsParent.SetActive(false);
             if (attackOptionsMenu != null) attackOptionsMenu.SetActive(false); // Fixes the glitch
@@ -1421,6 +1467,7 @@ public class TurnManager : MonoBehaviour
             blurbEvent.Set($"Panacea Used: Status Cured!");
             EventBus.Publish(blurbEvent);
             usedMove1.text = "Status Cured";
+            UpdateSoulMeterUI(isPlayerTurn: false);
             PotionData.Instance.Panacea--;
             if (attackOptionsParent != null) attackOptionsParent.SetActive(false);
             if (attackOptionsMenu != null) attackOptionsMenu.SetActive(false); // Fixes the glitch
@@ -1942,6 +1989,11 @@ public class TurnManager : MonoBehaviour
         {
             totalEnemiesKilled++;
             enemiesKilledInCurrentWave++;
+            if (!isExecutingUltimate && currentSoulShards < maxSoulShards)
+            {
+                currentSoulShards = Mathf.Min(maxSoulShards, currentSoulShards + 1);
+                UpdateSoulMeterUI(isPlayerTurn: false);
+            }
 
             // +100 Score per defeat (Gald updates automatically as 1/4 of score)
             AddScore(scorePerDefeat);
@@ -2224,6 +2276,147 @@ public class TurnManager : MonoBehaviour
 
         StopAllCoroutines();
     }
+    public void UpdateSoulMeterUI(bool isPlayerTurn)
+    {
+        if (currentGameMode != GameMode.Endless) return;
+
+        bool isFull = currentSoulShards >= maxSoulShards;
+
+        // 1. Toggle the 6 individual shard pieces
+        if (soulShardPieces != null && soulShardPieces.Length > 0)
+        {
+            for (int i = 0; i < soulShardPieces.Length; i++)
+            {
+                if (soulShardPieces[i] != null)
+                {
+                    soulShardPieces[i].SetActive(i < currentSoulShards);
+                }
+            }
+        }
+
+        // 2. Update radial fill (if used)
+        if (soulMeterRadialFill != null)
+        {
+            soulMeterRadialFill.fillAmount = (float)currentSoulShards / maxSoulShards;
+        }
+
+        // 3. Update text and ready glow
+        if (soulMeterText != null)
+        {
+            soulMeterText.text = isFull ? "ULTIMATE\nATTACK" : $"{currentSoulShards}/{maxSoulShards}";
+        }
+        if (ultimateReadyGlow != null)
+        {
+            ultimateReadyGlow.SetActive(isFull);
+        }
+
+        // 4. Only allow clicking when at 6/6 AND it is currently the player's turn
+        if (soulMeterButton != null)
+        {
+            soulMeterButton.interactable = isFull && isPlayerTurn && isBattleActive;
+        }
+    }
+
+    // Wire this method to your Soul Meter Button's OnClick() event in the Inspector
+    public void OnUltimateButtonClicked()
+    {
+        if (!isBattleActive || currentGameMode != GameMode.Endless) return;
+        if (currentSoulShards < maxSoulShards) return;
+
+        // Consume all 6 Soul Shards and reset meter to 0
+        currentSoulShards = 0;
+        UpdateSoulMeterUI(isPlayerTurn: false);
+
+        // Close all combat menus so the player can't double-act
+        selectedAttack1 = null;
+        selectedAttack2 = null;
+        targetingMode = false;
+        selectingEnemies = false;
+        selectedEnemies.Clear();
+
+        if (attackOptionsParent != null) attackOptionsParent.SetActive(false);
+        if (attackOptionsMenu != null) attackOptionsMenu.SetActive(false);
+        if (potionOptions != null) potionOptions.SetActive(false);
+        if (itemOptions != null) itemOptions.SetActive(false);
+        if (targetingHUDParent != null) targetingHUDParent.SetActive(false);
+
+        if (bossAttackCoroutine != null) StopCoroutine(bossAttackCoroutine);
+        bossAttackCoroutine = StartCoroutine(DoUltimateAttackRoutine());
+    }
+
+    private IEnumerator DoUltimateAttackRoutine()
+    {
+        if (!isBattleActive) yield break;
+
+        // Lock shard gain so kills from this Ultimate don't refill the meter
+        isExecutingUltimate = true;
+
+        if (usedMoveGO != null) usedMoveGO.SetActive(true);
+        string ultMsg = "Boss unleashed ULTIMATE ATTACK!";
+        blurbEvent.Set(ultMsg);
+        EventBus.Publish(blurbEvent);
+        if (usedMove1 != null) usedMove1.text = ultMsg;
+
+        hero.DoAttackAnimation();
+        yield return new WaitForSeconds(0.25f);
+
+        // Snapshot all currently active enemies on the field
+        List<Enemy> activeTargets = enemies.Where(e => e != null && !e.dead && e.currentHealth > 0).ToList();
+
+        // Spawn placeholder VFX across all active targets
+        foreach (var target in activeTargets)
+        {
+            if (target == null) continue;
+
+            if (ultimateAttackVFX != null)
+            {
+                ApplyEffectWithDelay(ultimateAttackVFX, target.transform, 0f, 3.0f);
+            }
+            else
+            {
+                // Fallback placeholder VFX using existing fire + crater effects
+                ApplyEffectWithDelay(fireAttack, target.transform, 0f, 2.5f, null, 2.0f);
+                ApplyEffectWithDelay(slashCrater, target.transform, 0.2f, 2.5f);
+            }
+        }
+
+        yield return new WaitForSeconds(0.3f);
+
+        // Wipe out all active enemies on screen simultaneously
+        foreach (var target in activeTargets)
+        {
+            if (target == null) continue;
+
+            target.Init(popupPrefab);
+            target.barrierCount = 0; // Bypass barriers
+            target.bideBuff = false; // Bypass defense buffs
+
+            // Deal exact remaining health to trigger DamageNumber popups and death animations cleanly
+            int fatalDamage = Mathf.Max(1, target.currentHealth);
+            target.TakeDamage(fatalDamage);
+
+            RemoveEnemy(target);
+        }
+
+        yield return new WaitForSeconds(1.0f);
+
+        // Reset Bide/Upgrades just like a standard turn action
+        foreach (var attack in attacksReset)
+        {
+            if (attack != null) attack.upgradeLevel = 0;
+        }
+        bideAttribute = 0;
+        hero.bideLevel = hero.bideLevelBase;
+        hero.bideUses = 0;
+        hero.bideBuff = false;
+        heroAniPlayed = false;
+
+        // Re-enable shard gain for future turns
+        isExecutingUltimate = false;
+
+        // Proceed to next turn (StartTurn automatically waits for replacements/wave breaks to finish)
+        if (isBattleActive) StartCoroutine(StartTurn());
+    }   
     public void OnBackFromItemsClicked()
     {
         // Shuts down the item menu and ensures the main battle options stay visible
