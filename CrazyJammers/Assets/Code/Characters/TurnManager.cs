@@ -1245,12 +1245,14 @@ public class TurnManager : MonoBehaviour
 
         if (dropdownContent == null) yield break;
 
-        yield return new WaitForEndOfFrame();
+        yield return null;
 
         int optionIndex = 0;
 
         foreach (Transform child in dropdownContent)
         {
+            if (!child.gameObject.activeSelf) continue;
+
             if (child.name.StartsWith("Item") && optionIndex < currentlyDisplayedAttacks.Count)
             {
                 AttackSO attack = currentlyDisplayedAttacks[optionIndex];
@@ -1267,9 +1269,8 @@ public class TurnManager : MonoBehaviour
                 if (trigger == null) trigger = child.gameObject.AddComponent<EventTrigger>();
                 trigger.triggers.Clear();
 
-                // Create a strict local variable to prevent the closure from grabbing the wrong description
                 string localDesc = attack.attackDescription; 
-                
+
                 EventTrigger.Entry pointerEnterEntry = new EventTrigger.Entry { eventID = EventTriggerType.PointerEnter };
                 pointerEnterEntry.callback.AddListener((_) => ShowDescription(localDesc));
                 trigger.triggers.Add(pointerEnterEntry);
