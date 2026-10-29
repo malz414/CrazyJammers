@@ -6037,7 +6037,7 @@ PrefabInstance:
     - target: {fileID: 8485419520516605267, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
       propertyPath: ultimateAttackVFX
       value: 
-      objectReference: {fileID: 1168529248583268, guid: 76d29242e44bd1d4481337c8f53681ac, type: 3}
+      objectReference: {fileID: 1443245140056534, guid: 5f04f7856979a4546a6b1b3362e64a75, type: 3}
     - target: {fileID: 8485419520516605267, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
       propertyPath: waveBreakDuration
       value: 2
