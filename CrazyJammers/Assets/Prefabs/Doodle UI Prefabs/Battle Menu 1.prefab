@@ -2090,7 +2090,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5d5de8faed09534c901e70aaa7fb02b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  buttonType: 0
+  updateMainDescriptionBox: 0
   descText: {fileID: 5484620246313956202}
+  potText2: {fileID: 0}
   text: Power up your moves and gain some defence
   textNo: You have to wait a bit before you can use bide again
 --- !u!114 &482205413266395863
@@ -2732,7 +2735,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5d5de8faed09534c901e70aaa7fb02b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  buttonType: 0
+  updateMainDescriptionBox: 0
   descText: {fileID: 5484620246313956202}
+  potText2: {fileID: 0}
   text: Select an item to support you in this battle
   textNo: 
 --- !u!1 &1737000829447573938
@@ -3643,7 +3649,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 1
   m_HorizontalAlignment: 2
-  m_VerticalAlignment: 512
+  m_VerticalAlignment: 1024
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -5311,7 +5317,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5d5de8faed09534c901e70aaa7fb02b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  buttonType: 0
+  updateMainDescriptionBox: 0
   descText: {fileID: 5484620246313956202}
+  potText2: {fileID: 0}
   text: Remix the of your enemies to create a stronger one
   textNo: 
 --- !u!1 &3157046335228800047
@@ -8216,7 +8225,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5d5de8faed09534c901e70aaa7fb02b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  buttonType: 0
+  updateMainDescriptionBox: 0
   descText: {fileID: 6870852455801273229}
+  potText2: {fileID: 0}
   text: Heals 1000hp
   textNo: No Potion  left
 --- !u!114 &8094191178352169436
@@ -13845,7 +13857,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5d5de8faed09534c901e70aaa7fb02b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  buttonType: 0
+  updateMainDescriptionBox: 0
   descText: {fileID: 6870852455801273229}
+  potText2: {fileID: 0}
   text: Cures all ailments
   textNo: No Panacea left
 --- !u!1 &8090418982970182115
