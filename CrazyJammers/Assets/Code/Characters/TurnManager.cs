@@ -569,22 +569,34 @@ public class TurnManager : MonoBehaviour
     {
         Transform spawnPoint = enemySpawns[spawnIndex];
         Vector3 targetPos = spawnPoint.position;
+        Quaternion targetRot = spawnPoint.rotation;
+
         Vector3 startPos = runDuration > 0f ? targetPos + spawnRunInOffset : targetPos;
 
         GameObject enemyObj = SpawnPrefabAtPosition(prefab, spawnPoint);
         enemyObj.transform.position = startPos;
+        enemyObj.transform.rotation = targetRot;
 
         Enemy newEnemy = enemyObj.GetComponent<Enemy>();
         newEnemy.Init(popupPrefab);
         enemies[spawnIndex] = newEnemy;
         if (!aliveEnemies.Contains(newEnemy)) aliveEnemies.Add(newEnemy);
         
-        enemyHUDs[spawnIndex].Init(newEnemy); // 1. Link the HUD first
+        enemyHUDs[spawnIndex].Init(newEnemy); 
         newEnemy.ResetOnSpawn();
+        
         if (runDuration > 0f)
         {
             Animator anim = enemyObj.GetComponentInChildren<Animator>();
-            SetRunningAnimation(anim, true);
+            bool originalRootMotion = false;
+
+            if (anim != null)
+            {
+                // 1. Disable Root Motion so the animation cannot physically drag them off-course
+                originalRootMotion = anim.applyRootMotion;
+                anim.applyRootMotion = false;
+                SetRunningAnimation(anim, true);
+            }
 
             float elapsed = 0f;
             while (elapsed < runDuration)
@@ -597,9 +609,26 @@ public class TurnManager : MonoBehaviour
 
             if (enemyObj != null)
             {
+                if (anim != null)
+                {
+                    SetRunningAnimation(anim, false);
+                    
+                    // 2. Wait exactly one frame for the Animator to process the transition to Idle
+                    yield return null; 
+                    
+                    // 3. Restore their original Root Motion setting
+                    anim.applyRootMotion = originalRootMotion;
+                }
+
+                // 4. Force the absolute final snap AFTER the run animation is fully shut down
                 enemyObj.transform.position = targetPos;
-                SetRunningAnimation(anim, false);
+                enemyObj.transform.rotation = targetRot;
             }
+        }
+        else
+        {
+            enemyObj.transform.position = targetPos;
+            enemyObj.transform.rotation = targetRot;
         }
     }
 
