@@ -632,7 +632,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &5080362037884209092
 RectTransform:
   m_ObjectHideFlags: 0
@@ -733,12 +733,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   CreditsObj: {fileID: 6037824462651477192}
-  sequenceTransition: {fileID: 0}
-  rectangle: {fileID: 0}
-  endlessModeButton: {fileID: 0}
-  endlessSceneName: EndlessModeScene
-  MainMenu: 0
-  continueButton: {fileID: 0}
 --- !u!1 &6037824462651477192
 GameObject:
   m_ObjectHideFlags: 0
