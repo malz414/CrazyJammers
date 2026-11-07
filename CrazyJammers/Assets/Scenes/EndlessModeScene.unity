@@ -511,21 +511,10 @@ MonoBehaviour:
   buttonType: 4
   updateMainDescriptionBox: 1
   descText: {fileID: 1501889607}
-  potText2: {fileID: 2102938385}
+  potText2: {fileID: 0}
   text: Consumes 6 Soul Shards to rain devastating meteors across the battlefield,
     instantly annihilating all active enemies on screen.
   textNo: Need to kill more enemies
---- !u!114 &164220383 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 9020955973937712614, guid: 86c29be434574f54ebf7e79740f36b69, type: 3}
-  m_PrefabInstance: {fileID: 2129315400}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &212048913 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6914971973993580857, guid: 86c29be434574f54ebf7e79740f36b69, type: 3}
@@ -4812,17 +4801,6 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 5842832993032211828, guid: d5f334b931d89e34283aeea5fcfb47e0, type: 3}
   m_PrefabInstance: {fileID: 1261390422}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &2041828309 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 9219808376052806037, guid: 86c29be434574f54ebf7e79740f36b69, type: 3}
-  m_PrefabInstance: {fileID: 2129315400}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &2053869988
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5091,17 +5069,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1135154112}
   m_LocalEulerAnglesHint: {x: 0, y: -90, z: 0}
---- !u!114 &2102938385 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 6870852455801273229, guid: 86c29be434574f54ebf7e79740f36b69, type: 3}
-  m_PrefabInstance: {fileID: 2129315400}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &2113591701 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3475959134499757416, guid: 5bc48eb34602b7d4b9e3d44d54050c50, type: 3}
@@ -5363,7 +5330,7 @@ PrefabInstance:
     - target: {fileID: 7933738706429711080, guid: 86c29be434574f54ebf7e79740f36b69, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[2].m_Target
       value: 
-      objectReference: {fileID: 2102938385}
+      objectReference: {fileID: 0}
     - target: {fileID: 7933738706429711080, guid: 86c29be434574f54ebf7e79740f36b69, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[2].m_CallState
       value: 2
@@ -5475,13 +5442,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
 --- !u!114 &2129315403 stripped
 MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 3268862385935356961, guid: 86c29be434574f54ebf7e79740f36b69, type: 3}
+  m_CorrespondingSourceObject: {fileID: 7351407602945509113, guid: 86c29be434574f54ebf7e79740f36b69, type: 3}
   m_PrefabInstance: {fileID: 2129315400}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &2129315404 stripped
@@ -5508,20 +5475,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
 --- !u!114 &2129315406 stripped
 MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 3582590496487219367, guid: 86c29be434574f54ebf7e79740f36b69, type: 3}
+  m_CorrespondingSourceObject: {fileID: 5140098039961634346, guid: 86c29be434574f54ebf7e79740f36b69, type: 3}
   m_PrefabInstance: {fileID: 2129315400}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!1 &2129315407 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1058293548545389982, guid: 86c29be434574f54ebf7e79740f36b69, type: 3}
-  m_PrefabInstance: {fileID: 2129315400}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1363350307300302488
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6030,7 +5992,7 @@ PrefabInstance:
     - target: {fileID: 8485419520516605267, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
       propertyPath: itemOptions
       value: 
-      objectReference: {fileID: 2129315407}
+      objectReference: {fileID: 0}
     - target: {fileID: 8485419520516605267, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
       propertyPath: lungeAttack
       value: 
@@ -6070,7 +6032,7 @@ PrefabInstance:
     - target: {fileID: 8485419520516605267, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
       propertyPath: potionButton
       value: 
-      objectReference: {fileID: 164220383}
+      objectReference: {fileID: 2129315406}
     - target: {fileID: 8485419520516605267, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
       propertyPath: reviveButton
       value: 
@@ -6082,7 +6044,7 @@ PrefabInstance:
     - target: {fileID: 8485419520516605267, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
       propertyPath: panaceaButton
       value: 
-      objectReference: {fileID: 2041828309}
+      objectReference: {fileID: 2129315403}
     - target: {fileID: 8485419520516605267, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
       propertyPath: potionOptions
       value: 
@@ -6130,7 +6092,7 @@ PrefabInstance:
     - target: {fileID: 8485419520516605267, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
       propertyPath: potionAmountText
       value: 
-      objectReference: {fileID: 2129315406}
+      objectReference: {fileID: 0}
     - target: {fileID: 8485419520516605267, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
       propertyPath: attackOptionsMenu
       value: 
@@ -6138,7 +6100,7 @@ PrefabInstance:
     - target: {fileID: 8485419520516605267, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
       propertyPath: panaceaAmountText
       value: 
-      objectReference: {fileID: 2129315403}
+      objectReference: {fileID: 0}
     - target: {fileID: 8485419520516605267, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
       propertyPath: ultimateAttackVFX
       value: 
