@@ -27,6 +27,7 @@ public class MainMenuManager : MonoBehaviour
 
     private void Start()
     {
+        Debug.Log(this.gameObject);
 #if USE_CRAZYGAMES
         if (CrazySDK.IsAvailable)
         {
@@ -135,5 +136,13 @@ public class MainMenuManager : MonoBehaviour
     public void ResetLevel()
     {
         TransitionManager.Instance().Transition("MainMenu", sequenceTransition, 0f);
+    }
+    public void GoToShop()
+    {
+        TransitionManager.Instance().Transition("ShopScene", sequenceTransition, 0f);
+    }
+    public void RestartCurrentScene()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 }

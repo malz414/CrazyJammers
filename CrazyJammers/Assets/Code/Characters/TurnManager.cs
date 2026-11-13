@@ -94,10 +94,12 @@ public class TurnManager : MonoBehaviour
     public int scorePerDefeat = 100;
     public int scorePerWaveBonus = 1000;
     public int currentScore = 0;
+    public int highScore = 0; 
     public int currentGald => currentScore / 4;
     public int currentWave = 1;
     [SerializeField] private TextMeshProUGUI waveText;
     [SerializeField] private TextMeshProUGUI scoreText;
+    [SerializeField] private TextMeshProUGUI highScoreText; 
     [SerializeField] private TextMeshProUGUI galdText;
     [Header("Endless Mode - Soul Meter & Ultimate")]
     [Tooltip("Total Soul Shards needed to charge the Ultimate (Default: 6).")]
@@ -284,6 +286,7 @@ public class TurnManager : MonoBehaviour
     public float endGameDelay = 2.0f; 
     private bool isBattleActive = false;
     private bool isEndingGame = false;
+    
 
     private void Awake()
     {
@@ -309,10 +312,11 @@ public class TurnManager : MonoBehaviour
             PotionData.Instance.SaveCheckpoint();
         }
 
+        highScore = PlayerPrefs.GetInt("EndlessHighScore", 0);
+
         SetupAttackDropdowns(); 
         if (currentGameMode == GameMode.Standard)
         {
-            
             PlayerPrefs.SetString("SavedLevel", SceneManager.GetActiveScene().name);
             PlayerPrefs.Save();
         }
@@ -442,6 +446,14 @@ public class TurnManager : MonoBehaviour
     private void AddScore(int points)
     {
         currentScore += points;
+
+        if (currentScore > highScore)
+        {
+            highScore = currentScore;
+            PlayerPrefs.SetInt("EndlessHighScore", highScore);
+            PlayerPrefs.Save(); 
+        }
+
         UpdateEndlessScoreUI();
     }
 
@@ -450,6 +462,8 @@ public class TurnManager : MonoBehaviour
         if (waveText != null) waveText.text = $" {currentWave}";
         if (scoreText != null) scoreText.text = $" {currentScore}";
         if (galdText != null) galdText.text = $" {currentGald}";
+        
+        if (highScoreText != null) highScoreText.text = $" {highScore}";
     }
 
     public IEnumerator MoveBackToPosition(Transform target, Vector3 startPos, float duration)
@@ -509,6 +523,9 @@ public class TurnManager : MonoBehaviour
         }
         else // Endless mode
         {
+            if (EndlessModeManager.Instance != null) EndlessModeManager.Instance.OnBattleStart();
+            
+            // Re-add these three lines so the enemies actually spawn!
             isExecutingUltimate = false;
             currentSoulShards = maxSoulShards;
             UpdateSoulMeterUI(isPlayerTurn: false);
@@ -715,6 +732,13 @@ public class TurnManager : MonoBehaviour
 
     public IEnumerator StartTurn()
     {
+        if (EndlessModeManager.Instance != null)
+        {
+            EndlessModeManager.Instance.freeItemActionActive = false;
+            EndlessModeManager.Instance.hasUsedItemThisTurn = false;
+        }
+        if (potionButton != null) potionButton.interactable = true;
+        if (panaceaButton != null) panaceaButton.interactable = true;
         UpdateSoulMeterUI(isPlayerTurn: false);
         // Wait if enemies are currently regenerating or transitioning between waves
         if (currentGameMode == GameMode.Endless)
@@ -1256,7 +1280,6 @@ public class TurnManager : MonoBehaviour
         }
 
         attackOptionsParent.SetActive(true);
-        potionOptions.SetActive(true);
         panaceaAmountText.text = PotionData.Instance.Panacea.ToString();
         potionAmountText.text = PotionData.Instance.Potion.ToString();
         if (currentGameMode == GameMode.Endless) UpdateSoulMeterUI(isPlayerTurn: true);
@@ -1388,9 +1411,15 @@ public class TurnManager : MonoBehaviour
 
     public void OnItemOptionsClicked()
     {
-        itemOptions.SetActive(true);
-        panaceaAmountText.text = PotionData.Instance.Panacea.ToString();
+        // Safely hide the main combat UI
+        if (attackOptionsParent != null) attackOptionsParent.SetActive(false);
+        if (potionOptions != null) potionOptions.SetActive(false);
+          panaceaAmountText.text = PotionData.Instance.Panacea.ToString();
         potionAmountText.text = PotionData.Instance.Potion.ToString();
+        
+        // Open the Endless item panel
+        
+        if (EndlessModeManager.Instance != null) EndlessModeManager.Instance.BuildOrRefreshBattleItemButtons();
     }
 
     public void OnBideButtonClicked()
@@ -1419,49 +1448,38 @@ public class TurnManager : MonoBehaviour
     {
         if (!isBattleActive) return;
 
+        if (EndlessModeManager.Instance != null && EndlessModeManager.Instance.hasUsedItemThisTurn)
+        {
+            if (descriptionTextPotion != null) descriptionTextPotion.text = "You already used an item this turn!";
+            return;
+        }
+
         if (PotionData.Instance.Potion > 0)
         {
-            
             if (hero.currentHealth >= hero.maxHealth)
             {
-                descriptionTextPotion.text = "Hero Health Full.";
+                if (descriptionTextPotion != null) descriptionTextPotion.text = "Hero Health Full.";
                 return; 
             }
 
             hero.Init(popupPrefabgreen);
             hero.HealDamage((int)(hero.maxHealth * .4));
-            
-            if (hero.currentHealth > hero.maxHealth)
-            {
-                hero.currentHealth = hero.maxHealth;
-            }
-            if (bideAttribute > 0)
-            {
-                bideAttribute = 2;
-            }
-            if (bideAttribute == 0)
-            {
-                hero.bideLevel = hero.bideLevelBase;
-                hero.bideUses = 0;
-            }
+            if (hero.currentHealth > hero.maxHealth) hero.currentHealth = hero.maxHealth;
+
             usedMoveGO.SetActive(true);
-            blurbEvent.Set($"Potion Used: Health Restored!");
+            blurbEvent.Set("Potion Used: Health Restored!");
             EventBus.Publish(blurbEvent);
             usedMove1.text = "Potion Used";
-            UpdateSoulMeterUI(isPlayerTurn: false);
-            PotionData.Instance.Potion--;
-            if (attackOptionsParent != null) attackOptionsParent.SetActive(false);
-            if (attackOptionsMenu != null) attackOptionsMenu.SetActive(false); // Fixes the glitch
-            if (potionOptions != null) potionOptions.SetActive(false);
-            if (itemOptions != null) itemOptions.SetActive(false);
             
+            PotionData.Instance.Potion--;
             ApplyEffectWithDelay(potionVFX, hero.transform, 0f, 2.0f);
             EventBus.Publish(statusUpdateEvent);
-            StartCoroutine(StartTurn());
+            
+            CompleteItemTurnOrContinue();
         }
         else
         {
-            descriptionTextPotion.text = "No Potion Left.";
+            if (descriptionTextPotion != null) descriptionTextPotion.text = "No Potion Left.";
             usedMove1.text = "No Potion";
         }
     }
@@ -1470,46 +1488,38 @@ public class TurnManager : MonoBehaviour
     {
         if (!isBattleActive) return;
 
+        if (EndlessModeManager.Instance != null && EndlessModeManager.Instance.hasUsedItemThisTurn)
+        {
+            if (descriptionTextPotion != null) descriptionTextPotion.text = "You already used an item this turn!";
+            return;
+        }
+
         if (PotionData.Instance.Panacea > 0)
         {
-            bool hasStatus = hero.burning > 0 || hero.paralysisEffect != null;
-
-            if (!hasStatus)
+            if (hero.burning <= 0 && hero.paralysisEffect == null)
             {
-                descriptionTextPotion.text = "No Status Effects to Cure.";
+                if (descriptionTextPotion != null) descriptionTextPotion.text = "No Status Effects to Cure.";
                 return;
-            }
-            if (bideAttribute > 0)
-            {
-                bideAttribute = 2;
-            }
-            if (bideAttribute == 0)
-            {
-                hero.bideLevel = hero.bideLevelBase;
-                hero.bideUses = 0;
             }
 
             hero.RemoveBurns();
             hero.RemoveParalysis();
             hero.RemoveHeroBurns();
             hero.RemoveHeroParalysis();
+            
             usedMoveGO.SetActive(true);
-            blurbEvent.Set($"Panacea Used: Status Cured!");
+            blurbEvent.Set("Panacea Used: Status Cured!");
             EventBus.Publish(blurbEvent);
             usedMove1.text = "Status Cured";
-            UpdateSoulMeterUI(isPlayerTurn: false);
+            
             PotionData.Instance.Panacea--;
-            if (attackOptionsParent != null) attackOptionsParent.SetActive(false);
-            if (attackOptionsMenu != null) attackOptionsMenu.SetActive(false); // Fixes the glitch
-            if (potionOptions != null) potionOptions.SetActive(false);
-            if (itemOptions != null) itemOptions.SetActive(false);
-
             ApplyEffectWithDelay(panaceaVFX, hero.transform, 0f, 2.0f);
-            StartCoroutine(StartTurn());
+            
+            CompleteItemTurnOrContinue();
         }
         else
         {
-            descriptionTextPotion.text = "No Panacea left";
+            if (descriptionTextPotion != null) descriptionTextPotion.text = "No Panacea left";
             usedMove1.text = "No Panacea";
         }
     }
@@ -2177,7 +2187,6 @@ public class TurnManager : MonoBehaviour
         
         if (attackOptionsParent != null) attackOptionsParent.SetActive(false);
         if (potionOptions != null) potionOptions.SetActive(false);
-        if (itemOptions != null) itemOptions.SetActive(false);
         if (targetingHUDParent != null) targetingHUDParent.SetActive(false);
 
         Debug.Log(playerWon ? $"You won! Score: {currentScore}, Gald: {currentGald}" : $"Game Over. Final Score: {currentScore}, Gald: {currentGald}");
@@ -2255,8 +2264,13 @@ public class TurnManager : MonoBehaviour
             {
                 TransitionManager.Instance().Transition(sequenceTransition, 1f);
             }
+            
 
             yield return new WaitForSeconds(endGameDelay);
+            if (currentGameMode == GameMode.Endless && EndlessModeManager.Instance != null)
+            {
+                EndlessModeManager.Instance.OnEndlessRunEnded(currentGald);
+            }
 
             if (MusicManager.Instance != null)
             {
@@ -2367,7 +2381,6 @@ public class TurnManager : MonoBehaviour
         if (attackOptionsParent != null) attackOptionsParent.SetActive(false);
         if (attackOptionsMenu != null) attackOptionsMenu.SetActive(false);
         if (potionOptions != null) potionOptions.SetActive(false);
-        if (itemOptions != null) itemOptions.SetActive(false);
         if (targetingHUDParent != null) targetingHUDParent.SetActive(false);
 
         if (bossAttackCoroutine != null) StopCoroutine(bossAttackCoroutine);
@@ -2449,9 +2462,75 @@ public class TurnManager : MonoBehaviour
     }   
     public void OnBackFromItemsClicked()
     {
-        // Shuts down the item menu and ensures the main battle options stay visible
-        if (itemOptions != null) itemOptions.SetActive(false);
+        // Hide the item menu and restore the main combat UI
         if (attackOptionsParent != null) attackOptionsParent.SetActive(true);
         if (potionOptions != null) potionOptions.SetActive(true);
+    }
+    public void ExecuteMiracleDewEffect()
+{
+    hero.Init(popupPrefabgreen);
+    int healAmount = hero.maxHealth - hero.currentHealth;
+    if (healAmount > 0) hero.HealDamage(healAmount);
+    hero.currentHealth = hero.maxHealth;
+
+    hero.RemoveBurns();
+    hero.RemoveParalysis();
+    hero.RemoveHeroBurns();
+    hero.RemoveHeroParalysis();
+
+    ApplyEffectWithDelay(potionVFX, hero.transform, 0f, 2.0f);
+    ApplyEffectWithDelay(panaceaVFX, hero.transform, 0f, 2.0f);
+    EventBus.Publish(statusUpdateEvent);
+
+    usedMoveGO.SetActive(true);
+    usedMove1.text = "Miracle Dew Used!";
+    blurbEvent.Set("Miracle Dew Used: Full HP & Status Restored!");
+    EventBus.Publish(blurbEvent);
+
+    CompleteItemTurnOrContinue();
+}
+
+public void ExecuteBlessedAmuletEffect()
+    {
+        ApplyEffectWithDelay(bideVFX, hero.transform, 0f, 2.0f, true, 0f, null, false);
+        usedMoveGO.SetActive(true);
+        usedMove1.text = "Blessed Amulet Activated!";
+        blurbEvent.Set("Blessed Amulet: Choose your next item!");
+        EventBus.Publish(blurbEvent);
+
+        if (EndlessModeManager.Instance != null) EndlessModeManager.Instance.BuildOrRefreshBattleItemButtons();
+    }
+public void CompleteItemTurnOrContinue()
+    {
+        if (EndlessModeManager.Instance != null)
+        {
+            EndlessModeManager.Instance.hasUsedItemThisTurn = true; 
+
+            if (EndlessModeManager.Instance.freeItemActionActive)
+            {
+                EndlessModeManager.Instance.freeItemActionActive = false; 
+                
+                
+                if (attackOptionsParent != null) attackOptionsParent.SetActive(true);
+                
+                if (potionOptions != null) potionOptions.SetActive(false); 
+                
+                UpdateSoulMeterUI(isPlayerTurn: true);
+
+                if (potionButton != null) potionButton.interactable = false;
+                if (panaceaButton != null) panaceaButton.interactable = false;
+                return;
+            }
+        }
+
+        if (bideAttribute > 0) bideAttribute = 2;
+        if (bideAttribute == 0) { hero.bideLevel = hero.bideLevelBase; hero.bideUses = 0; }
+
+        UpdateSoulMeterUI(isPlayerTurn: false);
+        if (attackOptionsParent != null) attackOptionsParent.SetActive(false);
+        if (attackOptionsMenu != null) attackOptionsMenu.SetActive(false);
+        if (potionOptions != null) potionOptions.SetActive(false);
+
+        StartCoroutine(StartTurn());
     }
 }

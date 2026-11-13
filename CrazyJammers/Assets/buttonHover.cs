@@ -12,7 +12,9 @@ public class buttonHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
         Bide, 
         Potion, 
         Panacea, 
-        SoulMeter 
+        SoulMeter,
+        MiracleDew,
+        BlessedAmulet
     }
 
     [Header("Button Settings")]
@@ -24,7 +26,6 @@ public class buttonHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
 
     [Header("UI References")]
     public TMP_Text descText;
-    public TMP_Text potText2;
     
     [Header("Descriptions")]
     [TextArea(2,4)]
@@ -36,7 +37,6 @@ public class buttonHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
 
     void Start()
     {
-        // Find the Hero instance in the scene
         hero = FindObjectOfType<Hero>();
         if (hero == null)
         {
@@ -47,38 +47,52 @@ public class buttonHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
     public void OnPointerEnter(PointerEventData eventData)
     {
         bool isUnavailable = false;
+        string customLockedMessage = "";
+        
+        bool itemActionLocked = EndlessModeManager.Instance != null && EndlessModeManager.Instance.hasUsedItemThisTurn;
+        bool amuletActive = EndlessModeManager.Instance != null && EndlessModeManager.Instance.freeItemActionActive;
 
-        // Check availability based on the button type chosen in the Inspector
         switch (buttonType)
         {
             case ButtonActionType.Bide:
                 if (hero != null && hero.bideLevel == 2.0f) isUnavailable = true;
                 break;
-            case ButtonActionType.Potion:
-                if (PotionData.Instance != null && PotionData.Instance.Potion <= 0) isUnavailable = true;
-                break;
-            case ButtonActionType.Panacea:
-                if (PotionData.Instance != null && PotionData.Instance.Panacea <= 0) isUnavailable = true;
-                break;
             case ButtonActionType.SoulMeter:
                 if (TurnManager.Instance != null && TurnManager.Instance.currentSoulShards < TurnManager.Instance.maxSoulShards) isUnavailable = true;
                 break;
+                
+            case ButtonActionType.Potion:
+                if (itemActionLocked) { isUnavailable = true; customLockedMessage = "You already used an item this turn!"; }
+                else if (PotionData.Instance != null && PotionData.Instance.Potion <= 0) isUnavailable = true;
+                break;
+                
+            case ButtonActionType.Panacea:
+                if (itemActionLocked) { isUnavailable = true; customLockedMessage = "You already used an item this turn!"; }
+                else if (PotionData.Instance != null && PotionData.Instance.Panacea <= 0) isUnavailable = true;
+                break;
+                
+            case ButtonActionType.MiracleDew:
+                if (itemActionLocked) { isUnavailable = true; customLockedMessage = "You already used an item this turn!"; }
+                else if (EndlessModeManager.Instance == null || EndlessModeManager.Instance.GetSessionItemCount(EndlessShopData.MIRACLE_DEW_ID) <= 0) isUnavailable = true;
+                break;
+                
+            case ButtonActionType.BlessedAmulet:
+                if (itemActionLocked) { isUnavailable = true; customLockedMessage = "You already used an item this turn!"; }
+                else if (amuletActive) { isUnavailable = true; customLockedMessage = "Blessed Amulet is already active!"; }
+                else if (EndlessModeManager.Instance == null || EndlessModeManager.Instance.GetSessionItemCount(EndlessShopData.BLESSED_AMULET_ID) <= 0) isUnavailable = true;
+                break;
         }
 
-        // Apply the correct text
+        // Display the correct text based on the lockout reason
         if (isUnavailable)
         {
-            descText.text = textNo;
-            if(potText2 != null) potText2.text = textNo;
-
+            descText.text = !string.IsNullOrEmpty(customLockedMessage) ? customLockedMessage : textNo;
         }
         else
         {
             descText.text = text;
-            if(potText2 != null) potText2.text = text;
         }
 
-        // Push the same description to the main move box if checked
         if (updateMainDescriptionBox && TurnManager.Instance != null)
         {
             TurnManager.Instance.ShowDescription(descText.text);
@@ -88,10 +102,7 @@ public class buttonHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
     public void OnPointerExit(PointerEventData eventData)
     {
         descText.text = "Select a command.";
-        if(potText2 != null) potText2.text = "Select a command.";
-
         
-        // Reset the main move box if checked
         if (updateMainDescriptionBox && TurnManager.Instance != null)
         {
             TurnManager.Instance.HideDescription();

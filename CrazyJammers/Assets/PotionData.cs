@@ -43,4 +43,5 @@ public class PotionData : MonoBehaviour
         Potion = 1;
         Panacea = 1;
     }
+    
 }

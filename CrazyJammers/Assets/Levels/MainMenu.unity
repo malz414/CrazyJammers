@@ -1590,6 +1590,10 @@ PrefabInstance:
       propertyPath: m_fontColor32.rgba
       value: 4294958573
       objectReference: {fileID: 0}
+    - target: {fileID: 8867542118845660331, guid: bdca80ec484d2484880037cea5c59fba, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: GoToShop
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
