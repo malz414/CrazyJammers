@@ -1,3 +1,8 @@
+    using System;
+    using System.Security.Cryptography;
+    #if USE_CRAZYGAMES
+    using CrazyGames;
+    #endif
     using System.Collections.Generic;
     using UnityEngine;
     using UnityEngine.UI;
@@ -205,7 +210,6 @@
             }
         }
 
-        // Returns true if Blessed Amulet was consumed (meaning the turn should NOT end!)
         public bool TryConsumeFreeItemAction()
         {
             if (!freeItemActionActive) return false;
@@ -217,13 +221,83 @@
             return sessionInventory.ContainsKey(itemId) ? sessionInventory[itemId] : 0;
         }
 
-        public void OnEndlessRunEnded(int earnedGald)
-        {
-            EndlessShopData.AddGald(earnedGald);
+    public void OnEndlessRunEnded(int earnedGald, int finalScore)
+    {
+        EndlessShopData.AddGald(earnedGald);
 
-            wasShopAlreadyUnlockedThisRun = EndlessShopData.IsShopUnlocked;
-            EndlessShopData.IsShopUnlocked = true;
+        wasShopAlreadyUnlockedThisRun = EndlessShopData.IsShopUnlocked;
+        EndlessShopData.IsShopUnlocked = true;
+
+#if USE_CRAZYGAMES
+        if (CrazySDK.IsAvailable)
+        {
+            // IMPORTANT: Replace this string later with your actual key from the Developer Portal!
+            string encryptionKey = "YOUR_32_BYTE_BASE64_KEY_HERE"; 
+            
+            try 
+            {
+                string encryptedScore = EncryptScore(finalScore, encryptionKey);
+                CrazySDK.User.SubmitScore(encryptedScore, finalScore);
+                Debug.Log($"[CrazyGames] Successfully sent Endless Score: {finalScore}");
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning($"[CrazyGames] Score encryption/submission failed: {e.Message}");
+            }
         }
+#endif
+    }
+
+#if USE_CRAZYGAMES
+    // CrazyGames' required AES Encryption method
+    private string EncryptScore(float score, string keyBase64)
+    {
+        byte[] key = Convert.FromBase64String(keyBase64);
+        byte[] plaintext = System.Text.Encoding.UTF8.GetBytes(score.ToString(System.Globalization.CultureInfo.InvariantCulture));
+        byte[] iv = new byte[12];
+        
+        using (RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider())
+        {
+            rng.GetBytes(iv);
+        }
+
+        byte[] result = new byte[iv.Length + plaintext.Length + 1];
+        Buffer.BlockCopy(iv, 0, result, 0, iv.Length);
+
+        using (Aes aes = Aes.Create())
+        {
+            aes.Key = key;
+            aes.Mode = CipherMode.ECB;
+            aes.Padding = PaddingMode.None;
+
+            using (var encryptor = aes.CreateEncryptor())
+            {
+                byte[] counter = new byte[16];
+                Buffer.BlockCopy(iv, 0, counter, 0, 12);
+                counter[15] = 1; 
+
+                for (int i = 0; i < plaintext.Length; i += 16)
+                {
+                    byte[] keystream = encryptor.TransformFinalBlock(counter, 0, 16);
+                    int blockSize = Math.Min(16, plaintext.Length - i);
+                    
+                    for (int j = 0; j < blockSize; j++)
+                    {
+                        result[iv.Length + i + j] = (byte)(plaintext[i + j] ^ keystream[j]);
+                    }
+
+                    for (int j = 15; j >= 0; j--)
+                    {
+                        if (++counter[j] != 0) break;
+                    }
+                }
+            }
+        }
+        
+        result[result.Length - 1] = 0x55; // Unity marker byte required by the SDK
+        return Convert.ToBase64String(result);
+    }
+#endif
         public void ShowPostRunShopOptions()
         {
             if (results != null) results.SetActive(false);

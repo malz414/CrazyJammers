@@ -2265,11 +2265,11 @@ public class TurnManager : MonoBehaviour
                 TransitionManager.Instance().Transition(sequenceTransition, 1f);
             }
             
-
             yield return new WaitForSeconds(endGameDelay);
+            
             if (currentGameMode == GameMode.Endless && EndlessModeManager.Instance != null)
             {
-                EndlessModeManager.Instance.OnEndlessRunEnded(currentGald);
+                EndlessModeManager.Instance.OnEndlessRunEnded(currentGald, currentScore);
             }
 
             if (MusicManager.Instance != null)
