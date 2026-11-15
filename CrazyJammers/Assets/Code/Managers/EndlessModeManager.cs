@@ -1,59 +1,59 @@
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.UI;
-using UnityEngine.EventSystems;
-using UnityEngine.SceneManagement;
-using TMPro;
-using EasyTransition;
+    using System.Collections.Generic;
+    using UnityEngine;
+    using UnityEngine.UI;
+    using UnityEngine.EventSystems;
+    using UnityEngine.SceneManagement;
+    using TMPro;
+    using EasyTransition;
 
-public class EndlessModeManager : MonoBehaviour
-{
-    public static EndlessModeManager Instance { get; private set; }
-
-    [Header("Battle Item Menu (Auto-Detected from Parent)")]
-    [Tooltip("Drag the 'Item Group' parent Transform from Battle Menu here. Children 0 & 1 (Potion/Panacea) are skipped automatically.")]
-    [SerializeField] private Transform battleItemGroupParent;
-    [Tooltip("How many children at the top of Item Group are standard items (2 = Potion & Panacea).")]
-    [SerializeField] private int standardItemButtonsCount = 2;
-    [SerializeField] private TextMeshProUGUI itemMenuDescriptionText;
-
-    [Header("Endless End-of-Run UI Groups")]
-    [SerializeField] private GameObject firstTimeEndlessEndGroup;
-    [SerializeField] private GameObject regularEndlessEndGroup;
-    [SerializeField] private GameObject shopUnlockNotifOverlay;
-     [SerializeField] private GameObject results;
-    [SerializeField] private GameObject resultsbutton;
-     [SerializeField] private GameObject image;
-     [HideInInspector] public bool hasUsedItemThisTurn = false;
-
-     
-    public string shopSceneName = "ShopScene";
-
-    // Runtime session inventory (replenished every run)
-    private Dictionary<string, int> sessionInventory = new Dictionary<string, int>();
-    private List<Button> spawnedBattleButtons = new List<Button>();
-    public bool freeItemActionActive = false;
-    private bool wasShopAlreadyUnlockedThisRun = false;
-    private void Awake()
+    public class EndlessModeManager : MonoBehaviour
     {
-        if (Instance == null) Instance = this;
-        else Destroy(gameObject);
-    }
+        public static EndlessModeManager Instance { get; private set; }
 
-    public void OnBattleStart()
-    {
-        freeItemActionActive = false;
-        sessionInventory.Clear();
+        [Header("Battle Item Menu (Auto-Detected from Parent)")]
+        [Tooltip("Drag the 'Item Group' parent Transform from Battle Menu here. Children 0 & 1 (Potion/Panacea) are skipped automatically.")]
+        [SerializeField] private Transform battleItemGroupParent;
+        [Tooltip("How many children at the top of Item Group are standard items (2 = Potion & Panacea).")]
+        [SerializeField] private int standardItemButtonsCount = 2;
+        [SerializeField] private TextMeshProUGUI itemMenuDescriptionText;
 
-        foreach (var item in EndlessShopData.Catalog)
+        [Header("Endless End-of-Run UI Groups")]
+        [SerializeField] private GameObject firstTimeEndlessEndGroup;
+        [SerializeField] private GameObject regularEndlessEndGroup;
+        [SerializeField] private GameObject shopUnlockNotifOverlay;
+        [SerializeField] private GameObject results;
+        [SerializeField] private GameObject resultsbutton;
+        [SerializeField] private GameObject image;
+        [HideInInspector] public bool hasUsedItemThisTurn = false;
+
+        
+        public string shopSceneName = "ShopScene";
+
+        // Runtime session inventory (replenished every run)
+        private Dictionary<string, int> sessionInventory = new Dictionary<string, int>();
+        private List<Button> spawnedBattleButtons = new List<Button>();
+        public bool freeItemActionActive = false;
+        private bool wasShopAlreadyUnlockedThisRun = false;
+        private void Awake()
         {
-            sessionInventory[item.itemId] = EndlessShopData.GetPermanentItemCount(item.itemId);
+            if (Instance == null) Instance = this;
+            else Destroy(gameObject);
         }
 
-        BuildOrRefreshBattleItemButtons();
-    }
+        public void OnBattleStart()
+        {
+            freeItemActionActive = false;
+            sessionInventory.Clear();
 
-    public void BuildOrRefreshBattleItemButtons()
+            foreach (var item in EndlessShopData.Catalog)
+            {
+                sessionInventory[item.itemId] = EndlessShopData.GetPermanentItemCount(item.itemId);
+            }
+
+            BuildOrRefreshBattleItemButtons();
+        }
+
+        public void BuildOrRefreshBattleItemButtons()
     {
         if (battleItemGroupParent == null) return;
 
@@ -83,13 +83,18 @@ public class EndlessModeManager : MonoBehaviour
                 EndlessItemDefinition itemDef = ownedCatalog[i];
                 int remainingCount = sessionInventory.ContainsKey(itemDef.itemId) ? sessionInventory[itemDef.itemId] : 0;
 
+                if (remainingCount <= 0)
+                {
+                    btn.gameObject.SetActive(false);
+                    continue; 
+                }
+
                 btn.gameObject.SetActive(true);
 
                 bool isActionLocked = hasUsedItemThisTurn || (itemDef.effectType == EndlessItemEffectType.FreeItemAction && freeItemActionActive);
-                bool canUse = (remainingCount > 0) && !isActionLocked;
+                bool canUse = !isActionLocked;
                 
                 btn.interactable = canUse;
-                
                 Color targetTextColor = canUse ? Color.white : Color.gray;
 
                 TextMeshProUGUI[] texts = btn.GetComponentsInChildren<TextMeshProUGUI>(true);
@@ -117,125 +122,124 @@ public class EndlessModeManager : MonoBehaviour
     }
 
 
-    private void SetupDynamicHover(GameObject btnObj, EndlessItemDefinition itemDef)
-    {
-        EventTrigger trigger = btnObj.GetComponent<EventTrigger>();
-        if (trigger == null) trigger = btnObj.AddComponent<EventTrigger>();
-        trigger.triggers.Clear();
-
-        EventTrigger.Entry enter = new EventTrigger.Entry { eventID = EventTriggerType.PointerEnter };
-        enter.callback.AddListener((_) =>
+        private void SetupDynamicHover(GameObject btnObj, EndlessItemDefinition itemDef)
         {
-            if (itemMenuDescriptionText == null) return;
-            
+            EventTrigger trigger = btnObj.GetComponent<EventTrigger>();
+            if (trigger == null) trigger = btnObj.AddComponent<EventTrigger>();
+            trigger.triggers.Clear();
+
+            EventTrigger.Entry enter = new EventTrigger.Entry { eventID = EventTriggerType.PointerEnter };
+            enter.callback.AddListener((_) =>
+            {
+                if (itemMenuDescriptionText == null) return;
+                
+                if (hasUsedItemThisTurn)
+                {
+                    itemMenuDescriptionText.text = "You already used an item this turn!";
+                    return;
+                }
+                if (itemDef.effectType == EndlessItemEffectType.FreeItemAction && freeItemActionActive)
+                {
+                    itemMenuDescriptionText.text = "Blessed Amulet is already active!";
+                    return;
+                }
+
+                int count = sessionInventory.ContainsKey(itemDef.itemId) ? sessionInventory[itemDef.itemId] : 0;
+                itemMenuDescriptionText.text = count > 0 ? itemDef.description : itemDef.emptyDescription;
+            });
+            trigger.triggers.Add(enter);
+
+            EventTrigger.Entry exit = new EventTrigger.Entry { eventID = EventTriggerType.PointerExit };
+            exit.callback.AddListener((_) =>
+            {
+                if (itemMenuDescriptionText != null) itemMenuDescriptionText.text = "Select a command.";
+            });
+            trigger.triggers.Add(exit);
+        }
+
+        private void UseEndlessItem(EndlessItemDefinition itemDef)
+        {
+            TurnManager tm = TurnManager.Instance;
+            if (tm == null || tm.hero == null) return;
+
             if (hasUsedItemThisTurn)
             {
-                itemMenuDescriptionText.text = "You already used an item this turn!";
-                return;
-            }
-            if (itemDef.effectType == EndlessItemEffectType.FreeItemAction && freeItemActionActive)
-            {
-                itemMenuDescriptionText.text = "Blessed Amulet is already active!";
+                if (itemMenuDescriptionText != null) itemMenuDescriptionText.text = "You already used an item this turn!";
                 return;
             }
 
             int count = sessionInventory.ContainsKey(itemDef.itemId) ? sessionInventory[itemDef.itemId] : 0;
-            itemMenuDescriptionText.text = count > 0 ? itemDef.description : itemDef.emptyDescription;
-        });
-        trigger.triggers.Add(enter);
+            if (count <= 0)
+            {
+                if (itemMenuDescriptionText != null) itemMenuDescriptionText.text = itemDef.emptyDescription;
+                return;
+            }
 
-        EventTrigger.Entry exit = new EventTrigger.Entry { eventID = EventTriggerType.PointerExit };
-        exit.callback.AddListener((_) =>
-        {
-            if (itemMenuDescriptionText != null) itemMenuDescriptionText.text = "Select a command.";
-        });
-        trigger.triggers.Add(exit);
-    }
+            switch (itemDef.effectType)
+            {
+                case EndlessItemEffectType.FullHealAndCure:
+                    bool needsHeal = tm.hero.currentHealth < tm.hero.maxHealth;
+                    bool hasStatus = tm.hero.burning > 0 || tm.hero.paralysisEffect != null;
+                    if (!needsHeal && !hasStatus)
+                    {
+                        if (itemMenuDescriptionText != null) itemMenuDescriptionText.text = "HP and Status already full!";
+                        return;
+                    }
 
-    private void UseEndlessItem(EndlessItemDefinition itemDef)
-    {
-        TurnManager tm = TurnManager.Instance;
-        if (tm == null || tm.hero == null) return;
+                    sessionInventory[itemDef.itemId]--;
+                    tm.ExecuteMiracleDewEffect();
+                    BuildOrRefreshBattleItemButtons();
+                    break;
 
-        if (hasUsedItemThisTurn)
-        {
-            if (itemMenuDescriptionText != null) itemMenuDescriptionText.text = "You already used an item this turn!";
-            return;
+                case EndlessItemEffectType.FreeItemAction:
+                    if (freeItemActionActive)
+                    {
+                        if (itemMenuDescriptionText != null) itemMenuDescriptionText.text = "Blessed Amulet already active!";
+                        return;
+                    }
+
+                    sessionInventory[itemDef.itemId]--;
+                    freeItemActionActive = true;
+                    tm.ExecuteBlessedAmuletEffect();
+                    break;
+            }
         }
 
-        int count = sessionInventory.ContainsKey(itemDef.itemId) ? sessionInventory[itemDef.itemId] : 0;
-        if (count <= 0)
+        // Returns true if Blessed Amulet was consumed (meaning the turn should NOT end!)
+        public bool TryConsumeFreeItemAction()
         {
-            if (itemMenuDescriptionText != null) itemMenuDescriptionText.text = itemDef.emptyDescription;
-            return;
+            if (!freeItemActionActive) return false;
+            freeItemActionActive = false;
+            return true;
+        }
+        public int GetSessionItemCount(string itemId)
+        {
+            return sessionInventory.ContainsKey(itemId) ? sessionInventory[itemId] : 0;
         }
 
-        switch (itemDef.effectType)
+        public void OnEndlessRunEnded(int earnedGald)
         {
-            case EndlessItemEffectType.FullHealAndCure:
-                bool needsHeal = tm.hero.currentHealth < tm.hero.maxHealth;
-                bool hasStatus = tm.hero.burning > 0 || tm.hero.paralysisEffect != null;
-                if (!needsHeal && !hasStatus)
-                {
-                    if (itemMenuDescriptionText != null) itemMenuDescriptionText.text = "HP and Status already full!";
-                    return;
-                }
+            EndlessShopData.AddGald(earnedGald);
 
-                sessionInventory[itemDef.itemId]--;
-                tm.ExecuteMiracleDewEffect();
-                BuildOrRefreshBattleItemButtons();
-                break;
+            wasShopAlreadyUnlockedThisRun = EndlessShopData.IsShopUnlocked;
+            EndlessShopData.IsShopUnlocked = true;
+        }
+        public void ShowPostRunShopOptions()
+        {
+            if (results != null) results.SetActive(false);
+            if (resultsbutton != null) resultsbutton.SetActive(false);
+            if (image != null) image.SetActive(true);
 
-            case EndlessItemEffectType.FreeItemAction:
-                if (freeItemActionActive)
-                {
-                    if (itemMenuDescriptionText != null) itemMenuDescriptionText.text = "Blessed Amulet already active!";
-                    return;
-                }
 
-                sessionInventory[itemDef.itemId]--;
-                freeItemActionActive = true;
-                tm.ExecuteBlessedAmuletEffect();
-                break;
+            if (firstTimeEndlessEndGroup != null) firstTimeEndlessEndGroup.SetActive(!wasShopAlreadyUnlockedThisRun);
+            if (regularEndlessEndGroup != null) regularEndlessEndGroup.SetActive(wasShopAlreadyUnlockedThisRun);
+        }
+
+        public void GoToShopScene()
+        {
+            if (TransitionManager.Instance() != null && TurnManager.Instance != null)
+                TransitionManager.Instance().Transition(shopSceneName, TurnManager.Instance.sequenceTransition, 0f);
+            else
+                SceneManager.LoadScene(shopSceneName);
         }
     }
-
-    // Returns true if Blessed Amulet was consumed (meaning the turn should NOT end!)
-    public bool TryConsumeFreeItemAction()
-    {
-        if (!freeItemActionActive) return false;
-        freeItemActionActive = false;
-        return true;
-    }
-    public int GetSessionItemCount(string itemId)
-    {
-        return sessionInventory.ContainsKey(itemId) ? sessionInventory[itemId] : 0;
-    }
-
-    public void OnEndlessRunEnded(int earnedGald)
-    {
-        EndlessShopData.AddGald(earnedGald);
-
-        wasShopAlreadyUnlockedThisRun = EndlessShopData.IsShopUnlocked;
-        EndlessShopData.IsShopUnlocked = true;
-    }
-    public void ShowPostRunShopOptions()
-    {
-        if (results != null) results.SetActive(false);
-        if (resultsbutton != null) resultsbutton.SetActive(false);
-         if (image != null) image.SetActive(true);
-
-
-        if (firstTimeEndlessEndGroup != null) firstTimeEndlessEndGroup.SetActive(!wasShopAlreadyUnlockedThisRun);
-        if (regularEndlessEndGroup != null) regularEndlessEndGroup.SetActive(wasShopAlreadyUnlockedThisRun);
-        if (!wasShopAlreadyUnlockedThisRun && shopUnlockNotifOverlay != null) shopUnlockNotifOverlay.SetActive(true);
-    }
-
-    public void GoToShopScene()
-    {
-        if (TransitionManager.Instance() != null && TurnManager.Instance != null)
-            TransitionManager.Instance().Transition(shopSceneName, TurnManager.Instance.sequenceTransition, 0f);
-        else
-            SceneManager.LoadScene(shopSceneName);
-    }
-}

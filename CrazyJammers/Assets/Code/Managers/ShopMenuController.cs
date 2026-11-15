@@ -6,12 +6,11 @@ using EasyTransition;
 
 public class ShopMenuController : MonoBehaviour
 {
-    [Header("Testing")]
+        [Header("Testing")]
     [Tooltip("Check this to instantly give yourself 999,999 Gald on Start so you can test buying.")]
     public bool debugGiveInfiniteGald = false;
-
     [Header("Dynamic Row Parent")]
-    [Tooltip("Drag 'Item Button Group' here. It will safely ignore your Buy/Multi-Select buttons.")]
+    [Tooltip("Drag 'Item Button Group' here.")]
     [SerializeField] private Transform itemButtonGroupParent;
 
     [Header("Top & Bottom Details UI")]
@@ -23,44 +22,53 @@ public class ShopMenuController : MonoBehaviour
     [SerializeField] private Button selectMultipleButton;
     [SerializeField] private Button buyButton;
 
+    [Header("First Time Shop Unlock")]
+    [Tooltip("Drag the Notification Overlay prefab here.")]
+    [SerializeField] private GameObject shopUnlockNotifOverlay;
+
     [Header("Navigation")]
     public TransitionSettings transitionSettings;
     public string mainMenuSceneName = "MainMenu";
     public string endlessSceneName = "EndlessModeScene";
 
     private List<Button> rowButtons = new List<Button>();
-    private int selectedIndex = 0;
-    private int purchaseQuantity = 1;
+    private int viewingIndex = 0; 
+    
+    private bool isMultiSelectMode = false;
+    private HashSet<int> cartIndices = new HashSet<int>(); 
 
     private void Start()
     {
-        // 1. Give test money if the cheat is checked
+           // 1. Give test money if the cheat is checked
         if (debugGiveInfiniteGald)
         {
             EndlessShopData.TotalGald = 999999;
+        }
+        if (EndlessShopData.IsShopUnlocked && !EndlessShopData.HasShownShopUnlockNotif && shopUnlockNotifOverlay != null)
+        {
+            shopUnlockNotifOverlay.SetActive(true);
+            EndlessShopData.HasShownShopUnlockNotif = true;
         }
 
         AutoBindRowButtons();
 
         if (selectMultipleButton != null)
-            selectMultipleButton.onClick.AddListener(OnCycleQuantityClicked);
+            selectMultipleButton.onClick.AddListener(OnToggleMultiSelect);
 
         if (buyButton != null)
             buyButton.onClick.AddListener(OnBuyClicked);
 
-        SelectItem(0);
-        RefreshAllUI();
+        ViewItem(0);
     }
+
+
 
     private void AutoBindRowButtons()
     {
         if (itemButtonGroupParent == null) return;
-
         rowButtons.Clear();
         foreach (Transform child in itemButtonGroupParent)
         {
-            // 2. CRITICAL FIX: Only grab objects specifically named "Item Button"
-            // This prevents the script from accidentally hijacking your Buy and Multi-Select buttons!
             if (child.name.StartsWith("Item Button"))
             {
                 Button btn = child.GetComponent<Button>();
@@ -71,7 +79,6 @@ public class ShopMenuController : MonoBehaviour
         while (rowButtons.Count < EndlessShopData.Catalog.Count && rowButtons.Count > 0)
         {
             Button clone = Instantiate(rowButtons[rowButtons.Count - 1], itemButtonGroupParent);
-            // Move the clone to the bottom of the items, but ABOVE your Buy/Multi buttons
             clone.transform.SetSiblingIndex(rowButtons.Count); 
             rowButtons.Add(clone);
         }
@@ -83,7 +90,8 @@ public class ShopMenuController : MonoBehaviour
             {
                 rowButtons[i].gameObject.SetActive(true);
                 rowButtons[i].onClick.RemoveAllListeners();
-                rowButtons[i].onClick.AddListener(() => SelectItem(index));
+                
+                rowButtons[i].onClick.AddListener(() => ViewItem(index));
             }
             else
             {
@@ -92,90 +100,155 @@ public class ShopMenuController : MonoBehaviour
         }
     }
 
-    public void SelectItem(int index)
+    public void ViewItem(int index)
     {
         if (index < 0 || index >= EndlessShopData.Catalog.Count) return;
-        selectedIndex = index;
-        purchaseQuantity = 1;
+        viewingIndex = index;
+        
+        if (isMultiSelectMode)
+        {
+            if (cartIndices.Contains(index)) cartIndices.Remove(index);
+            else cartIndices.Add(index);
+        }
+
         RefreshAllUI();
     }
 
-    public void OnCycleQuantityClicked()
+    public void OnToggleMultiSelect()
     {
-        if (EndlessShopData.Catalog.Count == 0) return;
-        var item = EndlessShopData.Catalog[selectedIndex];
-        int owned = EndlessShopData.GetPermanentItemCount(item.itemId);
+        isMultiSelectMode = !isMultiSelectMode;
         
-        // Calculate max amount you can physically carry vs financially afford
-        int maxCanBuyByLimit = Mathf.Max(1, item.maxCarryLimit - owned);
-        int maxCanAfford = item.price > 0 ? (EndlessShopData.TotalGald / item.price) : 99;
+        if (isMultiSelectMode)
+        {
+            cartIndices.Clear();
+            cartIndices.Add(viewingIndex);
+        }
+        else
+        {
+            cartIndices.Clear();
+        }
         
-        // Clamp the selection. If you have 0 money, maxAllowed drops to 1 so the UI doesn't break, but Buy stays disabled.
-        int maxAllowed = Mathf.Max(1, Mathf.Min(maxCanBuyByLimit, maxCanAfford));
-
-        purchaseQuantity++;
-        if (purchaseQuantity > maxAllowed) purchaseQuantity = 1;
-
         RefreshAllUI();
     }
 
     public void OnBuyClicked()
     {
         if (EndlessShopData.Catalog.Count == 0) return;
-        var item = EndlessShopData.Catalog[selectedIndex];
-        int owned = EndlessShopData.GetPermanentItemCount(item.itemId);
 
-        if (owned + purchaseQuantity > item.maxCarryLimit)
+        if (!isMultiSelectMode)
         {
-            purchaseQuantity = 1;
-            RefreshAllUI();
-            return;
+            var item = EndlessShopData.Catalog[viewingIndex];
+            int owned = EndlessShopData.GetPermanentItemCount(item.itemId);
+            
+            if (EndlessShopData.TotalGald >= item.price && owned < item.maxCarryLimit)
+            {
+                EndlessShopData.TotalGald -= item.price;
+                EndlessShopData.AddPermanentItem(item.itemId, 1);
+                RefreshAllUI();
+            }
         }
-
-        int totalCost = item.price * purchaseQuantity;
-        if (EndlessShopData.TotalGald >= totalCost)
+        else
         {
-            EndlessShopData.TotalGald -= totalCost;
-            EndlessShopData.AddPermanentItem(item.itemId, purchaseQuantity);
-            purchaseQuantity = 1;
-            RefreshAllUI();
+            if (cartIndices.Count == 0) return;
+
+            int totalCost = 0;
+            bool limitsOk = true;
+
+            foreach (int i in cartIndices)
+            {
+                var item = EndlessShopData.Catalog[i];
+                totalCost += item.price;
+                if (EndlessShopData.GetPermanentItemCount(item.itemId) >= item.maxCarryLimit)
+                {
+                    limitsOk = false;
+                }
+            }
+
+            if (limitsOk && EndlessShopData.TotalGald >= totalCost)
+            {
+                EndlessShopData.TotalGald -= totalCost;
+                foreach (int i in cartIndices)
+                {
+                    EndlessShopData.AddPermanentItem(EndlessShopData.Catalog[i].itemId, 1);
+                }
+                cartIndices.Clear();
+                isMultiSelectMode = false; 
+                RefreshAllUI();
+            }
         }
     }
 
     public void RefreshAllUI()
     {
-        if (galdCountText != null)
-            galdCountText.text = $"{EndlessShopData.TotalGald}G";
+        if (galdCountText != null) galdCountText.text = $"{EndlessShopData.TotalGald}G";
+
+        int totalCost = 0;
+        bool overLimit = false;
+
+        if (isMultiSelectMode)
+        {
+            foreach (int i in cartIndices)
+            {
+                var item = EndlessShopData.Catalog[i];
+                totalCost += item.price;
+                if (EndlessShopData.GetPermanentItemCount(item.itemId) >= item.maxCarryLimit) overLimit = true;
+            }
+        }
+        else if (EndlessShopData.Catalog.Count > 0)
+        {
+            var item = EndlessShopData.Catalog[viewingIndex];
+            totalCost = item.price;
+            if (EndlessShopData.GetPermanentItemCount(item.itemId) >= item.maxCarryLimit) overLimit = true;
+        }
 
         for (int i = 0; i < EndlessShopData.Catalog.Count && i < rowButtons.Count; i++)
         {
             var item = EndlessShopData.Catalog[i];
             int owned = EndlessShopData.GetPermanentItemCount(item.itemId);
+            int amountLeftInShop = item.maxCarryLimit - owned;
 
             TextMeshProUGUI[] rowTexts = rowButtons[i].GetComponentsInChildren<TextMeshProUGUI>(true);
-            if (rowTexts.Length > 0) rowTexts[0].text = item.displayName;
-            if (rowTexts.Length > 1) rowTexts[1].text = $"{item.price}G";
-            if (rowTexts.Length > 2) rowTexts[2].text = $"x{owned:00}";
+            
+            string prefix = "";
+            if (isMultiSelectMode)
+            {
+                prefix = cartIndices.Contains(i) ? "[X] " : "[ ] ";
+            }
+
+            if (rowTexts.Length > 0) rowTexts[0].text = $"{item.price}G"; 
+            if (rowTexts.Length > 1) rowTexts[1].text = prefix + item.displayName; 
+            
+            // --- NEW: Shows remaining quantity available to buy ---
+            if (rowTexts.Length > 2) rowTexts[2].text = amountLeftInShop.ToString(); 
+
+            CanvasGroup cg = rowButtons[i].GetComponent<CanvasGroup>();
+            if (cg == null) cg = rowButtons[i].gameObject.AddComponent<CanvasGroup>();
+            
+            if (isMultiSelectMode) cg.alpha = cartIndices.Contains(i) ? 1.0f : 0.5f;
+            else cg.alpha = (i == viewingIndex) ? 1.0f : 0.5f;
         }
 
-        if (EndlessShopData.Catalog.Count > 0 && selectedIndex < EndlessShopData.Catalog.Count)
+        // Refresh the Description Panel at the bottom
+        if (EndlessShopData.Catalog.Count > 0 && viewingIndex < EndlessShopData.Catalog.Count)
         {
-            var current = EndlessShopData.Catalog[selectedIndex];
+            var current = EndlessShopData.Catalog[viewingIndex];
             int owned = EndlessShopData.GetPermanentItemCount(current.itemId);
-            int totalCost = current.price * purchaseQuantity;
 
             if (selectedItemNameText != null) selectedItemNameText.text = current.displayName;
             if (selectedItemDescText != null) selectedItemDescText.text = current.description;
-            if (selectedItemOwnedText != null) selectedItemOwnedText.text = $"Owned x{owned:00}";
+            if (selectedItemOwnedText != null) selectedItemOwnedText.text = $"{owned}";
 
             if (selectMultipleButtonText != null)
-                selectMultipleButtonText.text = purchaseQuantity > 1 ? $"Qty: x{purchaseQuantity}" : "Select Multiple";
+                selectMultipleButtonText.text = isMultiSelectMode ? "Cancel" : "Select Multiple";
 
             if (buyButton != null)
             {
                 bool canAfford = EndlessShopData.TotalGald >= totalCost;
-                bool underLimit = (owned + purchaseQuantity) <= current.maxCarryLimit;
-                buyButton.interactable = canAfford && underLimit;
+                bool hasSelection = !isMultiSelectMode || cartIndices.Count > 0;
+                buyButton.interactable = canAfford && !overLimit && hasSelection;
+                
+                TextMeshProUGUI buyText = buyButton.GetComponentInChildren<TextMeshProUGUI>();
+                if (buyText != null) buyText.text = $"Buy ({totalCost}G)";
             }
         }
     }

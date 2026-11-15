@@ -19,6 +19,8 @@ public class MainMenuManager : MonoBehaviour
     
     [Header("Mode Unlocks")]
     [SerializeField] private Button endlessModeButton; 
+    [SerializeField] private Button shopButton; 
+    [SerializeField] private GameObject shopUnlockNotifOverlay; 
     [SerializeField] private string endlessSceneName = "EndlessModeScene"; 
     public bool MainMenu;
     
@@ -36,17 +38,25 @@ public class MainMenuManager : MonoBehaviour
 #endif
 
         bool isEndlessUnlocked = PlayerPrefs.GetInt("EndlessModeUnlocked", 0) == 1;
-
-        // Completely hide the button if not unlocked
         if (endlessModeButton != null)
         {
             endlessModeButton.gameObject.SetActive(isEndlessUnlocked);
+        }
+
+        if (shopButton != null)
+        {
+            shopButton.gameObject.SetActive(EndlessShopData.IsShopUnlocked);
+        }
+
+        if (EndlessShopData.IsShopUnlocked && !EndlessShopData.HasShownShopUnlockNotif && shopUnlockNotifOverlay != null)
+        {
+            shopUnlockNotifOverlay.SetActive(true);
+            EndlessShopData.HasShownShopUnlockNotif = true;
         }
         
         if (continueButton != null)
         {
             string savedScene = PlayerPrefs.GetString("SavedLevel", "");
-            
             bool canContinue = !string.IsNullOrEmpty(savedScene) && savedScene != "GameScene(LVL1)";
             
             continueButton.interactable = canContinue;
@@ -61,15 +71,11 @@ public class MainMenuManager : MonoBehaviour
         }
     }
 
+
     public void StartGame()
     {
-        if(gameStarted)
-        {
-            return;
-        }
-        
+        if(gameStarted) return;
         gameStarted = true;
-
         StartCoroutine(DoStartGameRoutine());
     }
 
@@ -77,7 +83,6 @@ public class MainMenuManager : MonoBehaviour
     {
         if (gameStarted) return;
         gameStarted = true;
-
         TransitionManager.Instance().Transition(endlessSceneName, sequenceTransition, 0f);
     }
 
@@ -85,7 +90,6 @@ public class MainMenuManager : MonoBehaviour
     {
         if (gameStarted) return;
         gameStarted = true;
-
         string sceneToLoad = PlayerPrefs.GetString("SavedLevel", "GameScene(LVL1)");
         TransitionManager.Instance().Transition(sceneToLoad, sequenceTransition, 0f);
     }
@@ -93,14 +97,9 @@ public class MainMenuManager : MonoBehaviour
     public void ShowCredits()
     {
 #if USE_CRAZYGAMES
-        if (CrazySDK.IsAvailable)
-        {
-            CrazySDK.Game.GameplayStop();
-        }
+        if (CrazySDK.IsAvailable) CrazySDK.Game.GameplayStop();
 #endif
-
         MusicManager.Instance.PlayMusic(MusicManager.Instance.credits);
-
         TransitionManager.Instance().Transition("CreditsScene", sequenceTransition, 0f);
     }
 
@@ -108,28 +107,21 @@ public class MainMenuManager : MonoBehaviour
     {
         PlayerPrefs.DeleteKey("SavedLevel");
         PlayerPrefs.Save();
-
         TransitionManager.Instance().Transition("GameScene(LVL1)", sequenceTransition, 0f);
     }
 
     public void HideCreditsReal()
     {
 #if USE_CRAZYGAMES
-        if (CrazySDK.IsAvailable)
-        {
-            CrazySDK.Game.GameplayStop();
-        }
+        if (CrazySDK.IsAvailable) CrazySDK.Game.GameplayStop();
 #endif
-
         TransitionManager.Instance().Transition("MainMenu", sequenceTransition, 0f);
     }
 
     private IEnumerator DoStartGameRoutine()
     {
         EventBus.Publish(new FadeOutEvent(UICategoryEnums.TransitionUI));
-
         yield return new WaitForSeconds(0f);
-
         gameObject.SetActive(false);
     }
 
@@ -137,10 +129,12 @@ public class MainMenuManager : MonoBehaviour
     {
         TransitionManager.Instance().Transition("MainMenu", sequenceTransition, 0f);
     }
+
     public void GoToShop()
     {
         TransitionManager.Instance().Transition("ShopScene", sequenceTransition, 0f);
     }
+
     public void RestartCurrentScene()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);

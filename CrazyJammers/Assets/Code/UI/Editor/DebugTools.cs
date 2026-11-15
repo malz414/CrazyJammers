@@ -5,6 +5,8 @@ using UnityEngine;
 public static class DebugTools
 {
     private const string EndlessPrefKey = "EndlessModeUnlocked";
+    private const string ShopPrefKey = "ShopUnlocked";
+    private const string ShopNotifPrefKey = "FirstShopNotifShown";
 
     [MenuItem("Debug Tools/Endless Mode/Lock (Disable)")]
     public static void LockEndlessMode()
@@ -22,14 +24,29 @@ public static class DebugTools
         Debug.Log("[DebugTools] Endless Mode UNLOCKED (Enabled).");
     }
 
-    [MenuItem("Debug Tools/Endless Mode/Toggle")]
-    public static void ToggleEndlessMode()
+    [MenuItem("Debug Tools/Shop Mode/Lock (Disable)")]
+    public static void LockShopMode()
     {
-        int current = PlayerPrefs.GetInt(EndlessPrefKey, 0);
-        int newState = current == 1 ? 0 : 1;
-        PlayerPrefs.SetInt(EndlessPrefKey, newState);
+        PlayerPrefs.SetInt(ShopPrefKey, 0);
+        PlayerPrefs.SetInt(ShopNotifPrefKey, 0);
         PlayerPrefs.Save();
-        Debug.Log($"[DebugTools] Endless Mode toggled to: {(newState == 1 ? "UNLOCKED" : "LOCKED")}");
+        Debug.Log("[DebugTools] Shop Mode LOCKED (Disabled).");
+    }
+
+    [MenuItem("Debug Tools/Shop Mode/Unlock (Enable)")]
+    public static void UnlockShopMode()
+    {
+        PlayerPrefs.SetInt(ShopPrefKey, 1);
+        PlayerPrefs.Save();
+        Debug.Log("[DebugTools] Shop Mode UNLOCKED (Enabled). Note: The popup will trigger on next scene load.");
+    }
+
+    [MenuItem("Debug Tools/Wipe ALL Save Data (Hard Reset)")]
+    public static void WipeAllPlayerPrefs()
+    {
+        PlayerPrefs.DeleteAll();
+        PlayerPrefs.Save();
+        Debug.Log("[DebugTools] ALL PlayerPrefs have been completely wiped. Game is reset to factory settings.");
     }
 }
 #endif

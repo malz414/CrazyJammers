@@ -420,6 +420,8 @@ MonoBehaviour:
   sequenceTransition: {fileID: 11400000, guid: 013263c83b6a84c4d95beaa8bd163ac8, type: 2}
   rectangle: {fileID: 11400000, guid: b0126e1e0c6c2a04895d564bd230dfb9, type: 2}
   endlessModeButton: {fileID: 0}
+  shopButton: {fileID: 0}
+  shopUnlockNotifOverlay: {fileID: 0}
   endlessSceneName: EndlessModeScene
   MainMenu: 0
   continueButton: {fileID: 0}
@@ -1447,6 +1449,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Results Ui-Endless
       objectReference: {fileID: 0}
+    - target: {fileID: 1308924250217206710, guid: de0137b3a4265aa4a9d9bdf5ebac1570, type: 3}
+      propertyPath: m_text
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3528146416245995522, guid: de0137b3a4265aa4a9d9bdf5ebac1570, type: 3}
       propertyPath: m_Pivot.x
       value: 0
@@ -1551,6 +1557,17 @@ PrefabInstance:
       addedObject: {fileID: 876687471}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: de0137b3a4265aa4a9d9bdf5ebac1570, type: 3}
+--- !u!114 &679077397 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1308924250217206710, guid: de0137b3a4265aa4a9d9bdf5ebac1570, type: 3}
+  m_PrefabInstance: {fileID: 679077396}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &708211242 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 4923524468529800304, guid: 86c29be434574f54ebf7e79740f36b69, type: 3}
@@ -5097,6 +5114,8 @@ MonoBehaviour:
   sequenceTransition: {fileID: 11400000, guid: 013263c83b6a84c4d95beaa8bd163ac8, type: 2}
   rectangle: {fileID: 11400000, guid: b0126e1e0c6c2a04895d564bd230dfb9, type: 2}
   endlessModeButton: {fileID: 0}
+  shopButton: {fileID: 0}
+  shopUnlockNotifOverlay: {fileID: 0}
   endlessSceneName: EndlessModeScene
   MainMenu: 0
   continueButton: {fileID: 0}
@@ -6809,6 +6828,10 @@ PrefabInstance:
       propertyPath: tripleAttack
       value: 
       objectReference: {fileID: 1168529248583268, guid: 76d29242e44bd1d4481337c8f53681ac, type: 3}
+    - target: {fileID: 8485419520516605267, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
+      propertyPath: highScoreText
+      value: 
+      objectReference: {fileID: 679077397}
     - target: {fileID: 8485419520516605267, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
       propertyPath: panaceaButton
       value: 
