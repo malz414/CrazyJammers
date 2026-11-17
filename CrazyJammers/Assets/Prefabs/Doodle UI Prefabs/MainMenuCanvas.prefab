@@ -1093,7 +1093,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Shop
+  m_text: Prize Corner
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 84dafc16f57598444a74b51537a420e3, type: 2}
   m_sharedMaterial: {fileID: 905570593109649617, guid: 84dafc16f57598444a74b51537a420e3, type: 2}
@@ -1654,6 +1654,8 @@ MonoBehaviour:
   sequenceTransition: {fileID: 11400000, guid: 013263c83b6a84c4d95beaa8bd163ac8, type: 2}
   rectangle: {fileID: 11400000, guid: 5d42ad7319df4a8439d74d82f30a60cc, type: 2}
   endlessModeButton: {fileID: 8599270775513495112}
+  shopButton: {fileID: 0}
+  shopUnlockNotifOverlay: {fileID: 0}
   endlessSceneName: EndlessModeScene
   MainMenu: 1
   continueButton: {fileID: 3923670575898709211}

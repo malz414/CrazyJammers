@@ -154,7 +154,6 @@ MonoBehaviour:
   buttonType: 0
   updateMainDescriptionBox: 0
   descText: {fileID: 0}
-  potText2: {fileID: 0}
   text: Heals 1000hp
   textNo: No Potion  left
 --- !u!114 &4779725789084653626
@@ -1186,7 +1185,6 @@ MonoBehaviour:
   buttonType: 0
   updateMainDescriptionBox: 0
   descText: {fileID: 0}
-  potText2: {fileID: 0}
   text: Heals 1000hp
   textNo: No Potion  left
 --- !u!114 &3984394641304751009
@@ -2315,7 +2313,6 @@ MonoBehaviour:
   buttonType: 0
   updateMainDescriptionBox: 0
   descText: {fileID: 0}
-  potText2: {fileID: 0}
   text: Heals 1000hp
   textNo: No Potion  left
 --- !u!114 &817568147315167719
@@ -3250,7 +3247,6 @@ MonoBehaviour:
   buttonType: 0
   updateMainDescriptionBox: 0
   descText: {fileID: 0}
-  potText2: {fileID: 0}
   text: Heals 1000hp
   textNo: No Potion  left
 --- !u!114 &4215802988593813619
@@ -4176,7 +4172,6 @@ MonoBehaviour:
   buttonType: 0
   updateMainDescriptionBox: 0
   descText: {fileID: 0}
-  potText2: {fileID: 0}
   text: Heals 1000hp
   textNo: No Potion  left
 --- !u!114 &7619395644735556886
@@ -5467,7 +5462,6 @@ MonoBehaviour:
   buttonType: 0
   updateMainDescriptionBox: 0
   descText: {fileID: 0}
-  potText2: {fileID: 0}
   text: Heals 1000hp
   textNo: No Potion  left
 --- !u!114 &8860186008758888291
@@ -5642,7 +5636,6 @@ MonoBehaviour:
   buttonType: 0
   updateMainDescriptionBox: 0
   descText: {fileID: 0}
-  potText2: {fileID: 0}
   text: Heals 1000hp
   textNo: No Potion  left
 --- !u!114 &2451898648695453690
@@ -7045,7 +7038,6 @@ MonoBehaviour:
   buttonType: 0
   updateMainDescriptionBox: 0
   descText: {fileID: 0}
-  potText2: {fileID: 0}
   text: Heals 1000hp
   textNo: No Potion  left
 --- !u!114 &3715257992732768510
@@ -7220,7 +7212,6 @@ MonoBehaviour:
   buttonType: 0
   updateMainDescriptionBox: 0
   descText: {fileID: 0}
-  potText2: {fileID: 0}
   text: Heals 1000hp
   textNo: No Potion  left
 --- !u!114 &5384978446698311233
@@ -8496,6 +8487,8 @@ MonoBehaviour:
   sequenceTransition: {fileID: 0}
   rectangle: {fileID: 0}
   endlessModeButton: {fileID: 0}
+  shopButton: {fileID: 0}
+  shopUnlockNotifOverlay: {fileID: 0}
   endlessSceneName: EndlessModeScene
   MainMenu: 0
   continueButton: {fileID: 0}
@@ -9186,7 +9179,6 @@ MonoBehaviour:
   buttonType: 0
   updateMainDescriptionBox: 0
   descText: {fileID: 0}
-  potText2: {fileID: 0}
   text: Heals 1000hp
   textNo: No Potion  left
 --- !u!114 &4693677652291072858
@@ -9955,7 +9947,6 @@ MonoBehaviour:
   buttonType: 0
   updateMainDescriptionBox: 0
   descText: {fileID: 0}
-  potText2: {fileID: 0}
   text: Heals 1000hp
   textNo: No Potion  left
 --- !u!114 &1621319683600175718
@@ -10841,7 +10832,6 @@ MonoBehaviour:
   buttonType: 0
   updateMainDescriptionBox: 0
   descText: {fileID: 0}
-  potText2: {fileID: 0}
   text: Heals 1000hp
   textNo: No Potion  left
 --- !u!114 &7218066790990510799
@@ -11615,7 +11605,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -438, y: 274}
+  m_AnchoredPosition: {x: -431.7, y: 274}
   m_SizeDelta: {x: 471.29, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5796635510765972333
@@ -11646,7 +11636,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Shop
+  m_text: Prize Corner
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 84dafc16f57598444a74b51537a420e3, type: 2}
   m_sharedMaterial: {fileID: 905570593109649617, guid: 84dafc16f57598444a74b51537a420e3, type: 2}
@@ -11673,13 +11663,13 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 60
-  m_fontSizeBase: 60
+  m_fontSize: 38
+  m_fontSizeBase: 38
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 1
+  m_fontStyle: 5
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
   m_textAlignment: 65535
@@ -12644,8 +12634,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 36
-  m_fontSizeBase: 36
+  m_fontSize: 30
+  m_fontSizeBase: 30
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
