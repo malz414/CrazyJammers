@@ -734,7 +734,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   icon: {fileID: 21300000, guid: e55e4ef66043a8747866894761ac06be, type: 3}
   title: New Mode Unlocked
-  description: 'You can now access [Endless Mode]'
+  description: You can now access the [Prize Corner}.
   notificationAnimator: {fileID: 3493245736844620955}
   iconObj: {fileID: 4399258598498626762}
   titleObj: {fileID: 3056352305574726549}
@@ -1214,6 +1214,8 @@ MonoBehaviour:
   sequenceTransition: {fileID: 0}
   rectangle: {fileID: 0}
   endlessModeButton: {fileID: 0}
+  shopButton: {fileID: 0}
+  shopUnlockNotifOverlay: {fileID: 0}
   endlessSceneName: EndlessModeScene
   MainMenu: 0
   continueButton: {fileID: 0}
@@ -2246,7 +2248,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'You can now access [Endless Mode]'
+  m_text: You can now access the [Prize Corner}.
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 0ed692f1d1ac74340a0ab0ba3a80fb96, type: 2}
   m_sharedMaterial: {fileID: 905570593109649617, guid: 0ed692f1d1ac74340a0ab0ba3a80fb96, type: 2}
