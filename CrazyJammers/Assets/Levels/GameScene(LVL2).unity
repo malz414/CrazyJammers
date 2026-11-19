@@ -254,17 +254,6 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 7401487280090963542, guid: 5bc48eb34602b7d4b9e3d44d54050c50, type: 3}
   m_PrefabInstance: {fileID: 1797794550}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &109579857 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 9219808376052806037, guid: edc093f874874f64d9cfa15aa220a370, type: 3}
-  m_PrefabInstance: {fileID: 541571726}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &146537183 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 9001465596760960799, guid: edc093f874874f64d9cfa15aa220a370, type: 3}
@@ -440,17 +429,6 @@ Mesh:
     offset: 0
     size: 0
     path: 
---- !u!114 &257257768 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 3268862385935356961, guid: edc093f874874f64d9cfa15aa220a370, type: 3}
-  m_PrefabInstance: {fileID: 541571726}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &265213637 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 615116979486716609, guid: 5bc48eb34602b7d4b9e3d44d54050c50, type: 3}
@@ -1131,17 +1109,6 @@ MonoBehaviour:
     m_MipBias: 0
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
---- !u!114 &366024075 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 6870852455801273229, guid: edc093f874874f64d9cfa15aa220a370, type: 3}
-  m_PrefabInstance: {fileID: 541571726}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &437982102
 GameObject:
   m_ObjectHideFlags: 0
@@ -1273,22 +1240,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &478166739 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 9020955973937712614, guid: edc093f874874f64d9cfa15aa220a370, type: 3}
-  m_PrefabInstance: {fileID: 541571726}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!1 &535260367 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1058293548545389982, guid: edc093f874874f64d9cfa15aa220a370, type: 3}
-  m_PrefabInstance: {fileID: 541571726}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &541571726
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1446,6 +1397,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: edc093f874874f64d9cfa15aa220a370, type: 3}
+--- !u!1 &541571727 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 9118875630574376118, guid: edc093f874874f64d9cfa15aa220a370, type: 3}
+  m_PrefabInstance: {fileID: 541571726}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &565285629 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1737000829447573938, guid: edc093f874874f64d9cfa15aa220a370, type: 3}
@@ -2714,6 +2670,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5d5de8faed09534c901e70aaa7fb02b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  buttonType: 0
+  updateMainDescriptionBox: 0
   descText: {fileID: 1877336720}
   text: Select an item to support you in this battle
   textNo: 
@@ -3062,17 +3020,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1135154112}
   m_LocalEulerAnglesHint: {x: 0, y: -90, z: 0}
---- !u!114 &1569385520 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 3582590496487219367, guid: edc093f874874f64d9cfa15aa220a370, type: 3}
-  m_PrefabInstance: {fileID: 541571726}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &1587063166 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 3565338914650672404, guid: edc093f874874f64d9cfa15aa220a370, type: 3}
@@ -3145,6 +3092,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5d5de8faed09534c901e70aaa7fb02b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  buttonType: 0
+  updateMainDescriptionBox: 0
   descText: {fileID: 988084837}
   text: Cures Ailments
   textNo: 
@@ -3160,6 +3109,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5d5de8faed09534c901e70aaa7fb02b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  buttonType: 0
+  updateMainDescriptionBox: 0
   descText: {fileID: 988084837}
   text: Heals 1000hp
   textNo: 
@@ -4046,6 +3997,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5d5de8faed09534c901e70aaa7fb02b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  buttonType: 0
+  updateMainDescriptionBox: 0
   descText: {fileID: 1877336720}
   text: Power up your moves and gain some defence
   textNo: Your Bide leve is maximum!
@@ -4061,6 +4014,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5d5de8faed09534c901e70aaa7fb02b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  buttonType: 0
+  updateMainDescriptionBox: 0
   descText: {fileID: 1877336720}
   text: Remix the of your enemies to create a stronger one
   textNo: 
@@ -5023,11 +4978,11 @@ PrefabInstance:
     - target: {fileID: 8485419520516605267, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
       propertyPath: PanAmount
       value: 
-      objectReference: {fileID: 257257768}
+      objectReference: {fileID: 0}
     - target: {fileID: 8485419520516605267, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
       propertyPath: PotAmount
       value: 
-      objectReference: {fileID: 1569385520}
+      objectReference: {fileID: 0}
     - target: {fileID: 8485419520516605267, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
       propertyPath: SteadyHit
       value: 
@@ -5123,7 +5078,7 @@ PrefabInstance:
     - target: {fileID: 8485419520516605267, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
       propertyPath: itemOptions
       value: 
-      objectReference: {fileID: 535260367}
+      objectReference: {fileID: 541571727}
     - target: {fileID: 8485419520516605267, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
       propertyPath: lungeAttack
       value: 
@@ -5183,7 +5138,7 @@ PrefabInstance:
     - target: {fileID: 8485419520516605267, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
       propertyPath: potionButton
       value: 
-      objectReference: {fileID: 478166739}
+      objectReference: {fileID: 0}
     - target: {fileID: 8485419520516605267, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
       propertyPath: reviveButton
       value: 
@@ -5207,7 +5162,7 @@ PrefabInstance:
     - target: {fileID: 8485419520516605267, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
       propertyPath: panaceaButton
       value: 
-      objectReference: {fileID: 109579857}
+      objectReference: {fileID: 0}
     - target: {fileID: 8485419520516605267, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
       propertyPath: potionOptions
       value: 
@@ -5255,7 +5210,7 @@ PrefabInstance:
     - target: {fileID: 8485419520516605267, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
       propertyPath: potionAmountText
       value: 
-      objectReference: {fileID: 1569385520}
+      objectReference: {fileID: 0}
     - target: {fileID: 8485419520516605267, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
       propertyPath: attackOptionsMenu
       value: 
@@ -5263,7 +5218,7 @@ PrefabInstance:
     - target: {fileID: 8485419520516605267, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
       propertyPath: panaceaAmountText
       value: 
-      objectReference: {fileID: 257257768}
+      objectReference: {fileID: 0}
     - target: {fileID: 8485419520516605267, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
       propertyPath: popupPrefabNeutral
       value: 
@@ -5283,7 +5238,7 @@ PrefabInstance:
     - target: {fileID: 8485419520516605267, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
       propertyPath: descriptionTextPotion
       value: 
-      objectReference: {fileID: 366024075}
+      objectReference: {fileID: 0}
     - target: {fileID: 8485419520516605267, guid: 0fb01ab645be0b84ba82026ffd6dfde6, type: 3}
       propertyPath: easyEnemies.Array.size
       value: 4
