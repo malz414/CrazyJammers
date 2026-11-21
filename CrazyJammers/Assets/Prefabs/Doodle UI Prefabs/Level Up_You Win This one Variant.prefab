@@ -1266,8 +1266,37 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 3124114940291854868, guid: 2c3e321abbbf6f441afb7af56e32e1ea, type: 3}
       insertIndex: 6
       addedObject: {fileID: 3538373503409682318}
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8870751976969089566, guid: 2c3e321abbbf6f441afb7af56e32e1ea, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4529746286183452790}
   m_SourcePrefab: {fileID: 100100000, guid: 2c3e321abbbf6f441afb7af56e32e1ea, type: 3}
+--- !u!1 &532820404995201048 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8870751976969089566, guid: 2c3e321abbbf6f441afb7af56e32e1ea, type: 3}
+  m_PrefabInstance: {fileID: 8971109682408565254}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &4529746286183452790
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 532820404995201048}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 893adef63899f7b48b7519b7d69eaa24, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  reward1Group: {fileID: 3897947365336296768}
+  uniqueItemLabelA: {fileID: 1384074407887456593}
+  uniqueItemCountA: {fileID: 5102297288381329545}
+  reward2Group: {fileID: 8232091835830247997}
+  uniqueItemLabelB: {fileID: 7458244157959899709}
+  uniqueItemCountB: {fileID: 5697642108467575393}
+  reward3Group: {fileID: 963806074221554418}
+  uniqueItemLabelC: {fileID: 3765545693656760717}
+  uniqueItemCountC: {fileID: 520294074683384330}
 --- !u!224 &6279387072114563090 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 3124114940291854868, guid: 2c3e321abbbf6f441afb7af56e32e1ea, type: 3}

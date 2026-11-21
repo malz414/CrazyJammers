@@ -2924,17 +2924,17 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: TurnManager, Assembly-CSharp
-        m_MethodName: OnItemOptionsClicked
-        m_Mode: 1
+      - m_Target: {fileID: 2606976723360317202}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
-          m_BoolArgument: 0
+          m_BoolArgument: 1
         m_CallState: 2
       - m_Target: {fileID: 1737000829447573938}
         m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
@@ -11304,7 +11304,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 1737000829447573938}
         m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
         m_MethodName: SetActive
         m_Mode: 6
@@ -12897,6 +12897,7 @@ GameObject:
   - component: {fileID: 7237527849783411229}
   - component: {fileID: 1906468847347737305}
   - component: {fileID: 334025681376683416}
+  - component: {fileID: 3793873990813597885}
   m_Layer: 5
   m_Name: Battle Menu-Endless
   m_TagString: Untagged
@@ -13034,6 +13035,33 @@ MonoBehaviour:
   FirstMatch: 0
   mainMenu: 0
   sequenceTransition: {fileID: 0}
+--- !u!114 &3793873990813597885
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6914971973993580857}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c48490eea0f66b0408c44797cd44776a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  battleItemGroupParent: {fileID: 7866392926672161910}
+  itemsPerPage: 4
+  prevPageButton: {fileID: 2571000562394960820}
+  nextPageButton: {fileID: 7460683360083397362}
+  pageCountText: {fileID: 4500697809033237407}
+  itemMenuDescriptionText: {fileID: 7255913561063510386}
+  firstTimeEndlessEndGroup: {fileID: 0}
+  regularEndlessEndGroup: {fileID: 0}
+  shopUnlockNotifOverlay: {fileID: 0}
+  results: {fileID: 0}
+  resultsbutton: {fileID: 0}
+  image: {fileID: 0}
+  hasUsedItemThisTurn: 0
+  freeItemActionActive: 0
+  shopSceneName: ShopScene
 --- !u!1 &6999229685243334273
 GameObject:
   m_ObjectHideFlags: 0

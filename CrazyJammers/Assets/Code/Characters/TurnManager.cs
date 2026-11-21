@@ -17,6 +17,9 @@ using EasyTransition;
 public class TurnManager : MonoBehaviour
 {
     public TransitionSettings sequenceTransition;
+    [Header("Main Campaign Match Settings")]
+    [Tooltip("Set to 1, 2, 3, 4, or 5 on each Regular Mode scene so the correct rewards are granted.")]
+    public int currentMatchNumber = 1;
 
     public enum GameMode
     {
@@ -501,6 +504,9 @@ public class TurnManager : MonoBehaviour
 
         if (currentGameMode == GameMode.Standard)
         {
+            if (currentMatchNumber == 1) EndlessShopData.ResetCampaignInventory();
+            EndlessShopData.SaveCampaignCheckpoint();
+            if (EndlessModeManager.Instance != null) EndlessModeManager.Instance.OnBattleStart();
             if (soulMeterContainer != null) soulMeterContainer.SetActive(false);
             GameObject knightObj = SpawnPrefabAtPosition(knightPrefab, enemySpawns[0]);
             GameObject swordsmanObj = SpawnPrefabAtPosition(swordsmanPrefab, enemySpawns[1]);
@@ -1280,8 +1286,8 @@ public class TurnManager : MonoBehaviour
         }
 
         attackOptionsParent.SetActive(true);
-        panaceaAmountText.text = PotionData.Instance.Panacea.ToString();
-        potionAmountText.text = PotionData.Instance.Potion.ToString();
+        if (panaceaAmountText != null && PotionData.Instance != null) panaceaAmountText.text = PotionData.Instance.Panacea.ToString();
+        if (potionAmountText != null && PotionData.Instance != null) potionAmountText.text = PotionData.Instance.Potion.ToString();
         if (currentGameMode == GameMode.Endless) UpdateSoulMeterUI(isPlayerTurn: true);
     }
 
@@ -1414,8 +1420,9 @@ public class TurnManager : MonoBehaviour
         // Safely hide the main combat UI
         if (attackOptionsParent != null) attackOptionsParent.SetActive(false);
         if (potionOptions != null) potionOptions.SetActive(false);
-          panaceaAmountText.text = PotionData.Instance.Panacea.ToString();
-        potionAmountText.text = PotionData.Instance.Potion.ToString();
+        
+        if (panaceaAmountText != null && PotionData.Instance != null) panaceaAmountText.text = PotionData.Instance.Panacea.ToString();
+        if (potionAmountText != null && PotionData.Instance != null) potionAmountText.text = PotionData.Instance.Potion.ToString();
         
         // Open the Endless item panel
         
@@ -2195,6 +2202,8 @@ public class TurnManager : MonoBehaviour
 
     public void ReviveBoss()
     {
+        EndlessShopData.RestoreCampaignCheckpoint();
+        if (EndlessModeManager.Instance != null) EndlessModeManager.Instance.OnBattleStart();
         if (PotionData.Instance != null)
         {
             PotionData.Instance.RestoreCheckpoint();
@@ -2254,7 +2263,26 @@ public class TurnManager : MonoBehaviour
             }
 
             yield return new WaitForSeconds(endGameDelay);
-            
+
+            if (currentGameMode == GameMode.Standard)
+            {
+                if (EndlessModeManager.Instance != null)
+                {
+                    EndlessModeManager.Instance.CommitCampaignInventory();
+                }
+
+                EndlessShopData.GrantMatchRewards(currentMatchNumber);
+
+                if (winScreen != null)
+                {
+                    WinScreenRewardsUI rewardsUI = winScreen.GetComponentInChildren<WinScreenRewardsUI>(true);
+                    if (rewardsUI != null)
+                    {
+                        rewardsUI.DisplayRewards(EndlessShopData.GetMatchRewards(currentMatchNumber));
+                    }
+                }
+            }
+
             winScreen.SetActive(true);
             MainUIParent.SetActive(false);
         }
@@ -2532,5 +2560,42 @@ public void CompleteItemTurnOrContinue()
         if (potionOptions != null) potionOptions.SetActive(false);
 
         StartCoroutine(StartTurn());
+    }
+    public void ExecuteHealingOrCureItem(EndlessItemDefinition itemDef)
+    {
+        bool heals = itemDef.effectType == EndlessItemEffectType.HealPercent ||
+                     itemDef.effectType == EndlessItemEffectType.HealPercentAndCure;
+        bool cures = itemDef.effectType == EndlessItemEffectType.CureStatus ||
+                     itemDef.effectType == EndlessItemEffectType.HealPercentAndCure;
+
+        if (heals)
+        {
+            hero.Init(popupPrefabgreen);
+            int healAmount = Mathf.RoundToInt(hero.maxHealth * itemDef.healPercent);
+            if (itemDef.healPercent >= 1.0f) healAmount = hero.maxHealth - hero.currentHealth;
+
+            if (healAmount > 0) hero.HealDamage(healAmount);
+            if (hero.currentHealth > hero.maxHealth) hero.currentHealth = hero.maxHealth;
+
+            ApplyEffectWithDelay(potionVFX, hero.transform, 0f, 2.0f);
+        }
+
+        if (cures)
+        {
+            hero.RemoveBurns();
+            hero.RemoveParalysis();
+            hero.RemoveHeroBurns();
+            hero.RemoveHeroParalysis();
+
+            ApplyEffectWithDelay(panaceaVFX, hero.transform, 0f, 2.0f);
+        }
+
+        EventBus.Publish(statusUpdateEvent);
+        usedMoveGO.SetActive(true);
+        usedMove1.text = $"{itemDef.displayName} Used!";
+        blurbEvent.Set($"{itemDef.displayName} Used!");
+        EventBus.Publish(blurbEvent);
+
+        CompleteItemTurnOrContinue();
     }
 }
