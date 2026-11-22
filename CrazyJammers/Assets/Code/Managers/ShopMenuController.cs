@@ -84,7 +84,31 @@ public class ShopMenuController : MonoBehaviour
             UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
         }
 
-     
+        // Temporary Click Raycast Debugger
+        if (Input.GetMouseButtonDown(0) && EventSystem.current != null)
+        {
+            PointerEventData pointerData = new PointerEventData(EventSystem.current)
+            {
+                position = Input.mousePosition
+            };
+
+            List<RaycastResult> results = new List<RaycastResult>();
+            EventSystem.current.RaycastAll(pointerData, results);
+
+            if (results.Count == 0)
+            {
+                Debug.Log("[ShopClickDebug] Clicked nothing on UI.");
+            }
+            else
+            {
+                string hitChain = "";
+                for (int i = 0; i < results.Count; i++)
+                {
+                    hitChain += $"\n  #{i + 1}: {results[i].gameObject.name} (Parent: {results[i].gameObject.transform.parent?.name})";
+                }
+                Debug.Log($"[ShopClickDebug] Top UI hit was '{results[0].gameObject.name}':{hitChain}");
+            }
+        }
     }
 
     private Transform FindChildRecursive(Transform parent, string targetName)
@@ -362,7 +386,7 @@ public class ShopMenuController : MonoBehaviour
 
             if (selectedItemNameText != null) selectedItemNameText.text = current.displayName;
             if (selectedItemDescText != null) selectedItemDescText.text = current.description;
-            if (selectedItemOwnedText != null) selectedItemOwnedText.text = $" x{owned}";
+            if (selectedItemOwnedText != null) selectedItemOwnedText.text = $"Owned x{owned}";
         }
         else
         {
@@ -372,7 +396,7 @@ public class ShopMenuController : MonoBehaviour
         }
 
         if (selectMultipleButtonText != null)
-            selectMultipleButtonText.text = isMultiSelectMode ? "Cancel Multi-Select" : "Select Multiple";
+            selectMultipleButtonText.text = isMultiSelectMode ? "Cancel" : "Select Multiple";
 
         if (buyButton != null)
         {
