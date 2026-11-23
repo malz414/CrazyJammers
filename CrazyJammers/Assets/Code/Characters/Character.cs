@@ -37,15 +37,15 @@ public abstract class Character : MonoBehaviour
     public void Init(DamageNumber popupPrefab)
     {
         this.popupPrefab = popupPrefab;
-        
     }
+
     public void ResetOnSpawn()
     {
         currentHealth = maxHealth;
         barrierCount = 0;
         burning = 0;
         bideBuff = false;
-        
+
         if (burnIcon != null) burnIcon.SetActive(false);
         if (paraIcon != null) paraIcon.SetActive(false);
         activeBurns.Clear();
@@ -53,7 +53,7 @@ public abstract class Character : MonoBehaviour
 
         if (statusUpdateEvent == null) statusUpdateEvent = new CharacterStatusUpdateEvent();
         if (blurbEvent == null) blurbEvent = new GameplayBlurbEvent();
-        
+
         EventBus.Publish(statusUpdateEvent);
     }
 
@@ -70,9 +70,9 @@ public abstract class Character : MonoBehaviour
             bideBuff = false;
             barrierUsed = true;
             bideDefUsed = true;
-            
+
             appliedMultiplier = Mathf.Max(0f, bideDefenseMultiplier - 0.20f);
-            damage = Mathf.RoundToInt(damage * appliedMultiplier);  
+            damage = Mathf.RoundToInt(damage * appliedMultiplier);
             currentHealth -= damage;
         }
         else if (barrierCount > 0)
@@ -80,16 +80,16 @@ public abstract class Character : MonoBehaviour
             barrierCount--;
             barrierUsed = true;
             appliedMultiplier = 0.80f;
-            
-            damage = Mathf.RoundToInt(damage * 0.80f); 
+
+            damage = Mathf.RoundToInt(damage * 0.80f);
             currentHealth -= damage;
         }
         else if (bideBuff)
         {
             bideDefUsed = true;
             appliedMultiplier = bideDefenseMultiplier;
-            
-            damage = Mathf.RoundToInt(damage * bideDefenseMultiplier); 
+
+            damage = Mathf.RoundToInt(damage * bideDefenseMultiplier);
             currentHealth -= damage;
         }
         else
@@ -113,11 +113,11 @@ public abstract class Character : MonoBehaviour
         DamageNumber newPopup = popupPrefab.Spawn(gam.transform.position + new Vector3(0, 0.25f, -1), damage);
         newPopup.permanent = false;
         newPopup.lifetime = DAMAGE_POPUP_LIFETIME;
-        
+
         if (currentHealth <= 0)
         {
             DoDeathAnimation();
-        } 
+        }
         else
         {
             DoHitAnimation();
@@ -135,13 +135,13 @@ public abstract class Character : MonoBehaviour
     public void RemoveBurns()
     {
         this.burning = 0;
-        burnIcon.SetActive(false);
+        if (burnIcon != null) burnIcon.SetActive(false);
     }
 
     public void RemoveParalysis()
     {
-        paralysisEffect = null;  
-        paraIcon.SetActive(false);
+        paralysisEffect = null;
+        if (paraIcon != null) paraIcon.SetActive(false);
     }
 
     public void DoAttackAnimation()
@@ -160,7 +160,7 @@ public abstract class Character : MonoBehaviour
         if (currentHealth <= 0)
         {
             DoDeathAnimation();
-        } 
+        }
         else
         {
             DoHitAnimation();
@@ -188,7 +188,7 @@ public abstract class Character : MonoBehaviour
     public void DoDeathAnimation()
     {
         animator.SetTrigger("Die");
-        
+
         if (burnIcon != null) burnIcon.SetActive(false);
         if (paraIcon != null) paraIcon.SetActive(false);
     }
@@ -203,13 +203,21 @@ public abstract class Character : MonoBehaviour
     public void ApplyBurn(int damagePerTurn, int duration)
     {
         burning = 4;
-        burnIcon.SetActive(true);
+        if (burnIcon != null) burnIcon.SetActive(true);
     }
 
     public void ApplyParalysis(int duration, bool enhanced)
     {
+        if (this is Hero &&
+            TurnManager.Instance != null &&
+            TurnManager.Instance.currentGameMode == TurnManager.GameMode.Endless &&
+            TurnManager.Instance.currentTurn <= 1)
+        {
+            return;
+        }
+
         paralysisEffect = new ParalysisEffect(duration, enhanced);
-        paraIcon.SetActive(true);
+        if (paraIcon != null) paraIcon.SetActive(true);
     }
 
     public bool CanAct()
@@ -225,28 +233,19 @@ public abstract class Character : MonoBehaviour
             if (burn.turnsRemaining <= 0)
             {
                 activeBurns.Remove(burn);
-                burnIcon.SetActive(false);
+                if (burnIcon != null) burnIcon.SetActive(false);
             }
         }
         if (burning <= 0)
         {
-            burning = 0; // Clamp it to prevent negatives
+            burning = 0;
             if (burnIcon != null) burnIcon.SetActive(false);
         }
 
         paralysisEffect?.CheckForActivation();
-        if(paralysisEffect != null) 
+        if (paralysisEffect != null)
         {
-            if(!paralysisEffect.IsEffectActive())
-            {
-                RemoveParalysis();
-            }
-        }
-
-        paralysisEffect?.CheckForActivation();
-        if(paralysisEffect != null) 
-        {
-            if(!paralysisEffect.IsEffectActive())
+            if (!paralysisEffect.IsEffectActive())
             {
                 RemoveParalysis();
             }

@@ -41,6 +41,8 @@ public static class EndlessShopData
     private const string GALD_KEY = "PlayerTotalGald";
     private const string SHOP_UNLOCKED_KEY = "ShopUnlocked";
     private const string FIRST_SHOP_NOTIF_SHOWN_KEY = "FirstShopNotifShown";
+    private const string ENDLESS_UNLOCKED_KEY = "EndlessModeUnlocked";
+    private const string FIRST_ENDLESS_NOTIF_SHOWN_KEY = "FirstEndlessNotifShown";
 
     public const string POTION_ID = "Potion";
     public const string GREAT_POTION_ID = "GreatPotion";
@@ -187,6 +189,17 @@ public static class EndlessShopData
     {
         get => PlayerPrefs.GetInt(FIRST_SHOP_NOTIF_SHOWN_KEY, 0) == 1;
         set { PlayerPrefs.SetInt(FIRST_SHOP_NOTIF_SHOWN_KEY, value ? 1 : 0); PlayerPrefs.Save(); }
+    }
+    public static bool IsEndlessUnlocked
+    {
+        get => PlayerPrefs.GetInt(ENDLESS_UNLOCKED_KEY, 0) == 1;
+        set { PlayerPrefs.SetInt(ENDLESS_UNLOCKED_KEY, value ? 1 : 0); PlayerPrefs.Save(); }
+    }
+
+    public static bool HasShownEndlessUnlockNotif
+    {
+        get => PlayerPrefs.GetInt(FIRST_ENDLESS_NOTIF_SHOWN_KEY, 0) == 1;
+        set { PlayerPrefs.SetInt(FIRST_ENDLESS_NOTIF_SHOWN_KEY, value ? 1 : 0); PlayerPrefs.Save(); }
     }
 
     public static void AddGald(int amount)

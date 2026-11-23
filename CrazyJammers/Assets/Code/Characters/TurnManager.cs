@@ -97,13 +97,14 @@ public class TurnManager : MonoBehaviour
     public int scorePerDefeat = 100;
     public int scorePerWaveBonus = 1000;
     public int currentScore = 0;
-    public int highScore = 0; 
+    public int highScore = 0;
     public int currentGald => currentScore / 4;
     public int currentWave = 1;
     [SerializeField] private TextMeshProUGUI waveText;
     [SerializeField] private TextMeshProUGUI scoreText;
-    [SerializeField] private TextMeshProUGUI highScoreText; 
+    [SerializeField] private TextMeshProUGUI highScoreText;
     [SerializeField] private TextMeshProUGUI galdText;
+
     [Header("Endless Mode - Soul Meter & Ultimate")]
     [Tooltip("Total Soul Shards needed to charge the Ultimate (Default: 6).")]
     public int maxSoulShards = 6;
@@ -187,7 +188,7 @@ public class TurnManager : MonoBehaviour
     [SerializeField] private GameObject iceParaHit;
     [SerializeField] private GameObject arrowBurnAttack; // Arrow x Burn
     [SerializeField] private GameObject arrowBurnHit;
-    
+
     // Expanded Names
     [SerializeField] private GameObject paralysisVFX; // Was "para"
     [SerializeField] private GameObject burn;
@@ -226,7 +227,7 @@ public class TurnManager : MonoBehaviour
     public List<AttackSO> allEncounteredMoves = new List<AttackSO>();
     private List<Enemy> selectedEnemies = new List<Enemy>();
     private List<Enemy> upcomingEnemies = new List<Enemy>();
-    
+
     private int selectedEnemyNum = -1;
     private bool selectingEnemies = false;
 
@@ -255,7 +256,7 @@ public class TurnManager : MonoBehaviour
 
     public bool TargetingMode => targetingMode;
     private bool targetingMode = false;
-    
+
     public float critMultiplier = 1.2f;
     public float heroCritRate = .05f;
 
@@ -278,7 +279,7 @@ public class TurnManager : MonoBehaviour
     public TextMeshProUGUI popupText; // Was "Popop"
 
     private CharacterStatusUpdateEvent statusUpdateEvent;
-    
+
     public AttackSO selectedAttack1;
     public AttackSO selectedAttack2;
     private List<AttackSO> currentlyDisplayedAttacks = new List<AttackSO>();
@@ -286,10 +287,10 @@ public class TurnManager : MonoBehaviour
     public bool isFirstMatch = false;
 
     [Tooltip("Time in seconds to wait before showing the win/lose screen.")]
-    public float endGameDelay = 2.0f; 
+    public float endGameDelay = 2.0f;
     private bool isBattleActive = false;
     private bool isEndingGame = false;
-    
+    private bool isPlayerCommandPhase = false;
 
     private void Awake()
     {
@@ -309,7 +310,7 @@ public class TurnManager : MonoBehaviour
     private void Start()
     {
         statusUpdateEvent = new CharacterStatusUpdateEvent();
-        
+
         if (PotionData.Instance != null)
         {
             PotionData.Instance.SaveCheckpoint();
@@ -317,7 +318,7 @@ public class TurnManager : MonoBehaviour
 
         highScore = PlayerPrefs.GetInt("EndlessHighScore", 0);
 
-        SetupAttackDropdowns(); 
+        SetupAttackDropdowns();
         if (currentGameMode == GameMode.Standard)
         {
             PlayerPrefs.SetString("SavedLevel", SceneManager.GetActiveScene().name);
@@ -325,9 +326,6 @@ public class TurnManager : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Ensures legacy easy/medium/hard lists are migrated into the new custom EnemyPool system if none are configured yet.
-    /// </summary>
     private void EnsureDefaultPoolsInitialized()
     {
         if (enemyPools == null) enemyPools = new List<EnemyPool>();
@@ -345,7 +343,6 @@ public class TurnManager : MonoBehaviour
         if (waveConfigs == null) waveConfigs = new List<WaveConfig>();
         if (waveConfigs.Count == 0 && enemyPools.Count > 0)
         {
-            // Default Wave 1 fallback if waveConfigs is left empty in the Inspector
             WaveConfig defaultWave1 = new WaveConfig
             {
                 waveLabel = "Wave 1 (Default)",
@@ -364,7 +361,6 @@ public class TurnManager : MonoBehaviour
         EnsureDefaultPoolsInitialized();
         List<GameObject> combinedPool = new List<GameObject>();
 
-        // 1. Check if we've reached the automation wave threshold (e.g. Wave 100+)
         if (currentWave >= automateToHighestDifficultyWave)
         {
             EnemyPool highestPool = enemyPools.FirstOrDefault(p =>
@@ -382,7 +378,6 @@ public class TurnManager : MonoBehaviour
         }
         else if (waveConfigs != null && waveConfigs.Count > 0)
         {
-            // 2. Use the configured WaveConfig for the current wave (clamped to the last configured wave if exceeded before automation)
             int configIndex = Mathf.Clamp(currentWave - 1, 0, waveConfigs.Count - 1);
             WaveConfig activeConfig = waveConfigs[configIndex];
 
@@ -407,7 +402,6 @@ public class TurnManager : MonoBehaviour
             }
         }
 
-        // Fallback if no rules matched the current kill count in the wave
         if (combinedPool.Count == 0 && enemyPools.Count > 0)
         {
             combinedPool.AddRange(enemyPools[0].enemyPrefabs);
@@ -431,7 +425,6 @@ public class TurnManager : MonoBehaviour
             existingNames.AddRange(extraExcludedNames);
         }
 
-        // Filter out enemies that are already active on the field so individual draws remain unique when possible
         List<GameObject> available = candidatePrefabs.Where(prefab =>
         {
             Enemy meta = prefab.GetComponent<Enemy>();
@@ -454,7 +447,7 @@ public class TurnManager : MonoBehaviour
         {
             highScore = currentScore;
             PlayerPrefs.SetInt("EndlessHighScore", highScore);
-            PlayerPrefs.Save(); 
+            PlayerPrefs.Save();
         }
 
         UpdateEndlessScoreUI();
@@ -465,7 +458,6 @@ public class TurnManager : MonoBehaviour
         if (waveText != null) waveText.text = $" {currentWave}";
         if (scoreText != null) scoreText.text = $" {currentScore}";
         if (galdText != null) galdText.text = $" {currentGald}";
-        
         if (highScoreText != null) highScoreText.text = $" {highScore}";
     }
 
@@ -486,7 +478,8 @@ public class TurnManager : MonoBehaviour
     public void StartBattle()
     {
         isEndingGame = false;
-        currentTurn = 0; 
+        isPlayerCommandPhase = false;
+        currentTurn = 0;
         isBattleActive = true;
         enemies = new List<Enemy> { null, null, null, null };
         aliveEnemies = new List<Enemy>();
@@ -500,7 +493,7 @@ public class TurnManager : MonoBehaviour
         pendingReplacementsCount = 0;
         isWaveTransitioning = false;
         if (loseScreen != null) loseScreen.SetActive(false);
-    
+        if (potionOptions != null) potionOptions.SetActive(false);
 
         if (currentGameMode == GameMode.Standard)
         {
@@ -508,6 +501,7 @@ public class TurnManager : MonoBehaviour
             EndlessShopData.SaveCampaignCheckpoint();
             if (EndlessModeManager.Instance != null) EndlessModeManager.Instance.OnBattleStart();
             if (soulMeterContainer != null) soulMeterContainer.SetActive(false);
+
             GameObject knightObj = SpawnPrefabAtPosition(knightPrefab, enemySpawns[0]);
             GameObject swordsmanObj = SpawnPrefabAtPosition(swordsmanPrefab, enemySpawns[1]);
             GameObject mageObj = SpawnPrefabAtPosition(magePrefab, enemySpawns[2]);
@@ -530,8 +524,7 @@ public class TurnManager : MonoBehaviour
         else // Endless mode
         {
             if (EndlessModeManager.Instance != null) EndlessModeManager.Instance.OnBattleStart();
-            
-            // Re-add these three lines so the enemies actually spawn!
+
             isExecutingUltimate = false;
             currentSoulShards = maxSoulShards;
             UpdateSoulMeterUI(isPlayerTurn: false);
@@ -552,9 +545,14 @@ public class TurnManager : MonoBehaviour
         hero.bideLevel = heroBideLevelBase;
         hero.bideLevelBase = heroBideLevelBase;
         hero.Init(popupPrefab);
-        
+
         bossHUD.Init(hero);
-        hero.ResetOnSpawn();     
+        hero.ResetOnSpawn();
+        hero.RemoveParalysis();
+        hero.RemoveHeroParalysis();
+        hero.RemoveBurns();
+        hero.RemoveHeroBurns();
+        hero.burning = 0;
 
         foreach (var obj in listOfObjectToDeactivateAtStartOfBattle)
         {
@@ -564,9 +562,9 @@ public class TurnManager : MonoBehaviour
         MainUIParent.SetActive(true);
         enemyAttacksUsed = new List<AttackSO>();
         blurbEvent = new GameplayBlurbEvent();
-        #if USE_CRAZYGAMES
+#if USE_CRAZYGAMES
         CrazySDK.Game.GameplayStart();
-        #endif
+#endif
     }
 
     private void SpawnInitialWaveEnemies(bool instant)
@@ -604,10 +602,10 @@ public class TurnManager : MonoBehaviour
         newEnemy.Init(popupPrefab);
         enemies[spawnIndex] = newEnemy;
         if (!aliveEnemies.Contains(newEnemy)) aliveEnemies.Add(newEnemy);
-        
-        enemyHUDs[spawnIndex].Init(newEnemy); 
+
+        enemyHUDs[spawnIndex].Init(newEnemy);
         newEnemy.ResetOnSpawn();
-        
+
         if (runDuration > 0f)
         {
             Animator anim = enemyObj.GetComponentInChildren<Animator>();
@@ -615,7 +613,6 @@ public class TurnManager : MonoBehaviour
 
             if (anim != null)
             {
-                // 1. Disable Root Motion so the animation cannot physically drag them off-course
                 originalRootMotion = anim.applyRootMotion;
                 anim.applyRootMotion = false;
                 SetRunningAnimation(anim, true);
@@ -635,15 +632,10 @@ public class TurnManager : MonoBehaviour
                 if (anim != null)
                 {
                     SetRunningAnimation(anim, false);
-                    
-                    // 2. Wait exactly one frame for the Animator to process the transition to Idle
-                    yield return null; 
-                    
-                    // 3. Restore their original Root Motion setting
+                    yield return null;
                     anim.applyRootMotion = originalRootMotion;
                 }
 
-                // 4. Force the absolute final snap AFTER the run animation is fully shut down
                 enemyObj.transform.position = targetPos;
                 enemyObj.transform.rotation = targetRot;
             }
@@ -672,7 +664,7 @@ public class TurnManager : MonoBehaviour
         }
     }
 
-    private void ApplyEffectWithDelay(GameObject effectPrefab, Transform target, float delay, float effectDuration, bool? xRotationEffect = null, float raiseAmount = 0f, float? yRotationOffset = null, bool? standUpright = null, float xOffset = 0f, float zOffset = 0f) 
+    private void ApplyEffectWithDelay(GameObject effectPrefab, Transform target, float delay, float effectDuration, bool? xRotationEffect = null, float raiseAmount = 0f, float? yRotationOffset = null, bool? standUpright = null, float xOffset = 0f, float zOffset = 0f)
     {
         StartCoroutine(DelayedEffectCoroutine(effectPrefab, target, delay, effectDuration, raiseAmount, xRotationEffect, yRotationOffset, standUpright, xOffset, zOffset));
     }
@@ -680,18 +672,18 @@ public class TurnManager : MonoBehaviour
     private IEnumerator DelayedEffectCoroutine(GameObject effectPrefab, Transform target, float delay, float effectDuration, float raiseAmount, bool? xRotationEffect, float? yRotationOffset = null, bool? standUpright = null, float xOffset = 0f, float zOffset = 0f)
     {
         yield return new WaitForSeconds(delay);
-        
-        if (target == null) yield break; 
+
+        if (target == null) yield break;
 
         Vector3 effectPosition = target.position + new Vector3(xOffset, raiseAmount, zOffset);
 
-        GameObject effect = Instantiate(effectPrefab, effectPosition, Quaternion.identity); 
+        GameObject effect = Instantiate(effectPrefab, effectPosition, Quaternion.identity);
 
         effect.transform.SetParent(target);
         effect.transform.SetParent(null);
-    
+
         if (yRotationOffset.HasValue)
-        {   
+        {
             Vector3 direction = Quaternion.Euler(0f, yRotationOffset.Value, 0f) * Vector3.forward;
             effect.transform.rotation = Quaternion.LookRotation(direction);
             HS_ProjectileMover mover = effect.GetComponent<HS_ProjectileMover>();
@@ -703,7 +695,7 @@ public class TurnManager : MonoBehaviour
             float xRotation = xRotationEffect.Value ? 90f : -90f;
             effect.transform.Rotate(0f, xRotation, 0f);
         }
-    
+
         if (standUpright.HasValue)
         {
             float xRotation = standUpright.Value ? 90f : -90f;
@@ -715,7 +707,8 @@ public class TurnManager : MonoBehaviour
     }
 
     public void SetUpBattle()
-    {    if (bossHUD != null) bossHUD.gameObject.SetActive(true);
+    {
+        if (bossHUD != null) bossHUD.gameObject.SetActive(true);
 
         StartCoroutine(DoBattleStartRoutine());
     }
@@ -738,6 +731,10 @@ public class TurnManager : MonoBehaviour
 
     public IEnumerator StartTurn()
     {
+        isPlayerCommandPhase = false;
+        if (potionOptions != null) potionOptions.SetActive(false);
+        if (EndlessModeManager.Instance != null) EndlessModeManager.Instance.CloseBattleItemPanel();
+
         if (EndlessModeManager.Instance != null)
         {
             EndlessModeManager.Instance.freeItemActionActive = false;
@@ -746,13 +743,13 @@ public class TurnManager : MonoBehaviour
         if (potionButton != null) potionButton.interactable = true;
         if (panaceaButton != null) panaceaButton.interactable = true;
         UpdateSoulMeterUI(isPlayerTurn: false);
-        // Wait if enemies are currently regenerating or transitioning between waves
+
         if (currentGameMode == GameMode.Endless)
         {
             yield return new WaitUntil(() => pendingReplacementsCount == 0 && !isWaveTransitioning);
         }
 
-        currentTurn++; 
+        currentTurn++;
         if (!isBattleActive) yield break;
 
         drop1Opened = false;
@@ -774,16 +771,16 @@ public class TurnManager : MonoBehaviour
             {
                 enemy.Init(popupPrefabfire);
                 enemy.TakeDamage((int)(enemy.maxHealth * .1));
-                
+
                 ApplyEffectWithDelay(burn, enemy.transform, 0f, 3.0f);
                 if (enemy.currentHealth <= 0)
                 {
-                    enemy.currentHealth = 0; 
+                    enemy.currentHealth = 0;
                     blurbEvent.Set($" {enemy.characterName} has been burnt to death!");
                     EventBus.Publish(blurbEvent);
-                    usedMove1.text = $"{enemy.characterName} has been burnt to death!";    
-                    enemy.RemoveBurns();              
-                    RemoveEnemy(enemy); 
+                    usedMove1.text = $"{enemy.characterName} has been burnt to death!";
+                    enemy.RemoveBurns();
+                    RemoveEnemy(enemy);
                     yield return new WaitForSeconds(1f);
                 }
                 else
@@ -798,7 +795,6 @@ public class TurnManager : MonoBehaviour
             }
         }
 
-        // If a burn death triggered a replacement or wave break, wait for it to finish
         if (currentGameMode == GameMode.Endless)
         {
             yield return new WaitUntil(() => pendingReplacementsCount == 0 && !isWaveTransitioning);
@@ -811,13 +807,13 @@ public class TurnManager : MonoBehaviour
                 enemy.UpdateEffects();
             }
         }
-    
-        if (hero.currentHealth <= 0) 
+
+        if (hero.currentHealth <= 0)
         {
             EndGame(false);
             yield return null;
         }
-            
+
         if (isBattleActive) StartCoroutine(DoTurnRoutine());
     }
 
@@ -830,7 +826,7 @@ public class TurnManager : MonoBehaviour
         if (!isBattleActive) yield break;
 
         enemyAttacksByIndex.Clear();
-        previousTurnMoves.Clear(); 
+        previousTurnMoves.Clear();
         while (enemyAttacksByIndexPerm.Count < enemies.Count)
         {
             enemyAttacksByIndexPerm.Add(null);
@@ -869,13 +865,13 @@ public class TurnManager : MonoBehaviour
                 AttackSO skippedAttack = enemyAttacksByIndexPerm[i];
                 if (skippedAttack != null && !enemyAttacksByIndex.Contains(skippedAttack))
                 {
-                     enemyAttacksByIndex.Add(skippedAttack);
+                    enemyAttacksByIndex.Add(skippedAttack);
                 }
 
                 blurbEvent.Set($"{enemy.characterName} is paralyzed and cannot act this turn!");
                 EventBus.Publish(blurbEvent);
                 usedMove1.text = $"{enemy.characterName} is paralyzed and cannot act this turn!";
-                usedMoveGO.SetActive(true);              
+                usedMoveGO.SetActive(true);
                 ApplyEffectWithDelay(paralysisVFX, enemy.transform, 0f, 3.0f);
                 yield return new WaitForSeconds(1f);
                 continue;
@@ -885,11 +881,11 @@ public class TurnManager : MonoBehaviour
                 AttackSO enemyAttack = enemy.PerformRandomAttack();
                 usedMove1.text = $"{enemy.characterName} Used {enemyAttack.attackName}";
                 usedMoveGO.SetActive(true);
-                
+
                 blurbEvent.Set($"{enemy.characterName} Used {enemyAttack.attackName}");
                 EventBus.Publish(blurbEvent);
                 enemyAttacksByIndexPerm[i] = enemyAttack;
-                
+
                 if (allEncounteredMoves.Contains(enemyAttack))
                 {
                     allEncounteredMoves.Remove(enemyAttack);
@@ -898,8 +894,8 @@ public class TurnManager : MonoBehaviour
 
                 if (!enemyAttacksByIndex.Contains(enemyAttack)) enemyAttacksByIndex.Add(enemyAttack);
                 if (!previousTurnMoves.Contains(enemyAttack)) previousTurnMoves.Add(enemyAttack);
-                            
-                if (hero.bideUses == 2) 
+
+                if (hero.bideUses == 2)
                 {
                     enemyAttacksByIndex.Clear();
                     enemyAttacksByIndex.AddRange(previousTurnMoves);
@@ -932,7 +928,7 @@ public class TurnManager : MonoBehaviour
                     {
                         if (enemyHeal == null || enemyHeal.dead || enemyHeal.currentHealth <= 0) continue;
                         enemyHeal.Init(popupPrefabgreen);
-                        
+
                         enemyHeal.HealDamage((int)(enemy.maxHealth * 0.2));
                         if (enemyHeal.currentHealth >= enemyHeal.maxHealth) enemyHeal.currentHealth = enemyHeal.maxHealth;
 
@@ -952,13 +948,13 @@ public class TurnManager : MonoBehaviour
 
                 if (enemyAttack.attributes.Contains("Heal"))
                 {
-                    var enemyHeal = enemies.Where(e => e != null && !e.dead && e.currentHealth > 0).OrderBy(e => e.currentHealth).FirstOrDefault(); 
+                    var enemyHeal = enemies.Where(e => e != null && !e.dead && e.currentHealth > 0).OrderBy(e => e.currentHealth).FirstOrDefault();
                     if (enemyHeal != null)
                     {
                         enemyHeal.Init(popupPrefabgreen);
                         enemyHeal.HealDamage((int)(enemy.maxHealth * 0.2));
                         if (enemyHeal.currentHealth > enemyHeal.maxHealth) enemyHeal.currentHealth = enemyHeal.maxHealth;
-                        
+
                         ApplyEffectWithDelay(heal, enemyHeal.transform, 0f, 2.0f);
                         blurbEvent.Set($"{enemyHeal.characterName} was healed.");
                         usedMove1.text = $"{enemyHeal.characterName} was healed.";
@@ -970,7 +966,7 @@ public class TurnManager : MonoBehaviour
                 }
 
                 if (enemyAttack.attributes.Contains("Ice"))
-                {   
+                {
                     hero.TakeDamage(enemyAttack.GetDamage());
                     hero.TakeDamage(enemyAttack.GetDamage());
 
@@ -1001,7 +997,7 @@ public class TurnManager : MonoBehaviour
                     tempGameObject.transform.position = newPosition;
                     Destroy(tempGameObject, 5f);
 
-                    ApplyEffectWithDelay(slashAttack, enemy.transform, 0f, 3.0f, null, 1.5f); 
+                    ApplyEffectWithDelay(slashAttack, enemy.transform, 0f, 3.0f, null, 1.5f);
                     ApplyEffectWithDelay(slashHit, tempGameObject.transform, 0.2f, 3.0f);
                     ApplyEffectWithDelay(slashCrater, hero.transform, 0.4f, 3.0f);
                 }
@@ -1024,22 +1020,24 @@ public class TurnManager : MonoBehaviour
                 {
                     hero.TakeDamage(enemyAttack.GetDamage());
                     hero.TakeDamage(enemyAttack.GetDamage());
-                    
-                    if (UnityEngine.Random.value <= .1f && hero.GetParalysisTurnsRemaining() <= 0 && hero.burning <= 0)
+
+                    bool canParalyzeFromTriple = !(currentGameMode == GameMode.Endless && currentTurn == 1);
+
+                    if (canParalyzeFromTriple && UnityEngine.Random.value <= .1f && hero.GetParalysisTurnsRemaining() <= 0 && hero.burning <= 0)
                     {
                         hero.ApplyParalysis(5, true);
                         blurbEvent.Set($"Boss has been paralyzed by {enemyAttack.attackName}!");
                         EventBus.Publish(blurbEvent);
                         usedMove1.text = $"Boss has been paralyzed by {enemyAttack.attackName}!";
                     }
-                    if (UnityEngine.Random.value <= .1f && hero.GetParalysisTurnsRemaining() <= 0 && hero.burning <= 0)
+                    if (canParalyzeFromTriple && UnityEngine.Random.value <= .1f && hero.GetParalysisTurnsRemaining() <= 0 && hero.burning <= 0)
                     {
                         hero.ApplyParalysis(5, true);
                         blurbEvent.Set($"Boss has been paralyzed by {enemyAttack.attackName}!");
                         usedMove1.text = $"Boss has been paralyzed by {enemyAttack.attackName}!";
                         EventBus.Publish(blurbEvent);
                     }
-                    if (UnityEngine.Random.value <= .1f && hero.GetParalysisTurnsRemaining() <= 0 && hero.burning <= 0)
+                    if (canParalyzeFromTriple && UnityEngine.Random.value <= .1f && hero.GetParalysisTurnsRemaining() <= 0 && hero.burning <= 0)
                     {
                         hero.ApplyParalysis(5, true);
                         blurbEvent.Set($"Boss has been paralyzed by {enemyAttack.attackName}!");
@@ -1055,7 +1053,7 @@ public class TurnManager : MonoBehaviour
                         case 2: yRotationOffset = -90f; break;
                         case 3: yRotationOffset = -115f; break;
                     }
-                    ApplyEffectWithDelay(tripleAttack, enemy.transform, 0f, 3.0f, null, 0f, yRotationOffset); 
+                    ApplyEffectWithDelay(tripleAttack, enemy.transform, 0f, 3.0f, null, 0f, yRotationOffset);
                     ApplyEffectWithDelay(tripleHit, hero.transform, .5f, 3.0f, null, 1.5f);
                 }
 
@@ -1083,13 +1081,15 @@ public class TurnManager : MonoBehaviour
                         case 2: yRotationOffset = -90f; break;
                         case 3: yRotationOffset = -110f; break;
                     }
-                    ApplyEffectWithDelay(fireAttack, enemy.transform, 0f, 3.0f, null, 1.5f, yRotationOffset); 
+                    ApplyEffectWithDelay(fireAttack, enemy.transform, 0f, 3.0f, null, 1.5f, yRotationOffset);
                     ApplyEffectWithDelay(fireHit, hero.transform, .5f, 3.0f);
                 }
 
                 if (enemyAttack.attributes.Contains("Paralysis"))
                 {
-                    if (UnityEngine.Random.value <= 1f && hero.GetParalysisTurnsRemaining() <= 0 && hero.burning <= 0)
+                    bool canParalyzeHero = !(currentGameMode == GameMode.Endless && currentTurn == 1);
+
+                    if (canParalyzeHero && UnityEngine.Random.value <= 1f && hero.GetParalysisTurnsRemaining() <= 0 && hero.burning <= 0)
                     {
                         hero.ApplyParalysis(5, false);
                         blurbEvent.Set($"Boss has been paralyzed by {enemyAttack.attackName}!");
@@ -1123,18 +1123,18 @@ public class TurnManager : MonoBehaviour
         hero.UpdateEffects();
 
         if (hero.burning > 0)
-        { 
+        {
             hero.Init(popupPrefabfire);
             hero.TakeDamage((int)(hero.maxHealth * .1));
-            
+
             ApplyEffectWithDelay(burn, hero.transform, 0f, 3.0f);
             blurbEvent.Set($" Boss is burning for {hero.burning} turns!");
             EventBus.Publish(blurbEvent);
             usedMove1.text = $" Boss is burning for {hero.burning} turns!";
-            
+
             hero.burning--;
             if (hero.burning <= 0) hero.burnIcon.SetActive(false);
-            
+
             yield return new WaitForSeconds(1f);
             if (hero.currentHealth <= 0)
             {
@@ -1143,20 +1143,20 @@ public class TurnManager : MonoBehaviour
             }
             yield return new WaitForSeconds(1f);
         }
-        
-        bool isParalyzedAndSkipping = !hero.CanAct(); 
+
+        bool isParalyzedAndSkipping = !hero.CanAct();
 
         if (isParalyzedAndSkipping && hero.paralysisEffect != null && !hero.paralysisEffect.hasHadFirstTurnCheck && isFirstMatch)
         {
-            hero.paralysisEffect.hasHadFirstTurnCheck = true; 
-            isParalyzedAndSkipping = false; 
+            hero.paralysisEffect.hasHadFirstTurnCheck = true;
+            isParalyzedAndSkipping = false;
         }
         else if (isParalyzedAndSkipping && hero.paralysisEffect != null)
         {
             hero.paralysisEffect.hasHadFirstTurnCheck = true;
         }
 
-        if (isParalyzedAndSkipping) 
+        if (isParalyzedAndSkipping)
         {
             blurbEvent.Set($"Boss is paralyzed and cannot act this turn!");
             EventBus.Publish(blurbEvent);
@@ -1167,7 +1167,7 @@ public class TurnManager : MonoBehaviour
             usedMoveGO.SetActive(false);
             if (isBattleActive) StartCoroutine(StartTurn());
         }
-        else 
+        else
         {
             if (bideAttribute > 0) bideAttribute--;
             if (bideAttribute == 0)
@@ -1182,11 +1182,11 @@ public class TurnManager : MonoBehaviour
             {
                 enemyAttacksByIndex.AddRange(allEncounteredMoves);
             }
-            else 
+            else
             {
                 for (int i = 0; i < enemies.Count; i++)
                 {
-                    if (enemyAttacksByIndexPerm[i] != null) 
+                    if (enemyAttacksByIndexPerm[i] != null)
                     {
                         if (!enemyAttacksByIndex.Contains(enemyAttacksByIndexPerm[i]))
                         {
@@ -1197,7 +1197,7 @@ public class TurnManager : MonoBehaviour
 
                 foreach (var pastMove in allEncounteredMoves)
                 {
-                    if (enemyAttacksByIndex.Count >= 4) break; 
+                    if (enemyAttacksByIndex.Count >= 4) break;
 
                     if (!enemyAttacksByIndex.Contains(pastMove))
                     {
@@ -1258,13 +1258,13 @@ public class TurnManager : MonoBehaviour
                 TMP_Dropdown.OptionData newOption = new TMP_Dropdown.OptionData(attack.attackName);
                 dropdownOptions.Add(newOption);
                 addedAttackNames.Add(attack.attackName);
-                
+
                 currentlyDisplayedAttacks.Add(attack);
 
                 if (bideAttribute >= 1)
                 {
-                    attack.upgradeLevel += 1; 
-                    if (attack.upgradeLevel > 3) attack.upgradeLevel = 3; 
+                    attack.upgradeLevel += 1;
+                    if (attack.upgradeLevel > 3) attack.upgradeLevel = 3;
                 }
             }
         }
@@ -1285,7 +1285,10 @@ public class TurnManager : MonoBehaviour
             OnAttack2Selected(1);
         }
 
+        isPlayerCommandPhase = true;
+        if (potionOptions != null) potionOptions.SetActive(false);
         attackOptionsParent.SetActive(true);
+
         if (panaceaAmountText != null && PotionData.Instance != null) panaceaAmountText.text = PotionData.Instance.Panacea.ToString();
         if (potionAmountText != null && PotionData.Instance != null) potionAmountText.text = PotionData.Instance.Potion.ToString();
         if (currentGameMode == GameMode.Endless) UpdateSoulMeterUI(isPlayerTurn: true);
@@ -1294,7 +1297,7 @@ public class TurnManager : MonoBehaviour
     private IEnumerator OnDropdownOpened(TMP_Dropdown dropdown)
     {
         Transform dropdownContent = null;
-        for (int i = 0; i < 10; i++) 
+        for (int i = 0; i < 10; i++)
         {
             dropdownContent = dropdown.transform.Find("Dropdown List/Viewport/Content");
             if (dropdownContent != null) break;
@@ -1327,7 +1330,7 @@ public class TurnManager : MonoBehaviour
                 if (trigger == null) trigger = child.gameObject.AddComponent<EventTrigger>();
                 trigger.triggers.Clear();
 
-                string localDesc = attack.attackDescription; 
+                string localDesc = attack.attackDescription;
 
                 EventTrigger.Entry pointerEnterEntry = new EventTrigger.Entry { eventID = EventTriggerType.PointerEnter };
                 pointerEnterEntry.callback.AddListener((_) => ShowDescription(localDesc));
@@ -1354,7 +1357,6 @@ public class TurnManager : MonoBehaviour
 
     public void OnConfirmButtonClicked()
     {
-        UpdateSoulMeterUI(isPlayerTurn: false);
         usedMoveGO.SetActive(true);
         if (selectedAttack1 == null || selectedAttack2 == null)
         {
@@ -1372,23 +1374,26 @@ public class TurnManager : MonoBehaviour
             return;
         }
 
+        isPlayerCommandPhase = false;
+        UpdateSoulMeterUI(isPlayerTurn: false);
+
         hero.CombineAttacks(selectedAttack1, selectedAttack2);
 
         int maxTargets = GetMaxTargetsForAttack(combinedAttack.attributes);
         var aliveEnemiesList = enemies.Where(e => e != null && !e.dead).ToList();
-        
+
         if (aliveEnemiesList.Count == 1 || (IsMultiTargetAttack(combinedAttack.attributes) && maxTargets >= aliveEnemiesList.Count && aliveEnemiesList.Count > 0))
         {
             usedMove1.text = $"Boss Used {combinedAttack.attackName}";
-            
+
             selectedAttack1 = null;
             selectedAttack2 = null;
             attackOptionsParent.SetActive(false);
             attackOptionsMenu.SetActive(false);
-            potionOptions.SetActive(false);
+            if (potionOptions != null) potionOptions.SetActive(false);
 
             if (bossAttackCoroutine != null) StopCoroutine(bossAttackCoroutine);
-            
+
             bossAttackCoroutine = StartCoroutine(DoBossAttackRoutine(aliveEnemiesList.ToArray()));
             return;
         }
@@ -1407,9 +1412,9 @@ public class TurnManager : MonoBehaviour
 
         attackOptionsParent.SetActive(false);
         attackOptionsMenu.SetActive(false);
-        potionOptions.SetActive(false);
+        if (potionOptions != null) potionOptions.SetActive(false);
         targetingHUDParent.SetActive(true);
-        
+
         targetingMode = true;
         selectingEnemies = false;
         selectedEnemies.Clear();
@@ -1417,32 +1422,34 @@ public class TurnManager : MonoBehaviour
 
     public void OnItemOptionsClicked()
     {
-        // Safely hide the main combat UI
+        if (!isBattleActive || !isPlayerCommandPhase) return;
+
         if (attackOptionsParent != null) attackOptionsParent.SetActive(false);
-        if (potionOptions != null) potionOptions.SetActive(false);
-        
+        if (potionOptions != null) potionOptions.SetActive(true);
+
         if (panaceaAmountText != null && PotionData.Instance != null) panaceaAmountText.text = PotionData.Instance.Panacea.ToString();
         if (potionAmountText != null && PotionData.Instance != null) potionAmountText.text = PotionData.Instance.Potion.ToString();
-        
-        // Open the Endless item panel
-        
-        if (EndlessModeManager.Instance != null) EndlessModeManager.Instance.BuildOrRefreshBattleItemButtons();
+
+        if (EndlessModeManager.Instance != null)
+        {
+            EndlessModeManager.Instance.OpenBattleItemPanel();
+        }
     }
 
     public void OnBideButtonClicked()
     {
-        
         if (!isBattleActive) return;
 
         bool bideSuccessful = hero.UseBide();
 
         if (bideSuccessful)
         {
+            isPlayerCommandPhase = false;
             UpdateSoulMeterUI(isPlayerTurn: false);
             ApplyEffectWithDelay(bideVFX, hero.transform, 0f, 2.0f, true, 0f, null, false);
             bideAttribute = 2;
             attackOptionsParent.SetActive(false);
-            potionOptions.SetActive(false);
+            if (potionOptions != null) potionOptions.SetActive(false);
             hero.bideBuff = true;
             bideBuff = true;
             usedMove1.text = "You bided for a turn";
@@ -1466,7 +1473,7 @@ public class TurnManager : MonoBehaviour
             if (hero.currentHealth >= hero.maxHealth)
             {
                 if (descriptionTextPotion != null) descriptionTextPotion.text = "Hero Health Full.";
-                return; 
+                return;
             }
 
             hero.Init(popupPrefabgreen);
@@ -1477,11 +1484,11 @@ public class TurnManager : MonoBehaviour
             blurbEvent.Set("Potion Used: Health Restored!");
             EventBus.Publish(blurbEvent);
             usedMove1.text = "Potion Used";
-            
+
             PotionData.Instance.Potion--;
             ApplyEffectWithDelay(potionVFX, hero.transform, 0f, 2.0f);
             EventBus.Publish(statusUpdateEvent);
-            
+
             CompleteItemTurnOrContinue();
         }
         else
@@ -1513,15 +1520,15 @@ public class TurnManager : MonoBehaviour
             hero.RemoveParalysis();
             hero.RemoveHeroBurns();
             hero.RemoveHeroParalysis();
-            
+
             usedMoveGO.SetActive(true);
             blurbEvent.Set("Panacea Used: Status Cured!");
             EventBus.Publish(blurbEvent);
             usedMove1.text = "Status Cured";
-            
+
             PotionData.Instance.Panacea--;
             ApplyEffectWithDelay(panaceaVFX, hero.transform, 0f, 2.0f);
-            
+
             CompleteItemTurnOrContinue();
         }
         else
@@ -1548,7 +1555,7 @@ public class TurnManager : MonoBehaviour
             targetingHUDParent.SetActive(false);
             bossAttackCoroutine = StartCoroutine(DoBossAttackRoutine(enemy));
             usedMove1.text = ($"Boss Used {combinedAttack.attackName}");
-            
+
             for (int i = 0; i < enemies.Count; i++)
             {
                 if (enemies[i] == enemy)
@@ -1576,8 +1583,8 @@ public class TurnManager : MonoBehaviour
             }
 
             selectedEnemies.Add(enemy);
-            usedMove1.text = $"Select {maxTargets} targets"; 
-            blurbEvent.Set($"Selected: {enemy.characterName} ({selectedEnemies.Count}/{maxTargets})"); 
+            usedMove1.text = $"Select {maxTargets} targets";
+            blurbEvent.Set($"Selected: {enemy.characterName} ({selectedEnemies.Count}/{maxTargets})");
             EventBus.Publish(blurbEvent);
 
             if (selectedEnemies.Count == maxTargets)
@@ -1603,9 +1610,9 @@ public class TurnManager : MonoBehaviour
     private int GetMaxTargetsForAttack(List<string> attributes)
     {
         if (attributes.Contains("Field")) return 4;
-        else if (attributes.Contains("Ice")) return 3; 
+        else if (attributes.Contains("Ice")) return 3;
         else if (attributes.Contains("Lunge")) return 2;
-        else return 1; 
+        else return 1;
     }
 
     private bool IsMultiTargetAttack(List<string> attributes)
@@ -1645,9 +1652,9 @@ public class TurnManager : MonoBehaviour
         }
 
         List<string> paralyzedNames = new List<string>();
-        List<string> defeatedNames = new List<string>(); 
+        List<string> defeatedNames = new List<string>();
 
-        hasIced = false; 
+        hasIced = false;
         hasLunged = false;
 
         foreach (var targetEnemy in targetEnemies)
@@ -1656,14 +1663,14 @@ public class TurnManager : MonoBehaviour
             if (targetEnemy == null) continue;
 
             int currentTargetIndex = enemies.IndexOf(targetEnemy);
-            
+
             bool isBurn = combinedAttack.attributes.Contains("Burn");
             bool isIce = combinedAttack.attributes.Contains("Ice");
             bool isPara = combinedAttack.attributes.Contains("Paralysis");
             bool isLunge = combinedAttack.attributes.Contains("Lunge");
             bool isHybridElements = (isBurn && isIce) || (isBurn && isPara) || (isIce && isPara);
 
-            targetEnemy.Init(popupPrefab); 
+            targetEnemy.Init(popupPrefab);
 
             yield return new WaitForSeconds(0.2f);
 
@@ -1698,7 +1705,7 @@ public class TurnManager : MonoBehaviour
                 damage = (int)(damage * critMultiplier);
                 blurbEvent.Set("Critical Hit!");
                 EventBus.Publish(blurbEvent);
-                usedMove1.text = "Critical Hit"; 
+                usedMove1.text = "Critical Hit";
                 targetEnemy.TakeDamage(damage);
             }
             else
@@ -1835,7 +1842,7 @@ public class TurnManager : MonoBehaviour
                 tempObj.transform.position = newPosition;
                 Destroy(tempObj, 5f);
 
-                ApplyEffectWithDelay(slashAttack, hero.transform, 0f, 3.0f, null, 1.5f); 
+                ApplyEffectWithDelay(slashAttack, hero.transform, 0f, 3.0f, null, 1.5f);
                 ApplyEffectWithDelay(slashHit, tempObj.transform, .5f, 3.0f);
                 ApplyEffectWithDelay(slashCrater, targetEnemy.transform, .8f, 3.0f);
             }
@@ -1892,17 +1899,17 @@ public class TurnManager : MonoBehaviour
                             case 3: yRotationOffset = 60f; break;
                         }
 
-                        ApplyEffectWithDelay(iceAttack, hero.transform, 0f, 3.0f, null, 1.5f, yRotationOffset); 
+                        ApplyEffectWithDelay(iceAttack, hero.transform, 0f, 3.0f, null, 1.5f, yRotationOffset);
                         hasIced = true;
                     }
                     ApplyEffectWithDelay(iceHit, targetEnemy.transform, 0.3f, 4.0f, null, 1f, null, null, 0.25f);
                 }
-                
+
                 blurbEvent.Set($"You strike again");
                 EventBus.Publish(blurbEvent);
             }
 
-            if (!isLunge && isHybridElements) 
+            if (!isLunge && isHybridElements)
             {
                 Vector3 newPos = hero.transform.position;
                 GameObject tempGameObject = new GameObject();
@@ -1910,12 +1917,12 @@ public class TurnManager : MonoBehaviour
                 Destroy(tempGameObject, 5f);
 
                 float yRot = -90f;
-                switch (currentTargetIndex) 
-                { 
-                    case 0: yRot = 15f; break; 
-                    case 1: yRot = 0f; break; 
-                    case 2: yRot = -15f; break; 
-                    case 3: yRot = -25f; break; 
+                switch (currentTargetIndex)
+                {
+                    case 0: yRot = 15f; break;
+                    case 1: yRot = 0f; break;
+                    case 2: yRot = -15f; break;
+                    case 3: yRot = -25f; break;
                 }
 
                 if (isIce && isBurn)
@@ -1964,7 +1971,6 @@ public class TurnManager : MonoBehaviour
                 ApplyEffectWithDelay(currentLungeHit, targetEnemy.transform, .5f, 3.0f);
             }
 
-            // Check death AFTER all multi-hit damage (such as Triple) has resolved
             if (targetEnemy.currentHealth <= 0)
             {
                 if (!defeatedNames.Contains(targetEnemy.characterName))
@@ -1975,7 +1981,7 @@ public class TurnManager : MonoBehaviour
             }
 
             heroCritRate = 0.05f;
-        } 
+        }
 
         if (paralyzedNames.Count > 0)
         {
@@ -1990,7 +1996,7 @@ public class TurnManager : MonoBehaviour
             EventBus.Publish(blurbEvent);
             usedMove1.text = combinedText;
             usedMoveGO.SetActive(true);
-            yield return new WaitForSeconds(1f); 
+            yield return new WaitForSeconds(1f);
         }
 
         if (defeatedNames.Count > 0)
@@ -2019,7 +2025,7 @@ public class TurnManager : MonoBehaviour
         hero.bideBuff = false;
 
         heroAniPlayed = false;
-        
+
         if (isBattleActive) StartCoroutine(StartTurn());
     }
 
@@ -2042,7 +2048,6 @@ public class TurnManager : MonoBehaviour
                 UpdateSoulMeterUI(isPlayerTurn: false);
             }
 
-            // +100 Score per defeat (Gald updates automatically as 1/4 of score)
             AddScore(scorePerDefeat);
 
             int spawnIndex = enemies.IndexOf(enemy);
@@ -2052,10 +2057,8 @@ public class TurnManager : MonoBehaviour
             }
             aliveEnemies.Remove(enemy);
 
-            // Fade out the dying enemy
             StartCoroutine(FadeOut(enemy.gameObject));
 
-            // Check if there are still enemies left to spawn in this 12-enemy wave
             if (enemiesSpawnedInCurrentWave < enemiesPerWave && spawnIndex >= 0)
             {
                 enemiesSpawnedInCurrentWave++;
@@ -2064,7 +2067,6 @@ public class TurnManager : MonoBehaviour
             }
             else if (enemiesKilledInCurrentWave >= enemiesPerWave)
             {
-                // All 12 enemies in this wave have been defeated!
                 if (!isWaveTransitioning)
                 {
                     StartCoroutine(CompleteWaveAndStartNextRoutine());
@@ -2124,13 +2126,11 @@ public class TurnManager : MonoBehaviour
         if (usedMove1 != null) usedMove1.text = $"Wave {currentWave} Complete!";
         if (usedMoveGO != null) usedMoveGO.SetActive(true);
 
-        // Hook for every set of 5 waves (Ad for special items - placeholder for future implementation)
         if (currentWave % 5 == 0)
         {
             OnFiveWaveMilestoneReached(currentWave);
         }
 
-        // Configurable 1-second break between waves
         yield return new WaitForSeconds(waveBreakDuration);
 
         if (!isBattleActive)
@@ -2139,7 +2139,6 @@ public class TurnManager : MonoBehaviour
             yield break;
         }
 
-        // Advance to next wave and reset wave counters
         currentWave++;
         enemiesSpawnedInCurrentWave = 0;
         enemiesKilledInCurrentWave = 0;
@@ -2149,16 +2148,12 @@ public class TurnManager : MonoBehaviour
         EventBus.Publish(blurbEvent);
         if (usedMove1 != null) usedMove1.text = $"Wave {currentWave}";
 
-        // Spawn the initial 4 enemies of the new wave with their running animation
         SpawnInitialWaveEnemies(instant: false);
         yield return new WaitForSeconds(waveSpawnRunDuration);
 
         isWaveTransitioning = false;
     }
 
-    /// <summary>
-    /// Placeholder hook called after every 5th wave (Wave 5, 10, 15, etc.) for special ad items.
-    /// </summary>
     protected virtual void OnFiveWaveMilestoneReached(int completedWave)
     {
         Debug.Log($"[Endless Mode] Completed Wave {completedWave} (5-Wave Set). Special item ad option can be triggered here later.");
@@ -2167,9 +2162,9 @@ public class TurnManager : MonoBehaviour
     private IEnumerator FadeOut(GameObject enemy)
     {
         if (enemy == null) yield break;
-        
-        yield return new WaitForSeconds(1.5f); 
-        
+
+        yield return new WaitForSeconds(1.5f);
+
         float duration = enemyFadeOutDuration;
         float time = 0f;
         Vector3 initialScale = enemy.transform.localScale;
@@ -2188,16 +2183,40 @@ public class TurnManager : MonoBehaviour
     {
         if (isEndingGame) return;
         isEndingGame = true;
+        isPlayerCommandPhase = false;
+        if (EndlessModeManager.Instance != null) EndlessModeManager.Instance.CloseBattleItemPanel();
 
         isBattleActive = false;
         StopAllCoroutines();
-        
+
         if (attackOptionsParent != null) attackOptionsParent.SetActive(false);
         if (potionOptions != null) potionOptions.SetActive(false);
         if (targetingHUDParent != null) targetingHUDParent.SetActive(false);
 
         Debug.Log(playerWon ? $"You won! Score: {currentScore}, Gald: {currentGald}" : $"Game Over. Final Score: {currentScore}, Gald: {currentGald}");
         StartCoroutine(DoEndGameRoutine(playerWon));
+    }
+
+    // Wire your Endless Mode Exit/Quit button OnClick() to this method
+    public void QuitEndlessRunNow()
+    {
+        if (!isBattleActive || isEndingGame || currentGameMode != GameMode.Endless || !isPlayerCommandPhase)
+            return;
+
+        isPlayerCommandPhase = false;
+
+        if (hero != null)
+        {
+            hero.currentHealth = 0;
+            EventBus.Publish(statusUpdateEvent);
+        }
+
+        if (potionOptions != null) potionOptions.SetActive(false);
+        if (attackOptionsParent != null) attackOptionsParent.SetActive(false);
+        if (attackOptionsMenu != null) attackOptionsMenu.SetActive(false);
+        if (targetingHUDParent != null) targetingHUDParent.SetActive(false);
+
+        EndGame(false);
     }
 
     public void ReviveBoss()
@@ -2210,13 +2229,13 @@ public class TurnManager : MonoBehaviour
         }
 
 #if USE_CRAZYGAMES
-        CrazySDK.Ad.RequestAd(CrazyAdType.Rewarded, () => 
+        CrazySDK.Ad.RequestAd(CrazyAdType.Rewarded, () =>
         {
-        }, 
+        },
         (error) =>
         {
             Debug.LogWarning($"Rewarded ad failed or was cancelled: {error}");
-        }, 
+        },
         () =>
         {
             PerformRevival();
@@ -2232,7 +2251,7 @@ public class TurnManager : MonoBehaviour
         hero.currentHealth = hero.maxHealth;
         hero.animator.SetTrigger("Revive");
         revived = true;
-        
+
         GameObject boss = GameObject.FindGameObjectWithTag("Boss");
         if (boss != null)
         {
@@ -2292,9 +2311,9 @@ public class TurnManager : MonoBehaviour
             {
                 TransitionManager.Instance().Transition(sequenceTransition, 1f);
             }
-            
+
             yield return new WaitForSeconds(endGameDelay);
-            
+
             if (currentGameMode == GameMode.Endless && EndlessModeManager.Instance != null)
             {
                 EndlessModeManager.Instance.OnEndlessRunEnded(currentGald, currentScore);
@@ -2319,6 +2338,7 @@ public class TurnManager : MonoBehaviour
     {
         TransitionManager.Instance().Transition(sequenceTransition, 1f);
         yield return new WaitForSeconds(endGameDelay);
+        EndlessShopData.IsEndlessUnlocked = true;
         PlayerPrefs.SetInt("EndlessModeUnlocked", 1);
         PlayerPrefs.Save();
         thankScreen.SetActive(true);
@@ -2339,7 +2359,7 @@ public class TurnManager : MonoBehaviour
             EventTrigger trigger1 = attackDropdown.GetComponent<EventTrigger>();
             if (trigger1 != null) trigger1.triggers.Clear();
         }
-        
+
         if (attackDropdown2 != null)
         {
             EventTrigger trigger2 = attackDropdown2.GetComponent<EventTrigger>();
@@ -2348,13 +2368,13 @@ public class TurnManager : MonoBehaviour
 
         StopAllCoroutines();
     }
+
     public void UpdateSoulMeterUI(bool isPlayerTurn)
     {
         if (currentGameMode != GameMode.Endless) return;
 
         bool isFull = currentSoulShards >= maxSoulShards;
 
-        // 1. Toggle the 6 individual shard pieces
         if (soulShardPieces != null && soulShardPieces.Length > 0)
         {
             for (int i = 0; i < soulShardPieces.Length; i++)
@@ -2366,13 +2386,11 @@ public class TurnManager : MonoBehaviour
             }
         }
 
-        // 2. Update radial fill (if used)
         if (soulMeterRadialFill != null)
         {
             soulMeterRadialFill.fillAmount = (float)currentSoulShards / maxSoulShards;
         }
 
-        // 3. Update text and ready glow
         if (soulMeterText != null)
         {
             soulMeterText.text = isFull ? "ULTIMATE\nATTACK" : $"{currentSoulShards}/{maxSoulShards}";
@@ -2382,24 +2400,21 @@ public class TurnManager : MonoBehaviour
             ultimateReadyGlow.SetActive(isFull);
         }
 
-        // 4. Only allow clicking when at 6/6 AND it is currently the player's turn
         if (soulMeterButton != null)
         {
             soulMeterButton.interactable = isFull && isPlayerTurn && isBattleActive;
         }
     }
 
-    // Wire this method to your Soul Meter Button's OnClick() event in the Inspector
     public void OnUltimateButtonClicked()
     {
         if (!isBattleActive || currentGameMode != GameMode.Endless) return;
         if (currentSoulShards < maxSoulShards) return;
 
-        // Consume all 6 Soul Shards and reset meter to 0
+        isPlayerCommandPhase = false;
         currentSoulShards = 0;
         UpdateSoulMeterUI(isPlayerTurn: false);
 
-        // Close all combat menus so the player can't double-act
         selectedAttack1 = null;
         selectedAttack2 = null;
         targetingMode = false;
@@ -2419,7 +2434,6 @@ public class TurnManager : MonoBehaviour
     {
         if (!isBattleActive) yield break;
 
-        // Lock shard gain so kills from this Ultimate don't refill the meter
         isExecutingUltimate = true;
 
         if (usedMoveGO != null) usedMoveGO.SetActive(true);
@@ -2431,10 +2445,8 @@ public class TurnManager : MonoBehaviour
         hero.DoAttackAnimation();
         yield return new WaitForSeconds(0.25f);
 
-        // Snapshot all currently active enemies on the field
         List<Enemy> activeTargets = enemies.Where(e => e != null && !e.dead && e.currentHealth > 0).ToList();
 
-        // Spawn placeholder VFX across all active targets
         foreach (var target in activeTargets)
         {
             if (target == null) continue;
@@ -2445,7 +2457,6 @@ public class TurnManager : MonoBehaviour
             }
             else
             {
-                // Fallback placeholder VFX using existing fire + crater effects
                 ApplyEffectWithDelay(fireAttack, target.transform, 0f, 2.5f, null, 2.0f);
                 ApplyEffectWithDelay(slashCrater, target.transform, 0.2f, 2.5f);
             }
@@ -2453,16 +2464,14 @@ public class TurnManager : MonoBehaviour
 
         yield return new WaitForSeconds(0.3f);
 
-        // Wipe out all active enemies on screen simultaneously
         foreach (var target in activeTargets)
         {
             if (target == null) continue;
 
             target.Init(popupPrefab);
-            target.barrierCount = 0; // Bypass barriers
-            target.bideBuff = false; // Bypass defense buffs
+            target.barrierCount = 0;
+            target.bideBuff = false;
 
-            // Deal exact remaining health to trigger DamageNumber popups and death animations cleanly
             int fatalDamage = Mathf.Max(1, target.currentHealth);
             target.TakeDamage(fatalDamage);
 
@@ -2471,7 +2480,6 @@ public class TurnManager : MonoBehaviour
 
         yield return new WaitForSeconds(1.0f);
 
-        // Reset Bide/Upgrades just like a standard turn action
         foreach (var attack in attacksReset)
         {
             if (attack != null) attack.upgradeLevel = 0;
@@ -2482,43 +2490,53 @@ public class TurnManager : MonoBehaviour
         hero.bideBuff = false;
         heroAniPlayed = false;
 
-        // Re-enable shard gain for future turns
         isExecutingUltimate = false;
 
-        // Proceed to next turn (StartTurn automatically waits for replacements/wave breaks to finish)
         if (isBattleActive) StartCoroutine(StartTurn());
-    }   
+    }
+
     public void OnBackFromItemsClicked()
     {
-        // Hide the item menu and restore the main combat UI
-        if (attackOptionsParent != null) attackOptionsParent.SetActive(true);
-        if (potionOptions != null) potionOptions.SetActive(true);
+        if (potionOptions != null) potionOptions.SetActive(false);
+
+        if (EndlessModeManager.Instance != null)
+        {
+            EndlessModeManager.Instance.ResetToFirstPage();
+            EndlessModeManager.Instance.CloseBattleItemPanel();
+        }
+
+        if (isBattleActive && !isEndingGame && isPlayerCommandPhase)
+        {
+            if (attackOptionsParent != null) attackOptionsParent.SetActive(true);
+        }
     }
+    
+
     public void ExecuteMiracleDewEffect()
-{
-    hero.Init(popupPrefabgreen);
-    int healAmount = hero.maxHealth - hero.currentHealth;
-    if (healAmount > 0) hero.HealDamage(healAmount);
-    hero.currentHealth = hero.maxHealth;
+    {
+        hero.Init(popupPrefabgreen);
+        int healAmount = hero.maxHealth - hero.currentHealth;
+        if (healAmount > 0) hero.HealDamage(healAmount);
+        hero.currentHealth = hero.maxHealth;
 
-    hero.RemoveBurns();
-    hero.RemoveParalysis();
-    hero.RemoveHeroBurns();
-    hero.RemoveHeroParalysis();
+        hero.RemoveBurns();
+        hero.RemoveParalysis();
+        hero.RemoveHeroBurns();
+        hero.RemoveHeroParalysis();
 
-    ApplyEffectWithDelay(potionVFX, hero.transform, 0f, 2.0f);
-    ApplyEffectWithDelay(panaceaVFX, hero.transform, 0f, 2.0f);
-    EventBus.Publish(statusUpdateEvent);
+        ApplyEffectWithDelay(potionVFX, hero.transform, 0f, 2.0f);
+        ApplyEffectWithDelay(panaceaVFX, hero.transform, 0f, 2.0f);
+        EventBus.Publish(statusUpdateEvent);
 
-    usedMoveGO.SetActive(true);
-    usedMove1.text = "Miracle Dew Used!";
-    blurbEvent.Set("Miracle Dew Used: Full HP & Status Restored!");
-    EventBus.Publish(blurbEvent);
+        usedMoveGO.SetActive(true);
+        usedMove1.text = "Miracle Dew Used!";
+        blurbEvent.Set("Miracle Dew Used: Full HP & Status Restored!");
+        EventBus.Publish(blurbEvent);
 
-    CompleteItemTurnOrContinue();
-}
+        CompleteItemTurnOrContinue();
+    }
 
-public void ExecuteBlessedAmuletEffect()
+    public void ExecuteBlessedAmuletEffect()
     {
         ApplyEffectWithDelay(bideVFX, hero.transform, 0f, 2.0f, true, 0f, null, false);
         usedMoveGO.SetActive(true);
@@ -2528,21 +2546,22 @@ public void ExecuteBlessedAmuletEffect()
 
         if (EndlessModeManager.Instance != null) EndlessModeManager.Instance.BuildOrRefreshBattleItemButtons();
     }
-public void CompleteItemTurnOrContinue()
+
+    public void CompleteItemTurnOrContinue()
     {
         if (EndlessModeManager.Instance != null)
         {
-            EndlessModeManager.Instance.hasUsedItemThisTurn = true; 
+            EndlessModeManager.Instance.hasUsedItemThisTurn = true;
+            EndlessModeManager.Instance.ResetToFirstPage();
+            EndlessModeManager.Instance.CloseBattleItemPanel();
 
             if (EndlessModeManager.Instance.freeItemActionActive)
             {
-                EndlessModeManager.Instance.freeItemActionActive = false; 
-                
-                
+                EndlessModeManager.Instance.freeItemActionActive = false;
+
                 if (attackOptionsParent != null) attackOptionsParent.SetActive(true);
-                
-                if (potionOptions != null) potionOptions.SetActive(false); 
-                
+                if (potionOptions != null) potionOptions.SetActive(false);
+
                 UpdateSoulMeterUI(isPlayerTurn: true);
 
                 if (potionButton != null) potionButton.interactable = false;
@@ -2550,6 +2569,8 @@ public void CompleteItemTurnOrContinue()
                 return;
             }
         }
+
+        isPlayerCommandPhase = false;
 
         if (bideAttribute > 0) bideAttribute = 2;
         if (bideAttribute == 0) { hero.bideLevel = hero.bideLevelBase; hero.bideUses = 0; }
@@ -2561,6 +2582,7 @@ public void CompleteItemTurnOrContinue()
 
         StartCoroutine(StartTurn());
     }
+
     public void ExecuteHealingOrCureItem(EndlessItemDefinition itemDef)
     {
         bool heals = itemDef.effectType == EndlessItemEffectType.HealPercent ||

@@ -39,4 +39,15 @@ public class train : MonoBehaviour
 
         TransitionManager.Instance().Transition("CreditsScene", sequenceTransition, 0f);
     }
+    public void GoEndless()
+    {
+#if USE_CRAZYGAMES
+        if (CrazySDK.IsAvailable)
+        {
+            CrazySDK.Game.GameplayStop();
+        }
+#endif
+
+        TransitionManager.Instance().Transition("EndlessModeScene", sequenceTransition, 0f);
+    }
 }

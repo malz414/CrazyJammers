@@ -386,7 +386,7 @@ public class ShopMenuController : MonoBehaviour
 
             if (selectedItemNameText != null) selectedItemNameText.text = current.displayName;
             if (selectedItemDescText != null) selectedItemDescText.text = current.description;
-            if (selectedItemOwnedText != null) selectedItemOwnedText.text = $"Owned x{owned}";
+            if (selectedItemOwnedText != null) selectedItemOwnedText.text = $"x{owned}";
         }
         else
         {

@@ -41,6 +41,18 @@ public class EndlessModeManager : MonoBehaviour
     private List<Button> slotButtons = new List<Button>();
     private int currentPage = 0;
     private bool wasShopAlreadyUnlockedThisRun = false;
+    [Header("First Time Endless Unlock")]
+    [SerializeField] private GameObject endlessUnlockNotifOverlay;
+    [SerializeField] private GameObject shopUnlockNotifCard;
+    [Tooltip("Seconds to wait after entering Endless Mode before pausing for the unlock popup.")]
+    [SerializeField] private float endlessUnlockNotifDelay = 1.5f;
+    private bool hasScheduledEndlessNotif = false;
+    
+    private class PauseWhilePopupOpen : MonoBehaviour
+    {
+        private void OnEnable() => Time.timeScale = 0f;
+        private void OnDisable() => Time.timeScale = 1f;
+    }
 
     private void Awake()
     {
@@ -50,45 +62,86 @@ public class EndlessModeManager : MonoBehaviour
 
     private void Start()
     {
+        EnsurePageButtonsBound();
+
+        if (EndlessShopData.IsEndlessUnlocked && !EndlessShopData.HasShownEndlessUnlockNotif && endlessUnlockNotifOverlay != null)
+        {
+            endlessUnlockNotifOverlay.SetActive(true);
+            EndlessShopData.HasShownEndlessUnlockNotif = true;
+        }
+    }
+    
+    private void TryScheduleEndlessUnlockPopup(string caller)
+    {
+        string sceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+        string modeName = TurnManager.Instance != null ? TurnManager.Instance.currentGameMode.ToString() : "TurnManager_NULL";
+        bool isEndlessScene = (TurnManager.Instance != null && TurnManager.Instance.currentGameMode == TurnManager.GameMode.Endless)
+                              || sceneName == "EndlessModeScene";
+
+        bool isUnlocked = EndlessShopData.IsEndlessUnlocked;
+        bool alreadyShown = EndlessShopData.HasShownEndlessUnlockNotif;
+        bool hasOverlay = endlessUnlockNotifOverlay != null;
+
+        Debug.Log($"[EndlessNotifDebug] ({caller}) Scheduled={hasScheduledEndlessNotif} | Scene='{sceneName}' | Mode={modeName} | IsEndlessScene={isEndlessScene} | IsUnlocked={isUnlocked} | AlreadyShown={alreadyShown} | OverlayAssigned={hasOverlay}");
+
+        if (hasScheduledEndlessNotif) return;
+
+        if (isEndlessScene && isUnlocked && !alreadyShown && hasOverlay)
+        {
+            hasScheduledEndlessNotif = true;
+            EndlessShopData.HasShownEndlessUnlockNotif = true;
+            Debug.Log($"[EndlessNotifDebug] Conditions met! Waiting {endlessUnlockNotifDelay}s (realtime) to show '{endlessUnlockNotifOverlay.name}'...");
+            StartCoroutine(ShowEndlessUnlockNotifDelayed(endlessUnlockNotifDelay));
+        }
+    }
+    
+    private void EnsurePageButtonsBound()
+    {
+        if (battleItemGroupParent != null && battleItemGroupParent.parent != null)
+        {
+            Transform panelRoot = battleItemGroupParent.parent;
+            if (prevPageButton == null)
+            {
+                Transform prevTf = panelRoot.Find("Page Turner Icons/PrevPageButton");
+                if (prevTf != null) prevPageButton = prevTf.GetComponent<Button>();
+            }
+            if (nextPageButton == null)
+            {
+                Transform nextTf = panelRoot.Find("Page Turner Icons/NextPageButton");
+                if (nextTf != null) nextPageButton = nextTf.GetComponent<Button>();
+            }
+        }
+
         if (prevPageButton != null)
         {
             prevPageButton.onClick.RemoveAllListeners();
             prevPageButton.onClick.AddListener(OnPrevPageClicked);
+            ForceButtonClickable(prevPageButton);
         }
 
         if (nextPageButton != null)
         {
             nextPageButton.onClick.RemoveAllListeners();
             nextPageButton.onClick.AddListener(OnNextPageClicked);
+            ForceButtonClickable(nextPageButton);
         }
+
+        // Prevent decorative texts from stealing mouse raycasts over PrevPageButton
+        if (pageCountText != null) pageCountText.raycastTarget = false;
+        if (itemMenuDescriptionText != null) itemMenuDescriptionText.raycastTarget = false;
     }
-    private void Update()
+
+    private void ForceButtonClickable(Button btn)
     {
-        if (Input.GetMouseButtonDown(0) && EventSystem.current != null)
+        if (btn == null) return;
+        btn.enabled = true;
+        btn.interactable = true;
+        foreach (var graphic in btn.GetComponentsInChildren<Graphic>(true))
         {
-            PointerEventData pointerData = new PointerEventData(EventSystem.current)
-            {
-                position = Input.mousePosition
-            };
-
-            List<RaycastResult> results = new List<RaycastResult>();
-            EventSystem.current.RaycastAll(pointerData, results);
-
-            if (results.Count == 0)
-            {
-                Debug.Log("[ClickDebug] Clicked nothing on UI.");
-            }
-            else
-            {
-                string hitChain = "";
-                for (int i = 0; i < results.Count; i++)
-                {
-                    hitChain += $"\n  #{i + 1}: {results[i].gameObject.name} (Parent: {results[i].gameObject.transform.parent?.name})";
-                }
-                Debug.Log($"[ClickDebug] Top UI hit was '{results[0].gameObject.name}':{hitChain}");
-            }
+            graphic.raycastTarget = true;
         }
     }
+
 
     public void OnBattleStart()
     {
@@ -107,6 +160,50 @@ public class EndlessModeManager : MonoBehaviour
         }
 
         BuildOrRefreshBattleItemButtons();
+    }
+
+    private System.Collections.IEnumerator ShowEndlessUnlockNotifDelayed(float delay)
+    {
+        yield return new WaitForSecondsRealtime(delay);
+
+        if (endlessUnlockNotifOverlay != null)
+        {
+            if (shopUnlockNotifCard != null) shopUnlockNotifCard.SetActive(false);
+
+            Transform p = endlessUnlockNotifOverlay.transform.parent;
+            while (p != null && p.GetComponent<Canvas>() == null)
+            {
+                p.gameObject.SetActive(true);
+                p = p.parent;
+            }
+
+            Time.timeScale = 0f;
+            endlessUnlockNotifOverlay.SetActive(true);
+        }
+    }
+    public void CloseEndlessUnlockNotif()
+    {
+        if (endlessUnlockNotifOverlay != null)
+            endlessUnlockNotifOverlay.SetActive(false);
+        Time.timeScale = 1f;
+    }
+
+    private void OnDestroy()
+    {
+        if (Time.timeScale == 0f) Time.timeScale = 1f;
+    }
+
+    public void ResetToFirstPage()
+    {
+        currentPage = 0;
+    }
+
+    public void QuitEndlessRunNow()
+    {
+        if (TurnManager.Instance != null)
+        {
+            TurnManager.Instance.QuitEndlessRunNow();
+        }
     }
 
     public void OnPrevPageClicked()
@@ -128,8 +225,8 @@ public class EndlessModeManager : MonoBehaviour
     public void BuildOrRefreshBattleItemButtons()
     {
         if (battleItemGroupParent == null) return;
+        EnsurePageButtonsBound();
 
-        // Collect all generic button slots inside the Item Group (excluding page buttons if nested inside)
         slotButtons.Clear();
         for (int i = 0; i < battleItemGroupParent.childCount; i++)
         {
@@ -140,7 +237,6 @@ public class EndlessModeManager : MonoBehaviour
             }
         }
 
-        // Only keep items with remaining count > 0 so empty items vanish automatically
         List<EndlessItemDefinition> visibleItems = new List<EndlessItemDefinition>();
         foreach (var item in EndlessShopData.Catalog)
         {
@@ -152,27 +248,18 @@ public class EndlessModeManager : MonoBehaviour
         int totalPages = Mathf.Max(1, Mathf.CeilToInt((float)visibleItems.Count / pageSize));
         currentPage = Mathf.Clamp(currentPage, 0, totalPages - 1);
 
-        // Update Pagination UI and force buttons interactable when visible
         if (prevPageButton != null)
         {
             bool showPrev = totalPages > 1 && currentPage > 0;
             prevPageButton.gameObject.SetActive(showPrev);
-            if (showPrev)
-            {
-                prevPageButton.enabled = true;
-                prevPageButton.interactable = true;
-            }
+            if (showPrev) ForceButtonClickable(prevPageButton);
         }
 
         if (nextPageButton != null)
         {
             bool showNext = totalPages > 1 && currentPage < totalPages - 1;
             nextPageButton.gameObject.SetActive(showNext);
-            if (showNext)
-            {
-                nextPageButton.enabled = true;
-                nextPageButton.interactable = true;
-            }
+            if (showNext) ForceButtonClickable(nextPageButton);
         }
 
         if (pageCountText != null)
@@ -415,6 +502,41 @@ public class EndlessModeManager : MonoBehaviour
         return Convert.ToBase64String(result);
     }
 #endif
+private GameObject GetBattleItemPanelRoot()
+    {
+        if (battleItemGroupParent == null) return null;
+
+        Transform current = battleItemGroupParent;
+        GameObject mainUI = TurnManager.Instance != null ? TurnManager.Instance.gameObject : null;
+
+        while (current.parent != null)
+        {
+            // Stop before reaching a Canvas or the root HUD parent
+            if (current.parent.GetComponent<Canvas>() != null ||
+                current.parent.name.Contains("MainUI") ||
+                current.parent.name.Contains("GameplayUI"))
+            {
+                return current.gameObject;
+            }
+            current = current.parent;
+        }
+
+        return battleItemGroupParent.parent != null ? battleItemGroupParent.parent.gameObject : battleItemGroupParent.gameObject;
+    }
+
+    public void OpenBattleItemPanel()
+    {
+        GameObject panelRoot = GetBattleItemPanelRoot();
+        if (panelRoot != null) panelRoot.SetActive(true);
+        currentPage = 0;
+        BuildOrRefreshBattleItemButtons();
+    }
+
+    public void CloseBattleItemPanel()
+    {
+        GameObject panelRoot = GetBattleItemPanelRoot();
+        if (panelRoot != null) panelRoot.SetActive(false);
+    }
 
     public void ShowPostRunShopOptions()
     {

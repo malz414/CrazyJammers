@@ -764,11 +764,15 @@ PrefabInstance:
       objectReference: {fileID: 1973534060}
     - target: {fileID: 3329207406715034785, guid: 2f52127b350c3d347bf41bb4998677b9, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: HideCreditsReal
+      value: GoEndless
       objectReference: {fileID: 0}
     - target: {fileID: 3329207406715034785, guid: 2f52127b350c3d347bf41bb4998677b9, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
       value: train, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 3643877081919509248, guid: 2f52127b350c3d347bf41bb4998677b9, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: HideCreditsReal
       objectReference: {fileID: 0}
     - target: {fileID: 3750295338986193131, guid: 2f52127b350c3d347bf41bb4998677b9, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
