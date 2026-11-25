@@ -5,7 +5,7 @@ using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using EasyTransition; 
+using EasyTransition;
 
 public class FadeOutEvent : IBusEvent
 {
@@ -16,9 +16,11 @@ public class FadeOutEvent : IBusEvent
         this.category = category;
     }
 }
-public class FadeInEvent : IBusEvent 
+
+public class FadeInEvent : IBusEvent
 {
     public UICategoryEnums category { get; private set; }
+
     public FadeInEvent(UICategoryEnums category)
     {
         this.category = category;
@@ -43,116 +45,173 @@ public class FadeScreen : MonoBehaviour
     [SerializeField] QuoteBoxManager quoteBoxManager;
     [SerializeField] MainMenuManager mainMenuManager;
     [SerializeField] int quoteNum;
+    [SerializeField] float typeSpeed = 0.01f;
     public bool startInstantly;
     public bool FirstMatch;
     public bool mainMenu = false;
     public TransitionSettings sequenceTransition;
 
-
-
-
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
     {
         EventBus.Subscribe<FadeOutEvent>(OnFadeOut);
         EventBus.Subscribe<FadeInEvent>(OnFadeIn);
-        if(skipButton != null)
+        if (skipButton != null)
         {
             skipButton.SetActive(false);
         }
-        
     }
+
     void Start()
-{
-    // Don't run battle setup logic if we are just in the Main Menu!
-    if(startInstantly && !mainMenu) 
     {
-        if (skipped) return;
-        skipped = true;
-        LeanTween.alphaCanvas(fadeScreen, 0, 0);
-        MusicManager.Instance.PlayMusic(MusicManager.Instance.prologueMusic2);
-        
-        quoteBoxManager.SetQuoteBox(enemyQuote[quoteNum]);
+        // First Match takes priority: type out the intro text and wait for the Next button
+        if (FirstMatch && !mainMenu)
+        {
+            StartCoroutine(RunFirstMatchIntroSequence());
+            return;
+        }
+
+        // Don't run battle setup logic if we are just in the Main Menu!
+        if (startInstantly && !mainMenu)
+        {
+            if (skipped) return;
+            skipped = true;
+
+            if (fadeScreen != null)
+            {
+                fadeScreen.interactable = false;
+                fadeScreen.blocksRaycasts = false;
+                LeanTween.alphaCanvas(fadeScreen, 0, 0);
+            }
+
+            if (MusicManager.Instance != null)
+                MusicManager.Instance.PlayMusic(MusicManager.Instance.prologueMusic2);
+
+            if (quoteBoxManager != null && enemyQuote != null && quoteNum >= 0 && quoteNum < enemyQuote.Length)
+                quoteBoxManager.SetQuoteBox(enemyQuote[quoteNum]);
+        }
     }
 
-    if(FirstMatch)
+    private IEnumerator RunFirstMatchIntroSequence()
     {
-        StartCoroutine(RunIntroSequence());
-    }
-}
+        skipped = false;
 
+        if (fadeScreen != null)
+        {
+            fadeScreen.gameObject.SetActive(true);
+            fadeScreen.alpha = 1f;
+            fadeScreen.interactable = true;
+            fadeScreen.blocksRaycasts = true;
+        }
+
+        if (skipButton != null) skipButton.SetActive(false);
+
+        if (prologueTextUI != null && introText != null && introText.Length > 0)
+        {
+            yield return StartCoroutine(TypeText(introText[0]));
+        }
+
+        // Reveal the Next button after typing finishes; pressing it calls SkipToGame() to show the quote box
+        if (skipButton != null) skipButton.SetActive(true);
+    }
+
+    // Wire your Next / Skip button's OnClick() event to this method
     public void SkipToGame()
     {
         if (skipped) return;
 
-        skipped=true;
+        skipped = true;
         StopAllCoroutines();
-        LeanTween.alphaCanvas(fadeScreen, 0, FADE_OUT_TIME);
-        MusicManager.Instance.PlayMusic(MusicManager.Instance.prologueMusic2);
-        if(!mainMenu)
+
+        if (skipButton != null) skipButton.SetActive(false);
+
+        if (fadeScreen != null)
         {
-        quoteBoxManager.SetQuoteBox(enemyQuote[quoteNum]);
+            fadeScreen.interactable = false;
+            fadeScreen.blocksRaycasts = false;
+            LeanTween.alphaCanvas(fadeScreen, 0, FADE_OUT_TIME);
+        }
+
+        if (MusicManager.Instance != null)
+        {
+            MusicManager.Instance.PlayMusic(MusicManager.Instance.prologueMusic2);
+        }
+
+        if (!mainMenu && quoteBoxManager != null && enemyQuote != null && quoteNum >= 0 && quoteNum < enemyQuote.Length)
+        {
+            quoteBoxManager.SetQuoteBox(enemyQuote[quoteNum]);
         }
     }
+
     public void ShowIntro()
     {
-        StartCoroutine(RunIntroSequence()); //
+        StartCoroutine(RunIntroSequence());
     }
 
     private IEnumerator TypeText(string textToType)
-{
-    prologueTextUI.text = ""; // Clear current text
-    foreach (char letter in textToType.ToCharArray())
     {
-        prologueTextUI.text += letter;
-        // Adjust this wait time for faster or slower typing
-        yield return new WaitForSeconds(0.01f); 
+        prologueTextUI.text = "";
+        foreach (char letter in textToType.ToCharArray())
+        {
+            prologueTextUI.text += letter;
+            yield return new WaitForSeconds(typeSpeed);
+        }
     }
-}
 
     private void OnFadeOut(FadeOutEvent fadeEvent)
     {
-        if(fadeEvent.category != this.category) { return; }       
+        if (fadeEvent.category != this.category) { return; }
         else if (fadeEvent.category == UICategoryEnums.TransitionUI)
         {
             StartCoroutine(NextBattleTransitionCoroutine());
         }
     }
-    private IEnumerator RunIntroSequence()
-{       TransitionManager.Instance().Transition(sequenceTransition, 0f);
-        yield return new WaitForSeconds(1f); 
-        skipButton.SetActive(true);
-        mainMenuScreen.interactable = false;
-        mainMenuScreen.blocksRaycasts = false;
-        
-        // Instantly hide the main menu (since the transition handles the visual flair now)
-        mainMenuScreen.alpha = 0; 
-        
-        yield return StartCoroutine(TypeText(introText[0]));
-        
-        yield return new WaitForSeconds(5f); 
-        
-        // Trigger the in-scene transition to reveal the next state
-        // 0f is the start delay before the transition begins
-        
-        mainMenuManager.HideCredits();
-}
 
+    private IEnumerator RunIntroSequence()
+    {
+        if (TransitionManager.Instance() != null && sequenceTransition != null)
+            TransitionManager.Instance().Transition(sequenceTransition, 0f);
+
+        yield return new WaitForSeconds(1f);
+
+        if (skipButton != null) skipButton.SetActive(true);
+
+        if (mainMenuScreen != null)
+        {
+            mainMenuScreen.interactable = false;
+            mainMenuScreen.blocksRaycasts = false;
+            mainMenuScreen.alpha = 0;
+        }
+
+        if (prologueTextUI != null && introText != null && introText.Length > 0)
+        {
+            yield return StartCoroutine(TypeText(introText[0]));
+        }
+
+        yield return new WaitForSeconds(5f);
+
+        if (mainMenuManager != null)
+        {
+            mainMenuManager.HideCredits();
+        }
+    }
 
     private IEnumerator NextBattleTransitionCoroutine()
     {
-        skipButton.SetActive(true);
-        prologueTextUI.text = introText[0];
+        if (skipButton != null) skipButton.SetActive(true);
+        if (prologueTextUI != null && introText != null && introText.Length > 0)
+            prologueTextUI.text = introText[0];
+
         yield return new WaitForSeconds(30f);
-        LeanTween.alphaCanvas(fadeScreen, 0, FADE_OUT_TIME);
+        if (fadeScreen != null) LeanTween.alphaCanvas(fadeScreen, 0, FADE_OUT_TIME);
         SkipToGame();
     }
 
     private void OnFadeIn(FadeInEvent fadeEvent)
     {
         if (fadeEvent.category != this.category) { return; }
-        LeanTween.alphaCanvas(fadeScreen, 1, FADE_IN_TIME);
+        if (fadeScreen != null) LeanTween.alphaCanvas(fadeScreen, 1, FADE_IN_TIME);
     }
+
     void OnDestroy()
     {
         EventBus.Unsubscribe<FadeOutEvent>(OnFadeOut);

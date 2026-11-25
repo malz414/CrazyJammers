@@ -386,7 +386,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5991268155122945167, guid: aebc5eccd177b664194584ab82de07c4, type: 3}
       propertyPath: description
-      value: 'You can now access [The Shop]'
+      value: 'You can now access [Endless Mode]'
       objectReference: {fileID: 0}
     - target: {fileID: 5991268155122945167, guid: aebc5eccd177b664194584ab82de07c4, type: 3}
       propertyPath: closeOnClick
